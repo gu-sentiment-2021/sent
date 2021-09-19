@@ -23,19 +23,19 @@ class mpqa3_to_dict:
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
 
-    def doc_to_dict(self, doc_name):
+    def doc_to_dict(self, docname):
         """
         It converts an MPQA document to a python dictionary.
-        :param doc_name: The name of the document to be converted.
+        :param docname: The name of the document to be converted.
         :return: A python dictionary representing the document.
         """
         # example: ./database.mpqa.3.0/docs/20011024/21.53.09-11428
-        with open(os.path.join(self.mpqa_dir, "docs", doc_name)) as doc_file:
+        with open(os.path.join(self.mpqa_dir, "docs", docname)) as doc_file:
             doc_text = doc_file.read()
         
         # example: ./database.mpqa.3.0/man_anns/20011024/21.53.09-11428/gateman.mpqa.lre.3.0
         anno_lines = []
-        with open(os.path.join(self.mpqa_dir, "man_anns", doc_name,
+        with open(os.path.join(self.mpqa_dir, "man_anns", docname,
                   "gateman.mpqa.lre.3.0")) as anno_file:
             anno_lines = anno_file.readlines()
 
@@ -111,17 +111,33 @@ class mpqa3_to_dict:
                     output["annotations"][key]["sentence-id"] = sentence_id
                     output["annotations"][key]["sentence"] = output["annotations"][sentence_id]["text"]
                     output["annotations"][key]["span-in-sentence"] = (
-                        output["annotations"][key]["span-in-doc"][0]-output["annotations"][sentence_id]["span-in-doc"][0],
-                        output["annotations"][key]["span-in-doc"][1]-output["annotations"][sentence_id]["span-in-doc"][0]
+                        output["annotations"][key]["span-in-doc"][0] - output["annotations"][sentence_id]["span-in-doc"][0],
+                        output["annotations"][key]["span-in-doc"][1] - output["annotations"][sentence_id]["span-in-doc"][0]
                     )
                     break
 
         return output
 
-    def corpus_to_dict(self, doc_list):
+    def corpus_to_dict(self, doclist=None, doclist_filename='doclist'):
         """
         It converts an entire list of MPQA documents to a python dictionary.
-        :param doc_list: The list of document names to be converted.
+        :param doclist: The list of document names to be converted. If set, doclist_filename will be ignored.
+        :param doclist_filename: The name of the file which contains a list of the document names.
         :return: A python dictionary representing the corpus.
         """
-        None
+        if doclist is None:
+            doclist = self.doclistfile_to_doclist(doclist_filename)
+        return None
+    
+    def doclistfile_to_doclist(self, doclist_filename='doclist'):
+        """
+        An auxiliary function for converting a file of a list of document names to a list of document names.
+        :param doclist_filename: The name of the file which contains a list of the document names.
+        :return: A python list containing the document names.
+        """
+        # example: ./database.mpqa.3.0/doclist
+        doclist = []
+        with open(os.path.join(self.mpqa_dir, doclist_filename)) as doclist_file:
+            for doc in doclist_file.readlines():
+                doclist.append(doc[:-1]) # Removes \n at the end of the line
+        return doclist
