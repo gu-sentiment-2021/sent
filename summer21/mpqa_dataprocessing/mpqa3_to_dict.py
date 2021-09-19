@@ -30,9 +30,8 @@ class mpqa3_to_dict:
         :return: A python dictionary representing the document.
         """
         # example: ./database.mpqa.3.0/docs/20011024/21.53.09-11428
-        doc_lines = []
         with open(os.path.join(self.mpqa_dir, "docs", doc_name)) as doc_file:
-            doc_lines = doc_file.readlines()
+            doc_text = doc_file.read()
         
         # example: ./database.mpqa.3.0/man_anns/20011024/21.53.09-11428/gateman.mpqa.lre.3.0
         anno_lines = []
@@ -71,9 +70,10 @@ class mpqa3_to_dict:
             attributes = attributes[:-2]
             # A temporary variable for an annotation line before knowing its ID.
             temp_dict = {
-                'line-id': int(line_id),
-                'span': span,
-                'anno-type': anno_type,
+                "anno-type": anno_type,
+                "text": doc_text[span[0]:span[1]],
+                "line-id": int(line_id),
+                "span-in-doc": span,
             }
             # Process all attributes
             if len(attributes) == 0: # example: split annotation
@@ -92,13 +92,30 @@ class mpqa3_to_dict:
             id = temp_dict.get("id", line_id)
             temp_dict.pop("id", None)
             # Updating the final output
-            output[id] = temp_dict
+            output["annotations"][id] = temp_dict
             if anno_type in output:
                 output[anno_type].append(id)
-            else: # If it's a new type of annotation, warn us in red!
+            else: # If there's a new type of annotation, warn us in red!
                 output[anno_type] = [id]
                 print("\033[91m <UNKNOWN ANNO: {}>\033[00m" .format(anno_type))
         
+        # Set sentence-id, sentence and span-in-sentence
+        for key in output["annotations"].keys():
+            if key in output["sentence"]:
+                continue # Skip changing sentences
+            # Search for the corresponding sentence
+            for sentence_id in output["sentence"]:
+                # Checks if the annotation is whithin this sentence
+                if  output["annotations"][sentence_id]["span-in-doc"][0] <= output["annotations"][key]["span-in-doc"][0]\
+                and output["annotations"][sentence_id]["span-in-doc"][1] >= output["annotations"][key]["span-in-doc"][1]:
+                    output["annotations"][key]["sentence-id"] = sentence_id
+                    output["annotations"][key]["sentence"] = output["annotations"][sentence_id]["text"]
+                    output["annotations"][key]["span-in-sentence"] = (
+                        output["annotations"][key]["span-in-doc"][0]-output["annotations"][sentence_id]["span-in-doc"][0],
+                        output["annotations"][key]["span-in-doc"][1]-output["annotations"][sentence_id]["span-in-doc"][0]
+                    )
+                    break
+
         return output
 
     def corpus_to_dict(self, doc_list):
