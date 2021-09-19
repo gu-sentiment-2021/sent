@@ -67,7 +67,7 @@ class mpqa3_to_dict:
             span = span.split(',')
             span = (int(span[0]), int(span[1]))
             # Removes ' \n' at the end of the string.
-            attributes = attributes[:-2]
+            attributes = attributes.strip()
             # A temporary variable for an annotation line before knowing its ID.
             temp_dict = {
                 "anno-type": anno_type,
@@ -79,9 +79,11 @@ class mpqa3_to_dict:
             if len(attributes) == 0: # example: split annotation
                 continue
             # Splits with the whitespaces out of the quotes as the delimeter
+            attributes = attributes.strip()
             attributes = re.split(r' (?=([^"]*"[^"]*")*[^"]*$)', attributes)
             for attribute in attributes:
                 key, val = attribute.split('=')
+                key, val = key.strip(), val.strip()
                 val = val[1:-1] # Removes double quotation marks
                 if key in HAS_LIST_OF_IDS:
                     temp_dict[key] = [] if val == "none" else val.split(',')
@@ -89,8 +91,7 @@ class mpqa3_to_dict:
                     temp_dict[key] = val
             # We probably know the identifier assigned to the annotation by now
             # except some of the agnets and the sentences
-            id = temp_dict.get("id", line_id)
-            temp_dict.pop("id", None)
+            id = temp_dict.pop("id", line_id)
             # Updating the final output
             output["annotations"][id] = temp_dict
             if anno_type in output:
@@ -127,7 +128,14 @@ class mpqa3_to_dict:
         """
         if doclist is None:
             doclist = self.doclistfile_to_doclist(doclist_filename)
-        return None
+        output = {
+            "corpus": self.corpus_name, # Name of the corpus from which the documents were drawn.
+            "doclist": doclist,         # List of the document names.
+            "docs": {}                  # Dictionary of document annotations in dictionary format.
+        }
+        for docname in doclist:
+            output["docs"][docname] = self.doc_to_dict(docname)
+        return output
     
     def doclistfile_to_doclist(self, doclist_filename='doclist'):
         """
