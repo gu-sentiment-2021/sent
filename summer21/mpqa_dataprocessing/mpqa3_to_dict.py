@@ -8,7 +8,8 @@ import re
 
 HAS_LIST_OF_IDS = [ # These attributes may have any number of ids. (>= 0)
     "nested-source", "attitude-link", "insubstantial",
-    "sTarget-link", "newETarget-link", "eTarget-link"
+    "sTarget-link", "newETarget-link", "eTarget-link",
+    "target-speech-link"
 ]
 
 class mpqa3_to_dict:
@@ -52,6 +53,7 @@ class mpqa3_to_dict:
             "sentence": [],
             "supplementaryAttitude": [],
             "supplementaryExpressive-subjectivity": [],
+            "target-speech": [],
             "annotations": {}
         }
 
