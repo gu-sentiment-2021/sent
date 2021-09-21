@@ -109,12 +109,15 @@ class JSON2CSDS:
         """
         It converts a document annotation from json to csds
         :param json_file: The json file which is obtained form mpqa to json conversion.
-        :return: A csds object.
+        :return: A csds collection (several csds objects).
         """
         # List of all document names extracted from the json file
         doc_list = json_file['doclist']
 
         docs = json_file['docs']
+
+        # In here, there must be some code to create a csds collection that stores the csds objects
+        # -------------
 
         # Process each document
         for doc_name in doc_list:
