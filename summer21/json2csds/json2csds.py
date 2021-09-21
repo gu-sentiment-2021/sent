@@ -1,5 +1,6 @@
 from sentiment.sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
+from CSDS_extended import CSDS, CSDSCollection
 
 
 class JSON2CSDS:
@@ -32,26 +33,37 @@ class JSON2CSDS:
         pass
         return None
 
-    def process_es(self, es_annot):
+    def process_es(self, es_annot, doc_id):
         """
-        It processes an ES type annotation.
+        It processes an ES (expressive-subjectivity) type annotation.
         :param json_file: A Python dict which represents an ES annotation.
         :return: A csds object.
         """
-        # ----
+        # The following lines of code are under development!
+        '''
+        csds_object = CSDS(es_annot['sentence'],
+                           es_annot['span-in-sentence'][0],
+                           es_annot['span-in-sentence'][1],
+                           es_annot['polarity'],
+                           es_annot['intensity'],
+                           es_annot['text'],  # this can be changed
+                           ...
+                           )
+        return csds_object
+        '''
         return None
 
-    def process_ds(self, a):
+    def process_ds(self, ds_annot, doc_id):
         """
         It processes a DS type annotation.
         :param json_file: A Python dict which represents a DS annotation.
         :return: A csds object.
         """
-        # !
+
         return None
 
     # This method is not being used till now!
-    def process_ose(self, a):
+    def process_ose(self, ose_annot, doc_id):
         """
         It processes an OSE type annotation.
         :param json_file: A Python dict which represents an OSE annotation.
@@ -60,7 +72,7 @@ class JSON2CSDS:
         # !
         return None
 
-    def process_att(self, a):
+    def process_att(self, att_annot, doc_id):
         """
         It processes an attitude type annotation.
         :param json_file: A Python dict which represents an attitude annotation.
@@ -69,7 +81,7 @@ class JSON2CSDS:
         # !
         return None
 
-    def process_tf(self, a):
+    def process_tf(self, tf_annot, doc_id):
         """
         It processes a target frame type annotation.
         :param json_file: A Python dict which represents a DS annotation.
@@ -78,7 +90,7 @@ class JSON2CSDS:
         # !
         return None
 
-    def process_starget(self, a):
+    def process_starget(self, starget_annot, doc_id):
         """
         It processes a sTarget type annotation.
         :param json_file: A Python dict which represents a sTarget annotation.
@@ -87,7 +99,7 @@ class JSON2CSDS:
         # !
         return None
 
-    def process_etarget(self, a):
+    def process_etarget(self, etarget_annot, doc_id):
         """
         It processes an eTarget type annotation.
         :param json_file: A Python dict which represents an eTarget annotation.
@@ -96,7 +108,7 @@ class JSON2CSDS:
         # !
         return None
 
-    def process_sentence(self, a):
+    def process_sentence(self, sentence_annot, doc_id):
         """
         It processes a sentence type annotation.
         :param json_file: A Python dict which represents a sentence annotation.
@@ -144,7 +156,7 @@ class JSON2CSDS:
                 # Process each ES item by its corresponding ID
                 for es_id in es_list:
                     annotation_item = es_list[es_id]
-                    csds_object = self.process_es(annotation_item)
+                    csds_object = self.process_es(annotation_item, doc_name)
                     # must store the object!
                     del csds_object
                 del es_list
@@ -155,7 +167,7 @@ class JSON2CSDS:
                 # Process each DS item by its corresponding ID
                 for ds_id in ds_list:
                     annotation_item = ds_list[ds_id]
-                    csds_object = self.process_ds(annotation_item)
+                    csds_object = self.process_ds(annotation_item, doc_name)
                     # must store the object!
                     del csds_object
                 del ds_list
@@ -237,4 +249,3 @@ class JSON2CSDS:
 address = "F:\pych\mpqa_3_0_database\database.mpqa.3.0"
 obj = JSON2CSDS("MPQA3.0", address)
 jsf = obj.produce_json_file()
-obj.doc2csds(jsf)
