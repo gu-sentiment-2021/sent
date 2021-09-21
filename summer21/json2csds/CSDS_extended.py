@@ -32,7 +32,8 @@ class CSDS:
     this information.
     
     List of Changes CSDS for MPQA:
-        1. head_start & head_end is span_start & span_end of targetFrame in MPQA3 respectively.
+        1. head_start & head_end is span_start & span_end of the text that refers to
+        the Type.
         2. head that was string, changed to list. Its values are a list of the id of newETarget
         & starget.
         3. added polarity. Its possible values:positive, negative, both, neutral, 
@@ -40,8 +41,6 @@ class CSDS:
         4. added intensity. Its possible values: low, medium, high, extreme.
         5. removed belief & sentiment.
         6. added Enum for Type of annotation.
-        7. added string_of_type that its value is the span of the text that refers to
-        the Type.
     """
     doc_id = -1  # unique index of origin document within corpus, value: name of doc
     sentence_id = -1  # index of sentence within document
@@ -51,13 +50,13 @@ class CSDS:
     head = []  # targets of annotation within sentence
     # belief = ""  # belief value (values are corpus-specific)
     # sentiment = ""  # sentiment value (values are corpus-specific)
-    string_of_type = "" # string of the type
     polarity = "" # polarity of the type of annotation
     intensity = "" # intensity of the type of annotation
-
+    typee: Type
+    
     def __init__(
             self, this_text, this_head_start, this_head_end, this_polarity, this_intensity, 
-            this_string_of_type, this_head = [], this_doc_id=-1, this_sentence_id=-1
+            this_string_of_type, this_typee: Type,  this_head = [], this_doc_id=-1, this_sentence_id=-1
     ):
         self.doc_id = this_doc_id
         self.sentence_id = this_sentence_id
@@ -67,7 +66,7 @@ class CSDS:
         self.belief = this_polarity
         self.intensity = this_intensity
         self.head = this_head
-        self.string_of_type = this_string_of_type
+        self.typee = this_typee
 
 
     def get_info_short(self):
