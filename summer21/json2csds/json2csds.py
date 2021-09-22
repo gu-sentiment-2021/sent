@@ -119,7 +119,7 @@ class JSON2CSDS:
                                    )
         return csds_object
 
-    def process_tf(self, tf_annot, tf_id, doc_id):
+    def process_tf(self, tf_annot, tf_id):
         """
         It processes a target frame type annotation.
         :param json_file: A Python dict which represents a DS annotation.
@@ -130,7 +130,7 @@ class JSON2CSDS:
                                tf_annot['span-in-sentence'][1])
         return target_object
 
-    def process_starget(self, starget_annot, starget_id, doc_id):
+    def process_starget(self, starget_annot, starget_id):
         """
         It processes a sTarget type annotation.
         :param json_file: A Python dict which represents a sTarget annotation.
@@ -146,7 +146,7 @@ class JSON2CSDS:
 
         return starget_object
 
-    def process_etarget(self, etarget_annot, etarget_id, doc_id):
+    def process_etarget(self, etarget_annot, etarget_id):
         """
         It processes an eTarget type annotation.
         :param json_file: A Python dict which represents an eTarget annotation.
