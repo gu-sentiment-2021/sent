@@ -16,6 +16,7 @@
 from itertools import chain
 from enum import Enum
 
+
 class Type(Enum):
     sentiment = 1
     arguing = 2
@@ -24,6 +25,7 @@ class Type(Enum):
     speculation = 5
     other_attitude = 6
     expressive_subjectivity = 7
+
 
 class CSDS:
     """
@@ -50,13 +52,13 @@ class CSDS:
     head = []  # targets of annotation within sentence
     # belief = ""  # belief value (values are corpus-specific)
     # sentiment = ""  # sentiment value (values are corpus-specific)
-    polarity = "" # polarity of the type of annotation
-    intensity = "" # intensity of the type of annotation
+    polarity = ""  # polarity of the type of annotation
+    intensity = ""  # intensity of the type of annotation
     typee: Type
-    
+
     def __init__(
-            self, this_text, this_head_start, this_head_end, this_polarity, this_intensity, 
-            this_string_of_type, this_typee: Type,  this_head = [], this_doc_id=-1, this_sentence_id=-1
+            self, this_text, this_head_start, this_head_end, this_polarity, this_intensity,
+            this_typee: Type, this_head=[], this_doc_id=-1, this_sentence_id=-1
     ):
         self.doc_id = this_doc_id
         self.sentence_id = this_sentence_id
@@ -67,7 +69,6 @@ class CSDS:
         self.intensity = this_intensity
         self.head = this_head
         self.typee = this_typee
-
 
     def get_info_short(self):
         return (
@@ -207,8 +208,8 @@ class CSDSCollection:
         :return: A string containing essential details about this collection.
         """
         return (
-                f"<CSDS collection from \"{self.corpus}\": {str(len(self.labeled_instances))} " 
-                f"labeled_instances>"
+            f"<CSDS collection from \"{self.corpus}\": {str(len(self.labeled_instances))} "
+            f"labeled_instances>"
         )
 
     def get_info_long(self):
