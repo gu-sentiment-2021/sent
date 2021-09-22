@@ -25,9 +25,12 @@ class JSON2CSDS:
         result = m2d.corpus_to_dict()
         return result
 
-        # A mapping between types and their corresponding number based on the enum
-
     def type_mapper(self, key):
+        """
+        A mapping between types and their corresponding number based on the enum.
+        :param key: type of the annotation.
+        :return: Type's corresponding number based on the enum.
+        """
         type_map_dict = {'sentiment': 1,
                          'arguing': 2,
                          'agreement': 3,
@@ -39,6 +42,11 @@ class JSON2CSDS:
         return type_map_dict[key]
 
     def alert_wrong_annot(self, annot, error=None):
+        """
+        It used for alert wrong annotation(s).
+        :param annot: The annotation that error(s) were happening in its process.
+        :param error: The error(s) that happened.
+        """
         print('===================\nWrong annotation!!')
         print(annot)
         print('Error details:')
@@ -47,17 +55,21 @@ class JSON2CSDS:
 
     def go_get_targets(self, annots, target_id):
         """
-        It goes after the targets in the target-links
-        :return: A python list of the targets
+        It goes after the targets in the target-links.
+        :param annots: A Python dict which represents all annotations in the dic.
+        :param target_id: Id of the target.
+        :return: A python list of the targets.
         """
         targets = annots[target_id]['newETarget-link'] + annots[target_id]['sTarget-link']
-
+        print('this is targets list:')
+        print(targets)
         return targets
 
     def process_agent(self, agent_annot, doc_id):
         """
         It processes an agent type annotation.
-        :param json_file: A Python dict which represents an agent annotation.
+        :param agent_annot: A Python dict which represents an agent annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
 
@@ -80,7 +92,9 @@ class JSON2CSDS:
     def process_es(self, all_annot, es_annot, doc_id):
         """
         It processes an ES (expressive-subjectivity) type annotation.
-        :param json_file: A Python dict which represents an ES annotation.
+        :param all_annot: A Python dict which represents all annotations in the dic.
+        :param es_annot: A Python dict which represents an ES annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
         # The following lines of code are under development!
@@ -104,7 +118,8 @@ class JSON2CSDS:
     def process_ds(self, ds_annot, doc_id):
         """
         It processes a DS (direct-subjective) type annotation.
-        :param json_file: A Python dict which represents a DS annotation.
+        :param ds_annot: A Python dict which represents a DS annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
         try:
@@ -129,7 +144,8 @@ class JSON2CSDS:
     def process_ose(self, ose_annot, doc_id):
         """
         It processes an OSE type annotation.
-        :param json_file: A Python dict which represents an OSE annotation.
+        :param ose_annot: A Python dict which represents an OSE annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
         # !
@@ -138,7 +154,9 @@ class JSON2CSDS:
     def process_att(self, all_annot, att_annot, doc_id):
         """
         It processes an attitude type annotation.
-        :param json_file: A Python dict which represents an attitude annotation.
+        :param all_annot: A Python dict which represents all annotations in the dic.
+        :param att_annot: A Python dict which represents an attitude annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
         its_pol = None
@@ -170,8 +188,9 @@ class JSON2CSDS:
     def process_tf(self, tf_annot, tf_id):
         """
         It processes a target frame type annotation.
-        :param json_file: A Python dict which represents a DS annotation.
-        :return: A csds object.
+        :param tf_annot: A Python dict which represents a targetFrame annotation.
+        :param tf_id: Id of the targetFrame.
+        :return: A targetFrame object.
         """
         target_object = Target(tf_id,
                                tf_annot['span-in-sentence'][0],
@@ -181,8 +200,9 @@ class JSON2CSDS:
     def process_starget(self, starget_annot, starget_id):
         """
         It processes a sTarget type annotation.
-        :param json_file: A Python dict which represents a sTarget annotation.
-        :return: A csds object.
+        :param starget_annot: A Python dict which represents a sTarget annotation.
+        :param starget_id: Id of the sTarget.
+        :return: A sTarget object.
         """
 
         try:
@@ -202,8 +222,9 @@ class JSON2CSDS:
     def process_etarget(self, etarget_annot, etarget_id):
         """
         It processes an eTarget type annotation.
-        :param json_file: A Python dict which represents an eTarget annotation.
-        :return: A csds object.
+        :param etarget_annot: A Python dict which represents an eTarget annotation.
+        :param etarget_id: Id of the eTarget.
+        :return: A eTarget object.
         """
         try:
             etarget_object = eTarget(etarget_id,
@@ -226,7 +247,8 @@ class JSON2CSDS:
     def process_sentence(self, sentence_annot, doc_id):
         """
         It processes a sentence type annotation.
-        :param json_file: A Python dict which represents a sentence annotation.
+        :param sentence_annot: A Python dict which represents a sentence annotation.
+        :param doc_id: Id of the doc.
         :return: A csds object.
         """
         # !
@@ -296,9 +318,10 @@ class JSON2CSDS:
                 ose_list = curr_doc['objective-speech-event']
                 # Process each OSE item by its corresponding ID
                 for ose_id in ose_list:
-                    annotation_item = ose_list[ose_id]
+                    annotation_item = annotations[ose_id]
                     csds_object = self.process_ose(annotation_item)
                     # must store the object!
+                    # WHAT TO DO?
                     del csds_object
                 del ose_list
             '''
@@ -342,9 +365,9 @@ class JSON2CSDS:
                 # Process each eTarget item by its corresponding ID
                 for etarget_id in etarget_list:
                     annotation_item = annotations[etarget_id]
-                    csds_object = self.process_etarget(annotation_item, etarget_id)
-                    # Must store the object!
-                    del csds_object
+                    etarget_object = self.process_etarget(annotation_item, etarget_id)
+                    # WHAT TO DO?
+                    del etarget_object
                 del etarget_list
             # Check for "sentence" annotation type, this part is not activated yet!
             '''
@@ -353,9 +376,10 @@ class JSON2CSDS:
                 sentence_list = curr_doc['sentence']
                 # Process each sentence item by its corresponding ID
                 for sentence_id in sentence_list:
-                    annotation_item = sentence_list[sentence_id]
+                    annotation_item = annotations[sentence_id]
                     csds_object = self.process_sentence(annotation_item)
                     # must store the object!
+                    # WHAT TO DO?
                     del csds_object
                 del sentence_list
 
