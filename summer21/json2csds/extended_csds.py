@@ -89,7 +89,7 @@ class ExtendedCSDS:
         return self.doc_id
 
 
-class CSDSCollection:
+class ExtendedCSDSCollection:
     """
     Holds a collection of CSDS objects for a single corpus, each of which represents
     a single example in the corpus.
