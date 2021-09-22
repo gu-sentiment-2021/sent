@@ -58,7 +58,7 @@ class ExtendedCSDS:
 
     def __init__(
             self, this_text, this_head_start, this_head_end, this_polarity, this_intensity,
-            this_typee: Type, this_head=[], this_doc_id=-1, this_sentence_id=-1
+            this_typee, this_head=[], this_doc_id=-1, this_sentence_id=-1
     ):
         self.doc_id = this_doc_id
         self.sentence_id = this_sentence_id
@@ -68,7 +68,7 @@ class ExtendedCSDS:
         self.belief = this_polarity
         self.intensity = this_intensity
         self.head = this_head
-        self.typee = this_typee
+        self.typee = Type(this_typee)
 
     def get_info_short(self):
         return (
