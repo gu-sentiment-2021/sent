@@ -1,12 +1,21 @@
 from sentiment.sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
-from CSDS_extended import CSDS, CSDSCollection
+from extended_csds import ExtendedCSDS, CSDSCollection
 
 
 class JSON2CSDS:
     """
     This is a class in order to convert json file to csds.
     """
+
+    # A mapping between types and their corresponding number based on the enum
+    type_mapper: {'sentiment': 1,
+                  'arguing': 2,
+                  'agreement': 3,
+                  'intention': 4,
+                  'speculation': 5,
+                  'other_attitude': 6,
+                  'expressive_subjectivity': 7}
 
     def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0"):
         """
@@ -40,18 +49,18 @@ class JSON2CSDS:
         :return: A csds object.
         """
         # The following lines of code are under development!
-        '''
-        csds_object = CSDS(es_annot['sentence'],
-                           es_annot['span-in-sentence'][0],
-                           es_annot['span-in-sentence'][1],
-                           es_annot['polarity'],
-                           es_annot['intensity'],
-                           es_annot['text'],  # this can be changed
-                           ...
-                           )
+
+        csds_object = ExtendedCSDS(es_annot['sentence'],
+                                   es_annot['span-in-sentence'][0],
+                                   es_annot['span-in-sentence'][1],
+                                   es_annot['polarity'],
+                                   es_annot['intensity'],
+                                   self.type_mapper['expressive_subjectivity'],
+                                   this_head=es_annot['targetFrame-link'],
+                                   this_doc_id=doc_id,
+                                   this_sentence_id=es_annot['sentence-id']
+                                   )
         return csds_object
-        '''
-        return None
 
     def process_ds(self, ds_annot, doc_id):
         """

@@ -27,7 +27,7 @@ class Type(Enum):
     expressive_subjectivity = 7
 
 
-class CSDS:
+class ExtendedCSDS:
     """
     Cognitive States Data Structure (CSDS): Represents information about 
     the writer's cognitive state and the text from which we have gleaned 
