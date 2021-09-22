@@ -44,6 +44,7 @@ class JSON2CSDS:
         csds_object = ExtendedCSDS(agent_annot['sentence'],
                                    agent_annot['span-in-sentence'][0],
                                    agent_annot['span-in-sentence'][1],
+                                   None,  # Belief !!
                                    None,
                                    None,
                                    None,
@@ -63,6 +64,7 @@ class JSON2CSDS:
         csds_object = ExtendedCSDS(es_annot['sentence'],
                                    es_annot['span-in-sentence'][0],
                                    es_annot['span-in-sentence'][1],
+                                   None,  # Belief!!!
                                    es_annot['polarity'],
                                    es_annot['intensity'],
                                    self.type_mapper['expressive_subjectivity'],
@@ -81,6 +83,7 @@ class JSON2CSDS:
         csds_object = ExtendedCSDS(ds_annot['sentence'],
                                    ds_annot['span-in-sentence'][0],
                                    ds_annot['span-in-sentence'][1],
+                                   None,  # Belief!!!
                                    ds_annot['attitude-type'],
                                    ds_annot['intensity'],
                                    self.type_mapper['expressive_subjectivity'],  # NOT SURE!
@@ -110,6 +113,7 @@ class JSON2CSDS:
         csds_object = ExtendedCSDS(att_annot['sentence'],
                                    att_annot['span-in-sentence'][0],
                                    att_annot['span-in-sentence'][1],
+                                   None,  # Belief !!!
                                    its_pol,
                                    att_annot['intensity'],
                                    self.type_mapper[att_annot['attitude-type'].split('-')[0]],

@@ -50,14 +50,14 @@ class ExtendedCSDS:
     head_start = -1  # offset within sentence of start of head word of proposition
     head_end = -1  # offset of end of head word of proposition
     head = []  # targets of annotation within sentence
-    # belief = ""  # belief value (values are corpus-specific)
-    # sentiment = ""  # sentiment value (values are corpus-specific)
+    belief = ""  # belief value (values are corpus-specific)
+    sentiment = ""  # sentiment value (values are corpus-specific)
     polarity = ""  # polarity of the type of annotation
     intensity = ""  # intensity of the type of annotation
     typee: Type
 
     def __init__(
-            self, this_text, this_head_start, this_head_end, this_polarity, this_intensity,
+            self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,
             this_typee, this_head=[], this_doc_id=-1, this_sentence_id=-1
     ):
         self.doc_id = this_doc_id
@@ -65,7 +65,8 @@ class ExtendedCSDS:
         self.text = this_text
         self.head_start = this_head_start
         self.head_end = this_head_end
-        self.belief = this_polarity
+        self.belief = this_belief
+        self.polarity = this_polarity
         self.intensity = this_intensity
         self.head = this_head
         self.typee = Type(this_typee)
@@ -82,8 +83,8 @@ class ExtendedCSDS:
                        " *" + self.text[self.head_end: len(self.text)]
         return new_sentence
 
-    # def get_belief(self):
-    #     return self.belief
+    def get_belief(self):
+        return self.belief
 
     def get_doc_id(self):
         return self.doc_id
