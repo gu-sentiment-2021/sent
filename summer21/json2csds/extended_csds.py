@@ -25,6 +25,7 @@ class Type(Enum):
     speculation = 5
     other_attitude = 6
     expressive_subjectivity = 7
+    unknown = 8
 
 
 class ExtendedCSDS:
