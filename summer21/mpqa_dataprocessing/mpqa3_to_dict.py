@@ -1,7 +1,8 @@
 # mpqa3_to_dict helps to convert MPQA stand-off format to python dictionaries.
 # It provides the following functionalities:
-# 1) Convert an MPQA document to a dictionary
-# 2) Convert an entire corpus to a dictionary
+# 1) Clean up the MPQA 3.0 corpus
+# 2) Convert an MPQA document to a dictionary
+# 3) Convert an entire corpus to a dictionary
 
 import os
 import re
@@ -14,7 +15,7 @@ HAS_LIST_OF_IDS = [ # These attributes may have any number of ids. (>= 0)
 
 class mpqa3_to_dict:
     """
-    mpqa3_to_dict helps to convert MPQA stand-off format to python dictionaries.
+    mpqa3_to_dict helps to clean up the corpus and convert MPQA stand-off format to python dictionaries.
     """
 
     corpus_name = "" # Name of the corpus from which the documents were drawn.
@@ -24,10 +25,19 @@ class mpqa3_to_dict:
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
 
-    def doc_to_dict(self, docname):
+    def cleanup_data(self, anno_lines):
+        """
+        It cleans up the annotation lines by correcting misspelled values, attributes and more.
+        :param anno_lines: a list of the annotation lines of a document
+        :return: The cleaned up list of the annotation lines of the document
+        """
+        return anno_lines
+
+    def doc_to_dict(self, docname, cleaning=True):
         """
         It converts an MPQA document to a python dictionary.
         :param docname: The name of the document to be converted.
+        :param cleaning: It cleans up the data, if set to true.
         :return: A python dictionary representing the document.
         """
         # example: ./database.mpqa.3.0/docs/20011024/21.53.09-11428
@@ -36,9 +46,10 @@ class mpqa3_to_dict:
         
         # example: ./database.mpqa.3.0/man_anns/20011024/21.53.09-11428/gateman.mpqa.lre.3.0
         anno_lines = []
-        with open(os.path.join(self.mpqa_dir, "man_anns", docname,
-                  "gateman.mpqa.lre.3.0")) as anno_file:
+        with open(os.path.join(self.mpqa_dir, "man_anns", docname, "gateman.mpqa.lre.3.0")) as anno_file:
             anno_lines = anno_file.readlines()
+        if cleaning: # Clean up the data, if requested.
+            anno_lines = self.cleanup_data(anno_lines)
 
         # Final output
         output = {
@@ -121,11 +132,12 @@ class mpqa3_to_dict:
 
         return output
 
-    def corpus_to_dict(self, doclist=None, doclist_filename='doclist'):
+    def corpus_to_dict(self, doclist=None, doclist_filename='doclist', cleaning=True):
         """
         It converts an entire list of MPQA documents to a python dictionary.
         :param doclist: The list of document names to be converted. If set, doclist_filename will be ignored.
         :param doclist_filename: The name of the file which contains a list of the document names.
+        :param cleaning: It cleans up the data, if set to true.
         :return: A python dictionary representing the corpus.
         """
         if doclist is None:
@@ -136,7 +148,7 @@ class mpqa3_to_dict:
             "docs": {}                  # Dictionary of document annotations in dictionary format.
         }
         for docname in doclist:
-            output["docs"][docname] = self.doc_to_dict(docname)
+            output["docs"][docname] = self.doc_to_dict(docname, cleaning)
         return output
     
     def doclistfile_to_doclist(self, doclist_filename='doclist'):
