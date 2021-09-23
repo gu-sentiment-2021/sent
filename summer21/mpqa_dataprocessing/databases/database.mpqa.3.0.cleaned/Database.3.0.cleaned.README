@@ -1,5 +1,14 @@
-=================================================================
+===============================================================================
 
-   List of changes made to the MPQA Opinion Corpus version 3.0
+          List of changes made to the MPQA Opinion Corpus version 3.0
 
-=================================================================
+===============================================================================
+
+* Following 34 targetFrame(s) had target-link and eTarget-link attributes,
+instead of sTarget-link and newETarget-link attributes. They're clean now.
+Also some target-links had the value of "n/a" which are now set to "none".
+    - non_fbis/06.12.31-26764:
+        25, 27, 29, 32, 34, 36, 40, 42, 44, 46, 48, 51, 53, 55, 114, 116, 118,
+        120, 122, 124, 127, 129
+    - non_fbis/10.24.29-21670:
+        151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162
