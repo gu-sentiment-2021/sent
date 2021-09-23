@@ -83,7 +83,7 @@
 79	1327,1335	direct-subjective	id="ds14" expression-intensity="low" annotation-uncertain="somewhat-uncertain" attitude-link="a16" insubstantial="c1" polarity="neutral" intensity="low" nested-source="w,thomson,us" 
 80	471,478	agent	id="critics" nested-source="w,critics" 
 81	1616,1634	direct-subjective	id="ds11" expression-intensity="low" annotation-uncertain="somewhat-uncertain" attitude-link="a21" insubstantial="c2" polarity="neutral" intensity="low" nested-source="w,indcount,indcount" 
-82	1705,1706	direct-subjective	intensity="medium" id="ds12" is-implicit="yes" attitude-link="a2200" nested-source="w,blair" 
+82	1705,1706	direct-subjective	intensity="medium" id="ds12" implicit="true" attitude-link="a2200" nested-source="w,blair" 
 83	1753,1772	direct-subjective	expression-intensity="medium" intensity="medium" id="ds1" attitude-link="a2200" polarity="negative" nested-source="w,blair,blair" 
 84	806,807	split	
 85	671,688	direct-subjective	expression-intensity="low" intensity="medium" id="ds2" attitude-link="a1600" polarity="uncertain-negative" nested-source="w,implicit" 

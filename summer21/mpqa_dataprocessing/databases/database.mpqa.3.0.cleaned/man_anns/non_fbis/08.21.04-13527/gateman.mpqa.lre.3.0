@@ -207,7 +207,7 @@
 203	283,306	sTarget	id="t4" eTarget-link="e9087" 
 204	720,737	sTarget	id="t11" eTarget-link="e9067" 
 205	439,443	direct-subjective	id="ds2" expression-intensity="low" annotation-uncertain="somewhat-uncertain" attitude-link="a30" insubstantial="c1" polarity="neutral" intensity="low" nested-source="w,koi,us" 
-206	742,743	direct-subjective	intensity="medium" id="ds1" attitude-type="positive" is-implicit="yes" attitude-link="a12" nested-source="w,koi" 
+206	742,743	direct-subjective	intensity="medium" id="ds1" attitude-type="positive" implicit="true" attitude-link="a12" nested-source="w,koi" 
 207	949,951	sTarget	id="t15" eTarget-link="e9028" 
 208	1451,1457	direct-subjective	expression-intensity="medium" intensity="medium" id="ds3" attitude-link="a24" polarity="positive" nested-source="w,koibush" 
 209	692,696	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds7" attitude-link="a100" nested-source="w,koi" 

@@ -438,7 +438,7 @@
 434	3037,3037	direct-subjective	implicit="true" intensity="high" id="ds28" attitude-link="a54,a56,a57" nested-source="w" 
 435	2753,2774	direct-subjective	expression-intensity="low" intensity="medium" id="ds37" attitude-link="a48" polarity="neutral" nested-source="w,bush" 
 436	2510,2510	direct-subjective	implicit="true" intensity="high" id="ds38" attitude-link="a43" nested-source="w" 
-437	775,776	direct-subjective	intensity="high" id="ds23" is-implicit="yes" attitude-link="a13,a14,a15" nested-source="w" 
+437	775,776	direct-subjective	intensity="high" id="ds23" implicit="true" attitude-link="a13,a14,a15" nested-source="w" 
 438	2638,2651	direct-subjective	expression-intensity="medium" intensity="medium" id="ds24" attitude-link="a46" polarity="negative" nested-source="w,bush" 
 439	593,600	direct-subjective	expression-intensity="low" id="ds36" attitude-link="a9" insubstantial="c2" polarity="neutral" intensity="low" nested-source="w,powell,usgov" 
 440	2089,2097	direct-subjective	expression-intensity="low" id="ds35" attitude-link="a32" insubstantial="c2" polarity="neutral" intensity="medium" nested-source="w,usadmin,usadmin" 

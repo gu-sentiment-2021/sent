@@ -274,9 +274,9 @@
 270	2948,2952	split	
 271	851,861	direct-subjective	expression-intensity="medium" intensity="medium" id="ds17" attitude-link="a8" polarity="positive" nested-source="w,members" 
 272	4505,4517	agent	nested-source="w,lehtinen" 
-273	3102,3104	direct-subjective	intensity="low" id="ds24" is-implicit="yes" attitude-link="a22,a23" nested-source="w,lucas" 
+273	3102,3104	direct-subjective	intensity="low" id="ds24" implicit="true" attitude-link="a22,a23" nested-source="w,lucas" 
 274	3096,3100	direct-subjective	expression-intensity="neutral" intensity="low" id="ds23" attitude-link="a21" nested-source="w,lucas" 
-275	1634,1634	direct-subjective	intensity="medium" id="ds22" is-implicit="yes" attitude-link="a12" nested-source="w" 
+275	1634,1634	direct-subjective	intensity="medium" id="ds22" implicit="true" attitude-link="a12" nested-source="w" 
 276	713,722	direct-subjective	expression-intensity="low" id="ds21" attitude-type="positive" attitude-link="a6" polarity="positive" intensity="low" nested-source="w,lehtinen" 
 277	3158,3158	targetFrame	id="tfa23" sTarget-link="t23" newETarget-link="none" 
 278	2815,2819	split	
@@ -288,7 +288,7 @@
 284	1932,1936	split	
 285	900,900	targetFrame	id="tfa9" sTarget-link="t9" newETarget-link="e9132" 
 286	2954,2957	eTarget	id="e5010" isNegated="no" type="event" isReferredInSpan="no" 
-287	940,942	direct-subjective	intensity="low" id="ds2" attitude-type="positive" is-implicit="yes" attitude-link="a10" nested-source="w,lehtinen" 
+287	940,942	direct-subjective	intensity="low" id="ds2" attitude-type="positive" implicit="true" attitude-link="a10" nested-source="w,lehtinen" 
 288	4399,4407	direct-subjective	expression-intensity="low" intensity="low" id="ds1" attitude-link="a26,a27" polarity="neutral" nested-source="w,diplomats" 
 289	49,49	direct-subjective	implicit="true" intensity="medium" id="ds4" attitude-link="a2" nested-source="w" 
 290	4628,4636	direct-subjective	expression-intensity="low" intensity="low" id="ds3" attitude-link="a290" polarity="negative" nested-source="w,rumsfeld,lehtinen" 

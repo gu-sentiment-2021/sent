@@ -58,7 +58,7 @@
 54	171,179	eTarget	id="e9020" type="entity" isNegated="no" 
 55	52,52	targetFrame	id="tfese1" sTarget-link="none" newETarget-link="e9002" 
 56	20,28	direct-subjective	expression-intensity="low" id="ds1" attitude-link="a2" insubstantial="c1" polarity="neutral" intensity="low" nested-source="w,cardoso,us" 
-57	315,316	direct-subjective	intensity="medium" id="ds2" is-implicit="yes" attitude-link="a7" nested-source="w,cardoso" 
+57	315,316	direct-subjective	intensity="medium" id="ds2" implicit="true" attitude-link="a7" nested-source="w,cardoso" 
 58	12,16	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds3" attitude-type="positive" attitude-link="a1" nested-source="w,cardoso" 
 59	164,226	sTarget	id="t3" eTarget-link="e9019,e9020,e9021,e9022,e9023" 
 60	383,478	sTarget	id="t9" eTarget-link="e9012,e9013,e9014,e9015,e9016,e9018" 

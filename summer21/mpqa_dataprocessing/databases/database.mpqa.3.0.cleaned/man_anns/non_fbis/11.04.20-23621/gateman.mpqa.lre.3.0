@@ -417,7 +417,7 @@
 413	2340,2345	direct-subjective	expression-intensity="low" id="ds37" annotation-uncertain="somewhat-uncertain" attitude-link="a26" polarity="positive" intensity="low" nested-source="w,duh" 
 414	3320,3328	direct-subjective	expression-intensity="low" id="ds27" annotation-uncertain="somewhat-uncertain" attitude-link="a35" polarity="neutral" intensity="low" nested-source="w,duh" 
 415	2313,2313	direct-subjective	implicit="true" intensity="low" id="ds28" attitude-link="a25" subjective-uncertain="somewhat-uncertain" nested-source="w" 
-416	3914,3916	direct-subjective	intensity="medium" id="ds29" is-implicit="yes" attitude-link="a39" nested-source="w,mark" 
+416	3914,3916	direct-subjective	intensity="medium" id="ds29" implicit="true" attitude-link="a39" nested-source="w,mark" 
 417	3467,3467	direct-subjective	implicit="true" intensity="medium" id="ds30" attitude-link="a36" nested-source="w" 
 418	1407,1420	direct-subjective	expression-intensity="medium" intensity="medium" id="ds23" attitude-link="a18" polarity="neutral" nested-source="w,implicit" 
 419	1101,1109	direct-subjective	expression-intensity="low" intensity="low" id="ds24" attitude-link="a14" polarity="neutral" nested-source="w,analysts" 

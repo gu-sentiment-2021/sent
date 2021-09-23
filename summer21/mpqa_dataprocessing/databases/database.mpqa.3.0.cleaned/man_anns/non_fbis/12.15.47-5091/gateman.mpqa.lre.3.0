@@ -28,7 +28,7 @@
 24	2588,2616	expressive-subjectivity	id="ese7" intensity="low" targetFrame-link="tfese7" polarity="neutral" nested-source="w,marc" 
 25	895,896	split	
 26	482,516	expressive-subjectivity	id="ese6" intensity="low" es-uncertain="somewhat-uncertain" targetFrame-link="tfese6" polarity="neutral" nested-source="w" 
-27	2587,2588	direct-subjective	intensity="medium" id="ds4" attitude-type="positive" is-implicit="yes" attitude-link="a40,a50" nested-source="w,marc" 
+27	2587,2588	direct-subjective	intensity="medium" id="ds4" attitude-type="positive" implicit="true" attitude-link="a40,a50" nested-source="w,marc" 
 28	617,621	split	
 29	610,616	expressive-subjectivity	id="ese5" intensity="low" targetFrame-link="tfese5" polarity="neutral" nested-source="w" 
 30	3095,3096	split	

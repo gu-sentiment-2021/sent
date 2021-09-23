@@ -580,7 +580,7 @@
 576	1515,1539	agent	id="mugabegov" nested-source="w,bush,bushadmin,mugabegov" 
 577	2658,2668	direct-subjective	expression-intensity="low" id="ds10" attitude-link="a36" insubstantial="c1,c2" polarity="neutral" intensity="low" nested-source="w,jean,we" 
 578	513,530	agent	id="tsvang" 
-579	4365,4366	direct-subjective	intensity="medium" id="ds1" is-implicit="yes" attitude-link="a53" nested-source="w,hilda" 
+579	4365,4366	direct-subjective	intensity="medium" id="ds1" implicit="true" attitude-link="a53" nested-source="w,hilda" 
 580	3599,3616	agent	id="mon" nested-source="w,mon" 
 581	5003,5003	targetFrame	id="tfese53" sTarget-link="none" newETarget-link="e9177" 
 582	5032,5038	eTarget	id="e9177" isNegated="no" type="entity" isReferredInSpan="yes" 
@@ -595,7 +595,7 @@
 591	1356,1358	agent	nested-source="w,tsvang" 
 592	3236,3242	direct-subjective	expression-intensity="medium" intensity="medium" id="ds9" attitude-link="a42,a43" polarity="negative" nested-source="w,mot" 
 593	1405,1406	split	
-594	5473,5474	direct-subjective	intensity="high" id="ds8" attitude-type="negative" is-implicit="yes" attitude-link="a66" nested-source="w,vendor" 
+594	5473,5474	direct-subjective	intensity="high" id="ds8" attitude-type="negative" implicit="true" attitude-link="a66" nested-source="w,vendor" 
 595	6507,6507	direct-subjective	implicit="true" intensity="low" id="ds7" attitude-link="a75" subjective-uncertain="somewhat-uncertain" nested-source="w" 
 596	1451,1465	direct-subjective	expression-intensity="medium" intensity="medium" id="ds6" attitude-link="a19" polarity="negative" nested-source="w,west" 
 597	3374,3383	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds29" attitude-type="positive" attitude-link="a44,a45" nested-source="w,team1" 
@@ -620,7 +620,7 @@
 616	172,172	direct-subjective	implicit="true" intensity="low" id="ds24" attitude-type="negative" attitude-link="a4" nested-source="w" 
 617	1635,1636	split	
 618	2511,2519	direct-subjective	expression-intensity="low" id="ds23" attitude-link="a34" insubstantial="c1,c2" polarity="neutral" intensity="low" nested-source="w,jean,committee" 
-619	1637,1638	direct-subjective	intensity="medium" id="ds22" attitude-type="negative" is-implicit="yes" attitude-link="a26,a27" nested-source="w,bush" 
+619	1637,1638	direct-subjective	intensity="medium" id="ds22" attitude-type="negative" implicit="true" attitude-link="a26,a27" nested-source="w,bush" 
 620	3403,3416	sTarget	id="t44" eTarget-link="e9170" 
 621	6511,6523	sTarget	id="t75" eTarget-link="none" 
 622	6115,6126	sTarget	id="t70" eTarget-link="none" 

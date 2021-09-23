@@ -76,7 +76,7 @@
 72	1371,1376	eTarget	id="e5200" isNegated="no" type="event" isReferredInSpan="no" 
 73	770,772	agent	nested-source="w,kong" 
 74	1348,1360	eTarget	id="e5015" isNegated="no" type="event" isReferredInSpan="yes" 
-75	1302,1306	direct-subjective	expression-intensity="neutral" id="ds8" attitude-type="positive" attitude-link="a20" intensity="medium" is-implicit="yes" nested-source="w,kong" 
+75	1302,1306	direct-subjective	expression-intensity="neutral" id="ds8" attitude-type="positive" attitude-link="a20" intensity="medium" implicit="true" nested-source="w,kong" 
 76	722,735	direct-subjective	expression-intensity="medium" id="ds7" attitude-type="negative" attitude-link="a11" polarity="negative" intensity="medium" nested-source="w,kong,china,uspublic" 
 77	577,581	agent	nested-source="w,kong" 
 78	160,170	direct-subjective	expression-intensity="neutral" id="ds6" attitude-type="negative" attitude-link="a4" insubstantial="c2" intensity="high" nested-source="w,kong,implicit" 

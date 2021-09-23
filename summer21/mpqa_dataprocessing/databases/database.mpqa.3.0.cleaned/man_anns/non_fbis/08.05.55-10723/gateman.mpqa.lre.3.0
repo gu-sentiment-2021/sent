@@ -318,10 +318,10 @@
 314	4941,4945	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds47" attitude-link="a480,a481" nested-source="w,rumsfeld" 
 315	4455,4459	direct-subjective	expression-intensity="neutral" intensity="low" id="ds52" attitude-link="a420" nested-source="w,rumsfeld" 
 316	5111,5111	direct-subjective	implicit="true" intensity="low" id="ds49" attitude-type="negative" attitude-link="a500" nested-source="w" 
-317	4229,4232	direct-subjective	intensity="medium" id="ds46" is-implicit="yes" attitude-link="a360" nested-source="w,rumsfeld" 
+317	4229,4232	direct-subjective	intensity="medium" id="ds46" implicit="true" attitude-link="a360" nested-source="w,rumsfeld" 
 318	1820,1826	direct-subjective	expression-intensity="low" intensity="low" id="ds51" attitude-link="a150" polarity="positive" nested-source="w,ai" 
 319	3119,3123	split	
-320	4608,4611	direct-subjective	intensity="medium" id="ds40" is-implicit="yes" attitude-link="a440" nested-source="w,noone" 
+320	4608,4611	direct-subjective	intensity="medium" id="ds40" implicit="true" attitude-link="a440" nested-source="w,noone" 
 321	5994,5995	split	
 322	3085,3096	direct-subjective	expression-intensity="low" id="ds53" attitude-link="a270" insubstantial="c1" polarity="neutral" intensity="low" nested-source="w,pique,spgov,us" 
 323	5371,5381	direct-subjective	expression-intensity="low" intensity="low" id="ds50" attitude-link="a510" polarity="neutral" nested-source="w,rumsfeld,rumsfeld" 
@@ -335,7 +335,7 @@
 331	1685,1698	direct-subjective	expression-intensity="low" id="ds48" annotation-uncertain="very-uncertain" attitude-link="a140" polarity="negative" intensity="low" nested-source="w,icrc,gc" 
 332	1985,1996	expressive-subjectivity	id="ese36" intensity="medium" targetFrame-link="tfese36" polarity="negative" nested-source="w,ai" 
 333	285,294	direct-subjective	expression-intensity="high" id="ds59" attitude-type="negative" attitude-link="a50" polarity="negative" intensity="high" nested-source="w,rumsfeld,intl" 
-334	4311,4314	direct-subjective	intensity="low" id="ds37" is-implicit="yes" attitude-link="a400" nested-source="w,rumsfeld" 
+334	4311,4314	direct-subjective	intensity="low" id="ds37" implicit="true" attitude-link="a400" nested-source="w,rumsfeld" 
 335	6180,6184	split	
 336	2238,2244	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds34" attitude-link="a200" nested-source="w,govts" 
 337	84,94	direct-subjective	expression-intensity="high" id="ds31" attitude-type="negative" attitude-link="a20" polarity="negative" intensity="high" nested-source="w,rumsfeld" 
@@ -346,22 +346,22 @@
 342	5957,5968	direct-subjective	expression-intensity="medium" id="ds27" attitude-link="a1055" insubstantial="c3" polarity="negative" intensity="medium" nested-source="w,rumsfeld,rumsfeld,some" 
 343	6225,6235	direct-subjective	expression-intensity="low" intensity="low" id="ds32" attitude-link="a580" polarity="negative" nested-source="w,judge" 
 344	5886,5891	direct-subjective	expression-intensity="low" intensity="medium" id="ds38" attitude-link="a560" polarity="neutral" nested-source="w,rumsfeld,rumsfeld" 
-345	4721,4726	direct-subjective	intensity="medium" id="ds41" is-implicit="yes" attitude-link="a450,a460" nested-source="w,noone" 
+345	4721,4726	direct-subjective	intensity="medium" id="ds41" implicit="true" attitude-link="a450,a460" nested-source="w,noone" 
 346	5446,5450	direct-subjective	expression-intensity="low" intensity="low" id="ds44" attitude-link="a520" polarity="neutral" nested-source="w,rumsfeld,rumsfeld" 
 347	10,17	direct-subjective	expression-intensity="medium" intensity="medium" id="ds39" attitude-link="a10" polarity="positive" nested-source="w,rumsfeld" 
 348	3869,3887	direct-subjective	expression-intensity="medium" id="ds42" attitude-link="a320" insubstantial="c2,c3" polarity="negative" intensity="medium" nested-source="w,rumsfeld,you,you" 
 349	2810,2811	split	
 350	3915,3919	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds45" attitude-link="a340" nested-source="w,rumsfeld" 
-351	4266,4268	direct-subjective	intensity="medium" id="ds35" is-implicit="yes" attitude-link="a380,a390" nested-source="w,rumsfeld" 
+351	4266,4268	direct-subjective	intensity="medium" id="ds35" implicit="true" attitude-link="a380,a390" nested-source="w,rumsfeld" 
 352	2195,2199	split	
 353	2617,2629	direct-subjective	expression-intensity="low" id="ds43" attitude-link="a230" insubstantial="c2" polarity="neutral" intensity="low" nested-source="w,neth,wash" 
 354	2172,2189	agent	nested-source="w,ai" 
 355	1324,1328	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds19" attitude-type="negative" attitude-link="a110" nested-source="w,critics" 
 356	1285,1302	direct-subjective	expression-intensity="high" intensity="high" id="ds20" attitude-link="a100" polarity="negative" nested-source="w,abroad" 
 357	6682,6684	split	
-358	640,641	direct-subjective	intensity="high" id="ds21" is-implicit="yes" attitude-link="a70" nested-source="w,rumsfeld" 
+358	640,641	direct-subjective	intensity="high" id="ds21" implicit="true" attitude-link="a70" nested-source="w,rumsfeld" 
 359	271,280	direct-subjective	expression-intensity="low" intensity="high" id="ds14" attitude-link="a55" polarity="negative" nested-source="w,rumsfeld" 
-360	4948,4950	direct-subjective	intensity="high" id="ds15" is-implicit="yes" attitude-link="a490" nested-source="w,rumsfeld" 
+360	4948,4950	direct-subjective	intensity="high" id="ds15" implicit="true" attitude-link="a490" nested-source="w,rumsfeld" 
 361	2600,2605	direct-subjective	expression-intensity="medium" intensity="medium" id="ds16" attitude-link="a220" polarity="positive" nested-source="w,neth" 
 362	1913,1914	split	
 363	6346,6363	direct-subjective	expression-intensity="high" intensity="high" id="ds17" attitude-link="a590" polarity="negative" nested-source="w,judge,judge" 
@@ -382,7 +382,7 @@
 378	1667,1684	agent	id="gc" nested-source="w,icrc,gc" 
 379	1647,1647	targetFrame	id="tfese42" sTarget-link="none" newETarget-link="none" 
 380	2190,2194	direct-subjective	expression-intensity="neutral" intensity="high" id="ds1" attitude-type="negative" attitude-link="a190,a195" nested-source="w,ai" 
-381	4238,4240	direct-subjective	intensity="medium" id="ds2" is-implicit="yes" attitude-link="a370" subjective-uncertain="somewhat-uncertain" nested-source="w,rumsfeld" 
+381	4238,4240	direct-subjective	intensity="medium" id="ds2" implicit="true" attitude-link="a370" subjective-uncertain="somewhat-uncertain" nested-source="w,rumsfeld" 
 382	2219,2236	direct-subjective	expression-intensity="low" intensity="medium" id="ds3" attitude-link="a200" polarity="neutral" nested-source="w,govts" 
 383	3864,3868	direct-subjective	expression-intensity="medium" id="ds4" attitude-link="a330" insubstantial="c2,c3" polarity="positive" intensity="medium" nested-source="w,rumsfeld,you" 
 384	1870,1874	direct-subjective	expression-intensity="neutral" intensity="low" id="ds5" attitude-link="a160" nested-source="w,ai" 

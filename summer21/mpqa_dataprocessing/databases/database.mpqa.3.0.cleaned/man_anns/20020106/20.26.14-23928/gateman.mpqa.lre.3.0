@@ -203,7 +203,7 @@
 199	1637,1637	direct-subjective	implicit="true" intensity="high" id="ds28" attitude-link="a43,a44" nested-source="w" 
 200	501,510	direct-subjective	expression-intensity="high" intensity="high" id="ds27" attitude-link="a14" polarity="negative" nested-source="w,supporters" 
 201	149,149	direct-subjective	implicit="true" intensity="low" id="ds26" attitude-link="a12" nested-source="w" 
-202	289,289	direct-subjective	intensity="high" id="ds25" is-implicit="yes" attitude-link="a15,a150,a20" nested-source="w" 
+202	289,289	direct-subjective	intensity="high" id="ds25" implicit="true" attitude-link="a15,a150,a20" nested-source="w" 
 203	1006,1006	direct-subjective	implicit="true" intensity="medium" id="ds16" attitude-link="a31" nested-source="w" 
 204	379,388	direct-subjective	expression-intensity="medium" intensity="medium" id="ds15" attitude-link="a21" polarity="negative" nested-source="w,imam,rushdie" 
 205	1143,1176	direct-subjective	expression-intensity="high" id="ds14" annotation-uncertain="somewhat-uncertain" attitude-link="a34" polarity="negative" intensity="high" nested-source="w,us" 

@@ -93,7 +93,7 @@
 89	2682,2682	direct-subjective	implicit="true" intensity="medium" id="ds23" attitude-link="a28" nested-source="w" 
 90	1033,1033	direct-subjective	implicit="true" intensity="medium" id="ds26" attitude-type="negative" attitude-link="a11" nested-source="w" 
 91	2326,2327	split	
-92	157,159	direct-subjective	intensity="low" id="ds25" is-implicit="yes" attitude-link="a1" nested-source="w" 
+92	157,159	direct-subjective	intensity="low" id="ds25" implicit="true" attitude-link="a1" nested-source="w" 
 93	1270,1270	direct-subjective	implicit="true" intensity="medium" id="ds28" attitude-link="a500" nested-source="w" 
 94	1159,1160	split	
 95	2456,2463	direct-subjective	expression-intensity="low" id="ds27" attitude-link="a24" insubstantial="c1" polarity="positive" intensity="low" nested-source="w,eu,bushadmin,us" 

@@ -270,7 +270,7 @@
 266	2049,2110	attitude	id="a240" intensity="medium-high" attitude-type="arguing-neg" targetFrame-link="tfa240" 
 267	464,474	attitude	id="a50" intensity="medium" attitude-type="arguing-pos" targetFrame-link="tfa50" 
 268	234,244	expressive-subjectivity	id="ese7" intensity="medium" targetFrame-link="tfese7" polarity="positive" nested-source="w,khatami" 
-269	2691,2691	direct-subjective	intensity="medium" id="ds18" is-implicit="yes" attitude-link="a56" nested-source="w" 
+269	2691,2691	direct-subjective	intensity="medium" id="ds18" implicit="true" attitude-link="a56" nested-source="w" 
 270	464,474	expressive-subjectivity	id="ese2" intensity="medium" targetFrame-link="tfese2" polarity="positive" nested-source="w,khatami" 
 271	1931,1943	expressive-subjectivity	id="ese4" intensity="medium" disagreement="not clear understanding of languages" targetFrame-link="tfese4" polarity="negative" nested-source="w,iran" 
 272	12,25	direct-subjective	expression-intensity="medium" intensity="medium" id="ds19" attitude-link="a1" polarity="positive" nested-source="w,khatami" 

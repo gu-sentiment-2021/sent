@@ -44,7 +44,7 @@
 40	701,705	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds8" attitude-link="a16" nested-source="w,arias" 
 41	763,767	direct-subjective	expression-intensity="neutral" intensity="high" id="ds7" attitude-link="a17,a18" nested-source="w,arias" 
 42	96,99	split	
-43	4,4	direct-subjective	intensity="medium" id="ds6" is-implicit="yes" attitude-link="a12" nested-source="w" 
+43	4,4	direct-subjective	intensity="medium" id="ds6" implicit="true" attitude-link="a12" nested-source="w" 
 44	0,0	agent	id="w" 
 45	1513,1513	objective-speech-event	implicit="true" id="ose4" targetFrame-link="tfose4" nested-source="w" 
 46	760,760	targetFrame	id="tfose6" sTarget-link="none" newETarget-link="none" 
@@ -115,7 +115,7 @@
 111	69,76	expressive-subjectivity	id="ese1" intensity="medium" targetFrame-link="tfese1" polarity="negative" nested-source="w" 
 112	1020,1030	sTarget	id="t19" eTarget-link="none" 
 113	641,659	sTarget	id="t16" eTarget-link="none" 
-114	105,105	direct-subjective	intensity="high" id="ds12" is-implicit="yes" attitude-link="a15" nested-source="w" 
+114	105,105	direct-subjective	intensity="high" id="ds12" implicit="true" attitude-link="a15" nested-source="w" 
 115	1203,1224	direct-subjective	expression-intensity="high" id="ds13" attitude-type="negative" attitude-link="a22" polarity="negative" intensity="high" nested-source="w,cuba" 
 116	1502,1508	sTarget	id="t28" eTarget-link="e9035" 
 117	1078,1084	sTarget	id="t20" eTarget-link="e9045" 

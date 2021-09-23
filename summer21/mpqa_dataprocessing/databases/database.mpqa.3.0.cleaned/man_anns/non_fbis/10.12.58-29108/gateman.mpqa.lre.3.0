@@ -234,8 +234,8 @@
 230	2164,2173	direct-subjective	expression-intensity="low" intensity="medium" id="ds8" attitude-link="a160,a161" polarity="neutral" nested-source="w,taskforce" 
 231	3360,3368	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds11" attitude-link="a280" insubstantial="c2" nested-source="w,dasch,society" 
 232	2722,2723	split	
-233	1535,1536	direct-subjective	intensity="low" id="ds14" is-implicit="yes" attitude-link="a110" nested-source="w,goldin" 
-234	999,1000	direct-subjective	intensity="medium" id="ds9" is-implicit="yes" attitude-link="a90" nested-source="w,cowing" 
+233	1535,1536	direct-subjective	intensity="low" id="ds14" implicit="true" attitude-link="a110" nested-source="w,goldin" 
+234	999,1000	direct-subjective	intensity="medium" id="ds9" implicit="true" attitude-link="a90" nested-source="w,cowing" 
 235	317,330	direct-subjective	expression-intensity="medium" id="ds15" annotation-uncertain="somewhat-uncertain" attitude-link="a40" polarity="neutral" intensity="medium" nested-source="w,nasa" 
 236	3049,3056	direct-subjective	expression-intensity="low" intensity="low" id="ds12" attitude-link="a240" polarity="neutral" nested-source="w,pike,implicit" 
 237	2340,2340	direct-subjective	implicit="true" intensity="medium" id="ds13" attitude-link="a170" nested-source="w" 

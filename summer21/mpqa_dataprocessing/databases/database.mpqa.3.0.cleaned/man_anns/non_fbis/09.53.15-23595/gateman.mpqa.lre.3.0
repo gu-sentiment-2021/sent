@@ -263,7 +263,7 @@
 259	97,118	expressive-subjectivity	id="ese22" intensity="low" targetFrame-link="tfese22" polarity="neutral" nested-source="w" 
 260	1672,1696	expressive-subjectivity	id="ese14" intensity="medium" es-uncertain="somewhat-uncertain" targetFrame-link="tfese14" polarity="negative" nested-source="w" 
 261	2845,2849	split	
-262	2223,2223	direct-subjective	expression-intensity="neutral" id="ds11" attitude-type="negative" attitude-link="a30" intensity="medium" is-implicit="yes" nested-source="w" 
+262	2223,2223	direct-subjective	expression-intensity="neutral" id="ds11" attitude-type="negative" attitude-link="a30" intensity="medium" implicit="true" nested-source="w" 
 263	1007,1019	expressive-subjectivity	id="ese5" intensity="low" targetFrame-link="tfese5" polarity="neutral" nested-source="w" 
 264	1988,1994	direct-subjective	expression-intensity="medium" intensity="medium" id="ds13" attitude-link="a25" polarity="positive" nested-source="w,chavez" 
 265	839,841	agent	nested-source="w,carmona,carmona" 
@@ -273,7 +273,7 @@
 269	2016,2025	direct-subjective	expression-intensity="medium" id="ds17" attitude-type="positive" attitude-link="a26" polarity="positive" intensity="medium" nested-source="w,chavez,chavezgov" 
 270	2337,2346	direct-subjective	expression-intensity="medium" id="ds16" attitude-type="positive" attitude-link="a31" polarity="positive" intensity="high" nested-source="w,officers,officers" 
 271	3429,3430	split	
-272	66,66	direct-subjective	intensity="low" id="ds19" attitude-type="other" is-implicit="yes" attitude-link="a50" nested-source="w" 
+272	66,66	direct-subjective	intensity="low" id="ds19" attitude-type="other" implicit="true" attitude-link="a50" nested-source="w" 
 273	242,242	direct-subjective	implicit="true" intensity="medium" id="ds18" attitude-link="a11,a12" nested-source="w" 
 274	1032,1045	direct-subjective	id="ds21" expression-intensity="medium" attitude-type="negative" annotation-uncertain="somewhat-uncertain" attitude-link="a17" polarity="negative" intensity="medium" nested-source="w,protestors" 
 275	1617,1617	direct-subjective	implicit="true" intensity="medium" id="ds20" attitude-link="a22" subjective-uncertain="somewhat-uncertain" nested-source="w" 
@@ -300,7 +300,7 @@
 296	2082,2086	split	
 297	1404,1414	direct-subjective	expression-intensity="low" id="ds4" attitude-type="negative" attitude-link="a20,a21" polarity="both" intensity="high" nested-source="w,marchers" 
 298	675,684	agent	id="ven" 
-299	1811,1812	direct-subjective	intensity="high" id="ds3" attitude-type="negative" is-implicit="yes" attitude-link="a23" nested-source="w,gomez" 
+299	1811,1812	direct-subjective	intensity="high" id="ds3" attitude-type="negative" implicit="true" attitude-link="a23" nested-source="w,gomez" 
 300	2026,2032	agent	nested-source="w,chavez,chavezgov,protestors" 
 301	3288,3288	direct-subjective	implicit="true" intensity="medium" id="ds10" attitude-link="a40" nested-source="w" 
 302	1794,1794	targetFrame	id="tfese20" sTarget-link="none" newETarget-link="none" 

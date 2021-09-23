@@ -235,7 +235,7 @@
 231	2355,2414	sTarget	id="t35" eTarget-link="none" 
 232	1623,1623	targetFrame	id="tfese6" sTarget-link="none" newETarget-link="none" 
 233	1792,1792	targetFrame	id="tfa24" sTarget-link="t23" newETarget-link="none" 
-234	1990,1995	direct-subjective	intensity="high" id="ds2" is-implicit="yes" attitude-link="a30,a31" nested-source="w,shivute" 
+234	1990,1995	direct-subjective	intensity="high" id="ds2" implicit="true" attitude-link="a30,a31" nested-source="w,shivute" 
 235	78,78	targetFrame	id="tfa11" sTarget-link="t11" newETarget-link="none" 
 236	1352,1352	targetFrame	id="tfa18" sTarget-link="t18" newETarget-link="none" 
 237	78,85	direct-subjective	expression-intensity="high" id="ds1" attitude-type="negative" attitude-link="a11" polarity="negative" intensity="high" nested-source="w,gov" 

@@ -340,7 +340,7 @@
 336	3976,3993	direct-subjective	expression-intensity="low" intensity="low" id="ds30" attitude-link="a67" polarity="positive" nested-source="w,us" 
 337	2122,2131	direct-subjective	expression-intensity="high" intensity="high" id="ds35" attitude-link="a35" polarity="negative" nested-source="w,khatami" 
 338	5485,5485	direct-subjective	implicit="true" intensity="medium" id="ds36" attitude-link="a83" nested-source="w" 
-339	3242,3245	direct-subjective	intensity="medium" id="ds33" is-implicit="yes" attitude-link="a57" nested-source="w,chomsky" 
+339	3242,3245	direct-subjective	intensity="medium" id="ds33" implicit="true" attitude-link="a57" nested-source="w,chomsky" 
 340	6135,6135	direct-subjective	implicit="true" intensity="medium" id="ds34" attitude-link="a104,a105" nested-source="w" 
 341	3661,3661	direct-subjective	implicit="true" intensity="high" id="ds40" attitude-link="a61,a62" nested-source="w" 
 342	5518,5527	direct-subjective	expression-intensity="high" intensity="high" id="ds39" attitude-link="a84,a85" polarity="both" nested-source="w,china" 

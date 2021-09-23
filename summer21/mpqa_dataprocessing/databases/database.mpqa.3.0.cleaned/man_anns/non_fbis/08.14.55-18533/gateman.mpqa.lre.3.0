@@ -262,7 +262,7 @@
 258	5882,5896	direct-subjective	expression-intensity="low" id="ds14" attitude-link="a28" insubstantial="c1" polarity="neutral" intensity="low" nested-source="w,bush,bush,enemy" 
 259	2098,2110	direct-subjective	expression-intensity="low" id="ds7" attitude-link="a3" polarity="neutral" subjective-uncertain="somewhat-uncertain" intensity="low" nested-source="w,implicit" 
 260	3779,3780	split	
-261	5750,5753	direct-subjective	intensity="medium" id="ds12" attitude-type="negative" is-implicit="yes" attitude-link="a22,a23" nested-source="w,bush" 
+261	5750,5753	direct-subjective	intensity="medium" id="ds12" attitude-type="negative" implicit="true" attitude-link="a22,a23" nested-source="w,bush" 
 262	5277,5281	agent	nested-source="w,amoff,amoff" 
 263	4439,4455	direct-subjective	expression-intensity="medium" intensity="medium" id="ds13" attitude-link="a13" polarity="uncertain-both" nested-source="w,wolf,phil" 
 264	5864,5875	direct-subjective	expression-intensity="medium" intensity="medium" id="ds18" attitude-link="a27" polarity="neutral" nested-source="w,bush,bush" 
@@ -275,7 +275,7 @@
 271	4694,4708	agent	id="bush" nested-source="w,bush" 
 272	3911,3919	direct-subjective	expression-intensity="low" intensity="low" id="ds22" attitude-link="a10" polarity="negative" nested-source="w,rumsfeld" 
 273	5755,5762	agent	id="enemy" 
-274	777,777	direct-subjective	intensity="low" id="ds21" is-implicit="yes" attitude-link="a30" subjective-uncertain="somewhat-uncertain" nested-source="w" 
+274	777,777	direct-subjective	intensity="low" id="ds21" implicit="true" attitude-link="a30" subjective-uncertain="somewhat-uncertain" nested-source="w" 
 275	4709,4717	direct-subjective	expression-intensity="medium" intensity="medium" id="ds20" attitude-link="a18" polarity="positive" nested-source="w,bush" 
 276	4279,4283	direct-subjective	expression-intensity="neutral" intensity="low" id="ds19" attitude-link="a11" nested-source="w,wolf" 
 277	2298,2323	agent	id="pgov" nested-source="w,amoff,pgov" 
@@ -299,7 +299,7 @@
 295	3072,3079	direct-subjective	expression-intensity="low" id="ds2" annotation-uncertain="somewhat-uncertain" attitude-link="a9" polarity="neutral" intensity="low" nested-source="w,miloff" 
 296	3387,3388	split	
 297	3920,3997	sTarget	id="t10" eTarget-link="e9099" 
-298	5797,5801	direct-subjective	intensity="low" id="ds4" is-implicit="yes" attitude-link="a24" nested-source="w,bush" 
+298	5797,5801	direct-subjective	intensity="low" id="ds4" implicit="true" attitude-link="a24" nested-source="w,bush" 
 299	4232,4278	agent	id="wolf" nested-source="w,wolf" 
 300	5743,5747	direct-subjective	expression-intensity="neutral" intensity="high" id="ds3" attitude-link="a21" nested-source="w,bush" 
 301	2231,2240	direct-subjective	expression-intensity="neutral" intensity="low" id="ds6" attitude-link="a4" nested-source="w,amoff" 

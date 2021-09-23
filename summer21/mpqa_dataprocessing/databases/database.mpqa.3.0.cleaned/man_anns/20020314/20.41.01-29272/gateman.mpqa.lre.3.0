@@ -231,7 +231,7 @@
 227	1491,1545	direct-subjective	expression-intensity="high" intensity="high" id="ds22" attitude-link="a24" polarity="positive" nested-source="w,moi,zims" 
 228	287,300	expressive-subjectivity	id="ese21" intensity="medium" targetFrame-link="tfese21" polarity="positive" nested-source="w,team" 
 229	2197,2201	direct-subjective	expression-intensity="neutral" intensity="low" id="ds20" attitude-link="a32" nested-source="w,report,sa" 
-230	1022,1023	direct-subjective	intensity="medium" id="ds23" is-implicit="yes" attitude-link="a15,a16" nested-source="w,mkapa" 
+230	1022,1023	direct-subjective	intensity="medium" id="ds23" implicit="true" attitude-link="a15,a16" nested-source="w,mkapa" 
 231	1419,1425	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds26" attitude-type="positive" attitude-link="a23" nested-source="w,moi" 
 232	241,250	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds29" attitude-link="a3,a4" nested-source="w,team" 
 233	3230,3234	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds24" attitude-type="negative" attitude-link="a46,a48" nested-source="w,riv" 
