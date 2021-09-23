@@ -1,4 +1,4 @@
-from sentiment.sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
+from sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
 from extended_csds import ExtendedCSDS, ExtendedCSDSCollection
 from Target import sTarget, eTarget, Target

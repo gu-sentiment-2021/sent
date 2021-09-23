@@ -1,4 +1,4 @@
-from sentiment.sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
+from sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
 
 # Specifies the path of the mpqa v3.0 database
