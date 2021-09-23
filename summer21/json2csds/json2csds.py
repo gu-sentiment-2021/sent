@@ -36,7 +36,7 @@ class JSON2CSDS:
                          'agreement': 3,
                          'intention': 4,
                          'speculation': 5,
-                         'other_attitude': 6,
+                         'other-attitude': 6,
                          'expressive_subjectivity': 7,
                          'unknown': 8}
         return type_map_dict[key]
@@ -61,8 +61,7 @@ class JSON2CSDS:
         :return: A python list of the targets.
         """
         targets = annots[target_id]['newETarget-link'] + annots[target_id]['sTarget-link']
-        print('this is targets list:')
-        print(targets)
+
         return targets
 
     def process_agent(self, agent_annot, doc_id):
@@ -99,11 +98,14 @@ class JSON2CSDS:
         """
         # The following lines of code are under development!
         try:
+            its_polarity = (es_annot['polarity'].split('-')[1] if es_annot['polarity'].find('-') >= 0 else es_annot[
+                'polarity']) if 'polarity' in es_annot else es_annot['ese-type'].split('-')[1]
+
             csds_object = ExtendedCSDS(es_annot['sentence'],
                                        es_annot['span-in-sentence'][0],
                                        es_annot['span-in-sentence'][1],
                                        None,  # Belief!!!
-                                       es_annot['polarity'],
+                                       its_polarity,
                                        es_annot['intensity'],
                                        self.type_mapper('expressive_subjectivity'),
                                        this_head=self.go_get_targets(all_annot, es_annot['targetFrame-link']),
@@ -163,11 +165,16 @@ class JSON2CSDS:
         its_type = self.type_mapper('unknown')
 
         try:
-            if att_annot['attitude-type'].find('-') != -1:
-                its_pol = 'positive' if att_annot['attitude-type'].split('-')[1].find('pos') >= 0 else 'negative'
-                its_type = self.type_mapper(att_annot['attitude-type'].split('-')[0])
-            else:
+            if att_annot['attitude-type'].find('other') >= 0:
                 its_type = self.type_mapper(att_annot['attitude-type'])
+            else:
+                if att_annot['attitude-type'].find('-') != -1:
+                    its_pol = 'positive' if att_annot['attitude-type'].split('-')[1].find('pos') >= 0 else 'negative'
+                    its_type = self.type_mapper(att_annot['attitude-type'].split('-')[0])
+                else:
+                    its_type = self.type_mapper(att_annot['attitude-type'])
+
+
         except Exception as err:
             self.alert_wrong_annot(att_annot, error=err)
 
