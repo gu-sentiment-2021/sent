@@ -161,3 +161,25 @@ Also some target-links had the value of "n/a" which are now set to "none". (34)
         874, 876, 882, 883, 886, 887, 888, 889, 890, 892, 894, 895
     - non_fbis/09.53.15-23595:
         75
+
+* The following expressive-subjectivity(s) had extra [Number]-eTarget-link
+and [Number]-isReferredInSpan attributes in addition to targetFrame-link. Those
+attributes are gone now. (4)
+    - 20011208/20.31.54-28680:
+        107, 114
+    - 20020507/22.11.06-28210:
+        26
+    - non_fbis/08.47.00-17401:
+        503
+New eTarget annotation line(s) have been added to cover above attributes. (5)
+    - 20011208/20.31.54-28680:
+        442 (modified), 781, 782
+    - 20020507/22.11.06-28210:
+        423 (modified), 428 (modified)
+Those new eTarget(s) are accessible through following modified targetFrame(s). (4)
+    - 20011208/20.31.54-28680:
+        729, 743
+    - 20020507/22.11.06-28210:
+        358
+    - non_fbis/08.47.00-17401:
+        91
