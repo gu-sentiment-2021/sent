@@ -101,12 +101,18 @@ class JSON2CSDS:
             its_polarity = (es_annot['polarity'].split('-')[1] if es_annot['polarity'].find('-') >= 0 else es_annot[
                 'polarity']) if 'polarity' in es_annot else es_annot['ese-type'].split('-')[1]
 
+            # Because this is optional attribute in ese
+            if 'intensity' in es_annot:
+                its_intensity = es_annot['intensity']
+            else:
+                its_intensity = None
+
             csds_object = ExtendedCSDS(es_annot['sentence'],
                                        es_annot['span-in-sentence'][0],
                                        es_annot['span-in-sentence'][1],
                                        None,  # Belief!!!
                                        its_polarity,
-                                       es_annot['intensity'],
+                                       its_intensity,
                                        self.type_mapper('expressive_subjectivity'),
                                        this_head=self.go_get_targets(all_annot, es_annot['targetFrame-link']),
                                        this_doc_id=doc_id,
