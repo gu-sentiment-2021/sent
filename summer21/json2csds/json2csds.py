@@ -41,7 +41,7 @@ class JSON2CSDS:
                          'unknown': 8}
         return type_map_dict[key]
 
-    def alert_wrong_annot(self, annot, error=None):
+    def alert_wrong_annot(self, annot, doc_id, error=None):
         """
         It used for alert wrong annotation(s).
         :param annot: The annotation that error(s) were happening in its process.
@@ -49,7 +49,7 @@ class JSON2CSDS:
         """
         print('===================\nWrong annotation!!')
         print(annot)
-        print('Error details:')
+        print('Error details: (doc_id: ', doc_id, ')')
         print(error)
         print('===================')
 
@@ -84,7 +84,7 @@ class JSON2CSDS:
                                        this_sentence_id=agent_annot['sentence-id']
                                        )
         except Exception as err:
-            self.alert_wrong_annot(agent_annot, error=err)
+            self.alert_wrong_annot(agent_annot, doc_id, error=err)
             return None
         return csds_object
 
@@ -113,7 +113,7 @@ class JSON2CSDS:
                                        this_sentence_id=es_annot['sentence-id']
                                        )
         except Exception as err:
-            self.alert_wrong_annot(es_annot, error=err)
+            self.alert_wrong_annot(es_annot, doc_id, error=err)
             return None
         return csds_object
 
@@ -139,7 +139,7 @@ class JSON2CSDS:
                                        )
             return csds_object
         except Exception as err:
-            self.alert_wrong_annot(ds_annot, error=err)
+            self.alert_wrong_annot(ds_annot, doc_id, error=err)
             return None
 
     # This method is not being used till now!
@@ -176,7 +176,7 @@ class JSON2CSDS:
 
 
         except Exception as err:
-            self.alert_wrong_annot(att_annot, error=err)
+            self.alert_wrong_annot(att_annot, doc_id, error=err)
 
         csds_object = ExtendedCSDS(att_annot['sentence'],
                                    att_annot['span-in-sentence'][0],
@@ -204,7 +204,7 @@ class JSON2CSDS:
                                tf_annot['span-in-sentence'][1])
         return target_object
 
-    def process_starget(self, starget_annot, starget_id):
+    def process_starget(self, starget_annot, starget_id, doc_id):
         """
         It processes a sTarget type annotation.
         :param starget_annot: A Python dict which represents a sTarget annotation.
@@ -221,12 +221,12 @@ class JSON2CSDS:
             if 'target-uncertain' in starget_annot:
                 starget_object.target_uncertain = starget_annot['target-uncertain']
         except Exception as err:
-            self.alert_wrong_annot(starget_annot, error=err)
+            self.alert_wrong_annot(starget_annot, doc_id, error=err)
             return None
 
         return starget_object
 
-    def process_etarget(self, etarget_annot, etarget_id):
+    def process_etarget(self, etarget_annot, etarget_id, doc_id):
         """
         It processes an eTarget type annotation.
         :param etarget_annot: A Python dict which represents an eTarget annotation.
@@ -245,7 +245,7 @@ class JSON2CSDS:
             if 'isReferredInSpan' in etarget_annot:
                 etarget_object.is_referred_in_span = etarget_annot['isReferredInSpan']
         except Exception as err:
-            self.alert_wrong_annot(etarget_annot, error=err)
+            self.alert_wrong_annot(etarget_annot, doc_id, error=err)
             return None
 
         return etarget_object
@@ -361,7 +361,7 @@ class JSON2CSDS:
                 # Process each sTarget item by its corresponding ID
                 for starget_id in starget_list:
                     annotation_item = annotations[starget_id]
-                    starget_object = self.process_starget(annotation_item, starget_id)
+                    starget_object = self.process_starget(annotation_item, starget_id, doc_name)
                     # WHAT TO DO?
                     del starget_object
                 del starget_list
@@ -372,7 +372,7 @@ class JSON2CSDS:
                 # Process each eTarget item by its corresponding ID
                 for etarget_id in etarget_list:
                     annotation_item = annotations[etarget_id]
-                    etarget_object = self.process_etarget(annotation_item, etarget_id)
+                    etarget_object = self.process_etarget(annotation_item, etarget_id, doc_name)
                     # WHAT TO DO?
                     del etarget_object
                 del etarget_list
@@ -397,7 +397,7 @@ class JSON2CSDS:
 
 ########################
 # test
-address = "F:\pych\mpqa_3_0_database\database.mpqa.3.0"
+address = "E:\Thesis\mpqa_3_0_database\database.mpqa.3.0"
 obj = JSON2CSDS("MPQA3.0", address)
 mpqa_json = obj.produce_json_file()
 csds_coll_result = obj.doc2csds(mpqa_json)
