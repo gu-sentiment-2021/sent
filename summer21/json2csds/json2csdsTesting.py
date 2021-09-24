@@ -49,7 +49,7 @@ class JSON2CSDS:
         """
         print('===================\nWrong annotation!!')
         print(annot)
-        print('Error details: (doc_id: ' , doc_id, ')')
+        print('Error details: (doc_id: ', doc_id, ')')
         print(error)
         print('===================')
 
@@ -63,6 +63,30 @@ class JSON2CSDS:
         targets = annots[target_id]['newETarget-link'] + annots[target_id]['sTarget-link']
 
         return targets
+
+    def process_agent(self, agent_annot, doc_id):
+        """
+        It processes an agent type annotation.
+        :param agent_annot: A Python dict which represents an agent annotation.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+
+        try:
+            csds_object = ExtendedCSDS(agent_annot['sentence'],
+                                       agent_annot['span-in-sentence'][0],
+                                       agent_annot['span-in-sentence'][1],
+                                       None,  # Belief !!
+                                       None,
+                                       None,
+                                       self.type_mapper('unknown'),
+                                       this_doc_id=doc_id,
+                                       this_sentence_id=agent_annot['sentence-id']
+                                       )
+        except Exception as err:
+            self.alert_wrong_annot(agent_annot, doc_id, error=err)
+            return None
+        return csds_object
 
     def process_es(self, all_annot, es_annot, doc_id):
         """
@@ -88,20 +112,156 @@ class JSON2CSDS:
                                        this_doc_id=doc_id,
                                        this_sentence_id=es_annot['sentence-id']
                                        )
-
-            arr_p = ['neutral', 'positive', 'negative', 'both', 'uncertain']
-            if its_polarity not in arr_p:
-                print('polarity: ', its_polarity)
-            arr_i = ['low', 'medium', 'high', 'extreme']
-            if es_annot['intensity'] not in arr_i:
-                print('intensity: ', es_annot['intensity'])
-
         except Exception as err:
             self.alert_wrong_annot(es_annot, doc_id, error=err)
             return None
         return csds_object
 
-    def doc2csds(self, json_file):
+    def process_ds(self, ds_annot, doc_id):
+        """
+        It processes a DS (direct-subjective) type annotation.
+        :param ds_annot: A Python dict which represents a DS annotation.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+        try:
+            csds_object = ExtendedCSDS(ds_annot['sentence'],
+                                       ds_annot['span-in-sentence'][0],
+                                       ds_annot['span-in-sentence'][1],
+                                       None,  # Belief!!!
+                                       # or maybe the polarity by getting it via attitude-link?
+                                       ds_annot['attitude-type'],
+                                       ds_annot['intensity'],
+                                       self.type_mapper('expressive_subjectivity'),  # NOT SURE!
+                                       this_head=ds_annot['attitude-link'],
+                                       this_doc_id=doc_id,
+                                       this_sentence_id=ds_annot['sentence-id']
+                                       )
+            return csds_object
+        except Exception as err:
+            self.alert_wrong_annot(ds_annot, doc_id, error=err)
+            return None
+
+    # This method is not being used till now!
+    def process_ose(self, ose_annot, doc_id):
+        """
+        It processes an OSE type annotation.
+        :param ose_annot: A Python dict which represents an OSE annotation.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+        # !
+        return None
+
+    def process_att(self, all_annot, att_annot, doc_id):
+        """
+        It processes an attitude type annotation.
+        :param all_annot: A Python dict which represents all annotations in the dic.
+        :param att_annot: A Python dict which represents an attitude annotation.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+        its_pol = None
+        its_type = self.type_mapper('unknown')
+
+        try:
+            if att_annot['attitude-type'].find('other') >= 0:
+                its_type = self.type_mapper(att_annot['attitude-type'])
+            else:
+                if att_annot['attitude-type'].find('-') != -1:
+                    its_pol = 'positive' if att_annot['attitude-type'].split('-')[1].find('pos') >= 0 else 'negative'
+                    its_type = self.type_mapper(att_annot['attitude-type'].split('-')[0])
+                else:
+                    its_type = self.type_mapper(att_annot['attitude-type'])
+
+
+        except Exception as err:
+            self.alert_wrong_annot(att_annot, doc_id, error=err)
+
+        csds_object = ExtendedCSDS(att_annot['sentence'],
+                                   att_annot['span-in-sentence'][0],
+                                   att_annot['span-in-sentence'][1],
+                                   None,  # Belief !!!
+                                   its_pol,
+                                   att_annot['intensity'],
+                                   its_type,
+                                   this_head=self.go_get_targets(all_annot, att_annot['targetFrame-link']),
+                                   this_doc_id=doc_id,
+                                   this_sentence_id=att_annot['sentence-id']
+                                   )
+        return csds_object
+
+    # The following method is not being activated yet!
+    def process_tf(self, tf_annot, tf_id):
+        """
+        It processes a target frame type annotation.
+        :param tf_annot: A Python dict which represents a targetFrame annotation.
+        :param tf_id: Id of the targetFrame.
+        :return: A targetFrame object.
+        """
+        target_object = Target(tf_id,
+                               tf_annot['span-in-sentence'][0],
+                               tf_annot['span-in-sentence'][1])
+        return target_object
+
+    def process_starget(self, starget_annot, starget_id, doc_id):
+        """
+        It processes a sTarget type annotation.
+        :param starget_annot: A Python dict which represents a sTarget annotation.
+        :param starget_id: Id of the sTarget.
+        :return: A sTarget object.
+        """
+
+        try:
+            starget_object = sTarget(starget_id,
+                                     starget_annot['span-in-sentence'][0],
+                                     starget_annot['span-in-sentence'][1],
+                                     this_etarget_link=starget_annot['eTarget-link'])
+
+            if 'target-uncertain' in starget_annot:
+                starget_object.target_uncertain = starget_annot['target-uncertain']
+        except Exception as err:
+            self.alert_wrong_annot(starget_annot, doc_id, error=err)
+            return None
+
+        return starget_object
+
+    def process_etarget(self, etarget_annot, etarget_id, doc_id):
+        """
+        It processes an eTarget type annotation.
+        :param etarget_annot: A Python dict which represents an eTarget annotation.
+        :param etarget_id: Id of the eTarget.
+        :return: A eTarget object.
+        """
+        try:
+            etarget_object = eTarget(etarget_id,
+                                     etarget_annot['span-in-sentence'][0],
+                                     etarget_annot['span-in-sentence'][1],
+                                     etarget_annot['type'])
+
+            if 'isNegated' in etarget_annot:
+                etarget_object.is_negated = etarget_annot['isNegated']
+
+            if 'isReferredInSpan' in etarget_annot:
+                etarget_object.is_referred_in_span = etarget_annot['isReferredInSpan']
+        except Exception as err:
+            self.alert_wrong_annot(etarget_annot, doc_id, error=err)
+            return None
+
+        return etarget_object
+
+    # This method is not being used till now!
+    def process_sentence(self, sentence_annot, doc_id):
+        """
+        It processes a sentence type annotation.
+        :param sentence_annot: A Python dict which represents a sentence annotation.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+        # !
+        return None
+
+    def doc2csds(self, json_file, type_for_test):
         """
         It converts a document annotation from json to csds
         :param json_file: The json file which is obtained form mpqa to json conversion.
@@ -122,8 +282,20 @@ class JSON2CSDS:
             # Extracts the list of all annotations
             annotations = curr_doc['annotations']
 
+            # Check for "agent" annotation type
+            if type_for_test == 'agent' and 'agent' in curr_doc:
+                # In the following line of code, we extract the IDs of agent type annotations
+                agent_list = curr_doc['agent']
+                # Process each agent item by its corresponding ID
+                for agent_id in agent_list:
+                    annotation_item = annotations[agent_id]
+                    csds_object = self.process_agent(annotation_item, doc_name)
+                    # Store the object!
+                    ext_csds_coll.add_labeled_instance(csds_object)
+                    del annotation_item
+                del agent_list
             # Check for "expressive-subjectivity" annotation type
-            if 'expressive-subjectivity' in curr_doc:
+            if type_for_test == 'expressive-subjectivity' and 'expressive-subjectivity' in curr_doc:
                 # In the following line of code, we extract the IDs of ES type annotations
                 es_list = curr_doc['expressive-subjectivity']
                 # Process each ES item by its corresponding ID
@@ -134,7 +306,92 @@ class JSON2CSDS:
                     ext_csds_coll.add_labeled_instance(csds_object)
                     del csds_object
                 del es_list
+            # Check for "direct-subjective" annotation type
+            if type_for_test == 'direct-subjective' and 'direct-subjective' in curr_doc:
+                # In the following line of code, we extract the IDs of DS type annotations
+                ds_list = curr_doc['direct-subjective']
+                # Process each DS item by its corresponding ID
+                for ds_id in ds_list:
+                    annotation_item = annotations[ds_id]
+                    csds_object = self.process_ds(annotation_item, doc_name)
+                    # Store the object!
+                    ext_csds_coll.add_labeled_instance(csds_object)
+                    del csds_object
+                del ds_list
+            # Check for "objective-speech-event" annotation type, this part is not activated yet!
+            '''
+            if type_for_test == 'objective-speech-event' and 'objective-speech-event' in curr_doc:
+                # In the following line of code, we extract the IDs of OSE type annotations
+                ose_list = curr_doc['objective-speech-event']
+                # Process each OSE item by its corresponding ID
+                for ose_id in ose_list:
+                    annotation_item = annotations[ose_id]
+                    csds_object = self.process_ose(annotation_item)
+                    # must store the object!
+                    # WHAT TO DO?
+                    del csds_object
+                del ose_list
+            '''
+            # Check for "attitude" annotation type
+            if type_for_test == 'attitude' and 'attitude' in curr_doc:
+                # In the following line of code, we extract the IDs of attitude type annotations
+                att_list = curr_doc['attitude']
+                # Process each attitude item by its corresponding ID
+                for att_id in att_list:
+                    annotation_item = annotations[att_id]
+                    csds_object = self.process_att(annotations, annotation_item, doc_name)
+                    # must store the object!
+                    del csds_object
+                del att_list
+            # Check for "targetFrame" annotation type
+            if type_for_test == 'targetFrame' and 'targetFrame' in curr_doc:
+                # In the following line of code, we extract the IDs of target frame type annotations
+                tf_list = curr_doc['targetFrame']
+                # Process each target frame item by its corresponding ID
+                for tf_id in tf_list:
+                    annotation_item = annotations[tf_id]
+                    tf_object = self.process_tf(annotation_item, tf_id)
+                    # WHAT TO DO?
+                    del tf_object
+                del tf_list
+            # Check for "sTarget" annotation type
+            if type_for_test == 'sTarget' and 'sTarget' in curr_doc:
+                # In the following line of code, we extract the IDs of sTarget type annotations
+                starget_list = curr_doc['sTarget']
+                # Process each sTarget item by its corresponding ID
+                for starget_id in starget_list:
+                    annotation_item = annotations[starget_id]
+                    starget_object = self.process_starget(annotation_item, starget_id, doc_name)
+                    # WHAT TO DO?
+                    del starget_object
+                del starget_list
+            # Check for "eTarget" annotation type
+            if type_for_test == 'eTarget' and 'eTarget' in curr_doc:
+                # In the following line of code, we extract the IDs of eTarget type annotations
+                etarget_list = curr_doc['eTarget']
+                # Process each eTarget item by its corresponding ID
+                for etarget_id in etarget_list:
+                    annotation_item = annotations[etarget_id]
+                    etarget_object = self.process_etarget(annotation_item, etarget_id, doc_name)
+                    # WHAT TO DO?
+                    del etarget_object
+                del etarget_list
+            # Check for "sentence" annotation type, this part is not activated yet!
+            '''
+            if type_for_test == 'sentence' and 'sentence' in curr_doc:
+                # In the following line of code, we extract the IDs of sentence type annotations
+                sentence_list = curr_doc['sentence']
+                # Process each sentence item by its corresponding ID
+                for sentence_id in sentence_list:
+                    annotation_item = annotations[sentence_id]
+                    csds_object = self.process_sentence(annotation_item)
+                    # must store the object!
+                    # WHAT TO DO?
+                    del csds_object
+                del sentence_list
 
+            del annotations
+            '''
         return ext_csds_coll
 
 
@@ -143,4 +400,5 @@ class JSON2CSDS:
 address = "E:\Thesis\mpqa_3_0_database\database.mpqa.3.0"
 obj = JSON2CSDS("MPQA3.0", address)
 mpqa_json = obj.produce_json_file()
-csds_coll_result = obj.doc2csds(mpqa_json)
+type_for_test = "expressive-subjectivity"
+csds_coll_result = obj.doc2csds(mpqa_json, type_for_test)
