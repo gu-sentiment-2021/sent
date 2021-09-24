@@ -76,7 +76,7 @@
 72	3412,3418	agent	nested-source="w,ledesma,ledesma,venezuelans,chavez" 
 73	1133,1140	expressive-subjectivity	id="ese6" intensity="low" es-uncertain="somewhat-uncertain" targetFrame-link="tfese6" polarity="neutral" nested-source="w" 
 74	2293,2301	agent	id="officers" nested-source="w,officers" 
-75	16,25	expressive-subjectivity	id="ese17" intensity="low" targetFrame-link="tfese17" polarity="neutral" nested-source="w" 
+75	16,24	expressive-subjectivity	id="ese17" intensity="low" targetFrame-link="tfese17" polarity="neutral" nested-source="w" 
 76	2702,2706	split	
 77	2103,2112	direct-subjective	expression-intensity="neutral" intensity="medium" id="ds29" attitude-type="negative" attitude-link="a27,a28" nested-source="w,chavez" 
 78	766,767	split	
