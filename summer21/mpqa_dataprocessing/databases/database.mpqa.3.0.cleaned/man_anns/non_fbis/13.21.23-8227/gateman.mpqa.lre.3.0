@@ -23,7 +23,7 @@
 19	0,0	agent	id="w" 
 20	999,1047	sentence	nested-source="w" 
 21	0,0	agent	id="implicit" 
-22	998,1009	sTarget	id="t30" eTarget-link="e9001" 
+22	999,1009	sTarget	id="t30" eTarget-link="e9001" 
 23	962,995	sentence	nested-source="w" 
 24	818,961	sentence	nested-source="w" 
 25	273,422	sentence	nested-source="w" 
