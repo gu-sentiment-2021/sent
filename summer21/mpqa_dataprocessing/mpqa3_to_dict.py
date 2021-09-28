@@ -84,7 +84,7 @@ class mpqa3_to_dict:
             # A temporary variable for an annotation line before knowing its ID.
             temp_dict = {
                 "anno-type": anno_type,
-                "text": doc_text[span[0]:span[1]],
+                "head": doc_text[span[0]:span[1]],
                 "line-id": int(line_id),
                 "span-in-doc": span,
             }
@@ -111,7 +111,7 @@ class mpqa3_to_dict:
                 output[anno_type].append(id)
             else: # If there's a new type of annotation, warn us in red!
                 output[anno_type] = [id]
-                print("\033[91m <UNKNOWN ANNO: {}>\033[00m" .format(anno_type))
+                print("\033[91m <UNKNOWN ANNO: {}>\033[00m".format(anno_type))
         
         # Set sentence-id, sentence and span-in-sentence
         for key in output["annotations"].keys():
@@ -123,7 +123,7 @@ class mpqa3_to_dict:
                 if  output["annotations"][sentence_id]["span-in-doc"][0] <= output["annotations"][key]["span-in-doc"][0]\
                 and output["annotations"][sentence_id]["span-in-doc"][1] >= output["annotations"][key]["span-in-doc"][1]:
                     output["annotations"][key]["sentence-id"] = sentence_id
-                    output["annotations"][key]["sentence"] = output["annotations"][sentence_id]["text"]
+                    output["annotations"][key]["text"] = output["annotations"][sentence_id]["head"]
                     output["annotations"][key]["span-in-sentence"] = (
                         output["annotations"][key]["span-in-doc"][0] - output["annotations"][sentence_id]["span-in-doc"][0],
                         output["annotations"][key]["span-in-doc"][1] - output["annotations"][sentence_id]["span-in-doc"][0]
