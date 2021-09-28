@@ -149,7 +149,7 @@ class JSON2CSDS:
 
         try:
             if att_annot['attitude-type'].find('other') >= 0:
-                its_type = self.type_mapper(att_annot['attitude-type'])
+                its_type = self.type_mapper('other-attitude')
             else:
                 if att_annot['attitude-type'].find('-') != -1:
                     its_attitude_type = att_annot['attitude-type'].split('-')
