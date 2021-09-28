@@ -35,42 +35,40 @@ class ExtendedCSDS:
     this information.
     
     List of Changes CSDS for MPQA:
-        1. head_start & head_end is span_start & span_end of the text that refers to
-        the Type.
-        2. head that was string, changed to list. Its values are a list of the id of newETarget
-        & starget.
-        3. added polarity. Its possible values:positive, negative, both, neutral, 
+        1. added polarity. Its possible values:positive, negative, both, neutral,
         uncertain-positive, uncertain-negative, uncertain-both, uncertain-neutral.
-        4. added intensity. Its possible values: low, medium, high, extreme.
-        5. removed belief & sentiment.
-        6. added Enum for Type of annotation.
+        2. added intensity. Its possible values: low, medium, high, extreme.
+        3. added Enum for Type of annotation.
+        4. added target_link that contains a list of the id of e/sTargets.
     """
     doc_id = -1  # unique index of origin document within corpus, value: name of doc
     sentence_id = -1  # index of sentence within document
     text = ""  # sentence in which the annotated head occurs
     head_start = -1  # offset within sentence of start of head word of proposition
     head_end = -1  # offset of end of head word of proposition
-    head = []  # targets of annotation within sentence
+    head = ""  # target of annotation within sentence
     belief = ""  # belief value (values are corpus-specific)
     sentiment = ""  # sentiment value (values are corpus-specific)
     polarity = ""  # polarity of the type of annotation
     intensity = ""  # intensity of the type of annotation
-    typee: Type
+    annotation_type: Type # The type annotation
+    target_link = [] # A list that contains the id of e/sTargets
 
     def __init__(
             self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,
-            this_typee, this_head=[], this_doc_id=-1, this_sentence_id=-1
+            this_annotation_type, this_target_link=[], this_head="", this_doc_id=-1, this_sentence_id=-1
     ):
         self.doc_id = this_doc_id
         self.sentence_id = this_sentence_id
         self.text = this_text
         self.head_start = this_head_start
         self.head_end = this_head_end
+        self.head = this_head
         self.belief = this_belief
         self.polarity = this_polarity
         self.intensity = this_intensity
-        self.head = this_head
-        self.typee = Type(this_typee)
+        self.annotation_type = Type(this_annotation_type)
+        self.target_link = this_target_link
 
     def get_info_short(self):
         return (
