@@ -72,17 +72,28 @@ class JSON2CSDS:
         :return: A csds object.
         """
 
+        if agent_annot['span-in-doc'][0] == 0 and agent_annot['span-in-doc'][1] == 0:
+            its_text = None
+            its_head_start = -1
+            its_head_end = -1
+            its_sentence_id = -1
+        else:
+            its_text = agent_annot['text']
+            its_head_start = agent_annot['span-in-sentence'][0]
+            its_head_end = agent_annot['span-in-sentence'][1]
+            its_sentence_id = agent_annot['sentence-id']
+
         try:
-            csds_object = ExtendedCSDS(this_text=agent_annot['text'],
-                                       this_head_start=agent_annot['span-in-sentence'][0],
-                                       this_head_end=agent_annot['span-in-sentence'][1],
+            csds_object = ExtendedCSDS(this_text=its_text,
+                                       this_head_start=its_head_start,
+                                       this_head_end=its_head_end,
                                        this_belief=None,
                                        this_polarity=None,
                                        this_intensity=None,
                                        this_annotation_type=self.type_mapper('unknown'),
                                        this_head=agent_annot['head'],
                                        this_doc_id=doc_id,
-                                       this_sentence_id=agent_annot['sentence-id']
+                                       this_sentence_id=its_sentence_id
                                        )
         except Exception as err:
             self.alert_wrong_annot(agent_annot, doc_id, error=err)
