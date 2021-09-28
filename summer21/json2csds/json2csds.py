@@ -152,8 +152,10 @@ class JSON2CSDS:
                 its_type = self.type_mapper(att_annot['attitude-type'])
             else:
                 if att_annot['attitude-type'].find('-') != -1:
-                    its_pol = 'positive' if att_annot['attitude-type'].split('-')[1].find('pos') >= 0 else 'negative'
-                    its_type = self.type_mapper(att_annot['attitude-type'].split('-')[0])
+                    its_attitude_type = att_annot['attitude-type'].split('-')
+                    length = len(its_attitude_type)
+                    its_pol = 'positive' if its_attitude_type[length-1].find('pos') >= 0 else 'negative'
+                    its_type = self.type_mapper('agreement') if its_attitude_type[length-2].find('agree') >= 0 else self.type_mapper(its_attitude_type[length-2])
                 else:
                     its_type = self.type_mapper(att_annot['attitude-type'])
 
