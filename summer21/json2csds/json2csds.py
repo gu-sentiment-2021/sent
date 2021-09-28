@@ -420,7 +420,7 @@ class JSON2CSDS:
 
 ########################
 # test
-address = "E:\Thesis\mpqa_3_0_database\database.mpqa.3.0"
+address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = JSON2CSDS("MPQA3.0", address)
 mpqa_json = obj.produce_json_file()
 csds_coll_result = obj.doc2csds(mpqa_json)
