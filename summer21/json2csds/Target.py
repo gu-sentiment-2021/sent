@@ -99,6 +99,21 @@ class TargetCollection:
             return self.target_instances[self.indexer[instance_id]]
         return None
 
+    def get_all_instances(self):
+        """
+        Returns the list of Target objects.
+        :return: A list of Target objects.
+        """
+        return self.target_instances
+
+    def get_num_instances(self):
+        """
+        Gets the number of Target objects in this collection corresponding
+        to actual annotations in the corpus.
+        :return:  An integer, the count of Target objects.
+        """
+        return len(self.target_instances)
+
     # Under construction: The following method is not using the storage efficiently! But it is not being used very much.
     def del_instance(self, instance_id):
         """
