@@ -335,7 +335,8 @@ class JSON2CSDS:
                     annotation_item = annotations[agent_id]
                     csds_object = self.process_agent(annotation_item, doc_name)
                     # Store the object!
-                    ext_csds_coll.add_labeled_instance(csds_object)
+                    if not csds_object is None:
+                        ext_csds_coll.add_labeled_instance(csds_object)
                     del annotation_item
                 del agent_list
             # Check for "expressive-subjectivity" annotation type.
@@ -347,7 +348,8 @@ class JSON2CSDS:
                     annotation_item = annotations[es_id]
                     csds_object = self.process_es(annotations, annotation_item, doc_name)
                     # Store the object!
-                    ext_csds_coll.add_labeled_instance(csds_object)
+                    if not csds_object is None:
+                        ext_csds_coll.add_labeled_instance(csds_object)
                     del csds_object
                 del es_list
             # Check for "attitude" annotation type.
@@ -358,7 +360,8 @@ class JSON2CSDS:
                 for att_id in att_list:
                     annotation_item = annotations[att_id]
                     csds_object = self.process_att(annotations, annotation_item, doc_name)
-                    ext_csds_coll.add_labeled_instance(csds_object)
+                    if not csds_object is None:
+                        ext_csds_coll.add_labeled_instance(csds_object)
                     del csds_object
                 del att_list
             # Check for "targetFrame" annotation type.
@@ -370,7 +373,8 @@ class JSON2CSDS:
                     annotation_item = annotations[tf_id]
                     tf_object = self.process_tf(annotation_item, tf_id, doc_name)
                     # Store the object.
-                    target_coll.add_instance(tf_object)
+                    if not tf_object is None:
+                        target_coll.add_instance(tf_object)
                     del tf_object
                 del tf_list
             # Check for "sTarget" annotation type.
@@ -382,7 +386,8 @@ class JSON2CSDS:
                     annotation_item = annotations[starget_id]
                     starget_object = self.process_starget(annotation_item, starget_id, doc_name)
                     # Store the object.
-                    target_coll.add_instance(starget_object)
+                    if not starget_object is None:
+                        target_coll.add_instance(starget_object)
                     del starget_object
                 del starget_list
             # Check for "eTarget" annotation type.
@@ -394,7 +399,8 @@ class JSON2CSDS:
                     annotation_item = annotations[etarget_id]
                     etarget_object = self.process_etarget(annotation_item, etarget_id, doc_name)
                     # Store the object.
-                    target_coll.add_instance(etarget_object)
+                    if not etarget_object is None:
+                        target_coll.add_instance(etarget_object)
                     del etarget_object
                 del etarget_list
             '''
