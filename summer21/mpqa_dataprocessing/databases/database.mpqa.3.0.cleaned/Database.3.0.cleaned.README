@@ -179,7 +179,11 @@ Those new eTarget(s) are accessible through following modified targetFrame(s).
     - non_fbis/08.47.00-17401:
         91
 
-* The following annotation line(s) had a wrong or a duplicate id. They've been
-renamed. (1)
+* The following annotation line(s) had a wrong or duplicate id. Thus they've
+been renamed. (1)
     - 20020507/17.55.10-20068
         221
+
+* The following document(s) had misspelled words. Thus they've been fixed. (1)
+    - temp_fbis/20.46.58-22510
+    - 20011210/20.21.48-16389
