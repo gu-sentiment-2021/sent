@@ -324,7 +324,7 @@
 320	2432,2435	eTarget	id="e9035" type="event" isNegated="no" 
 321	2444,2448	eTarget	id="e5050" type="event" isNegated="no" 
 322	2373,2387	eTarget	id="e9031" type="entity" isNegated="no" 
-323	2396,2406	eTarget	id="e9032" type="event" isNegated="no" 
+323	2396,2405	eTarget	id="e9032" type="event" isNegated="no" 
 324	1050,1050	targetFrame	id="tfa10" sTarget-link="none" newETarget-link="none" 
 325	2778,2778	targetFrame	id="tfese2" sTarget-link="none" newETarget-link="none" 
 326	1325,1325	targetFrame	id="tfese7" sTarget-link="none" newETarget-link="none" 
