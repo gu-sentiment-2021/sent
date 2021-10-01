@@ -307,7 +307,7 @@
 303	249,249	targetFrame	id="tfese29" sTarget-link="none" newETarget-link="e9156" 
 304	243,243	targetFrame	id="tfa70" sTarget-link="t70" newETarget-link="e9156" 
 305	1266,1272	eTarget	id="e9075" type="entity" isNegated="no" 
-306	1317,1325	eTarget	id="e9080" type="event" isNegated="no" 
+306	1317,1324	eTarget	id="e9080" type="event" isNegated="no" 
 307	1340,1344	eTarget	id="e9082" type="event" isNegated="no" 
 308	1379,1383	eTarget	id="e9085" type="event" isNegated="no" 
 309	1399,1409	eTarget	id="e9086" type="event" isNegated="no" 
