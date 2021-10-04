@@ -139,7 +139,7 @@
 135	2870,2896	agent	id="zimgov" nested-source="w,straw,zimgov" 
 136	3044,3072	attitude	id="a43" intensity="high" attitude-type="sentiment-neg" targetFrame-link="tfa43" 
 137	1164,1325	attitude	id="a18" intensity="low" attitude-type="arguing-pos" targetFrame-link="tfa18" 
-138	3423,3489	attitude	id="a490" intensity="medium-high" attitude-type="arguing-neg" targetFrame-link="tfa490" 
+138	3422,3489	attitude	id="a490" intensity="medium-high" attitude-type="arguing-neg" targetFrame-link="tfa490" 
 139	584,588	objective-speech-event	id="ose4" targetFrame-link="tfose4" nested-source="w,mongella" 
 140	1992,1992	targetFrame	id="tfose1" sTarget-link="none" newETarget-link="none" 
 141	1992,1992	objective-speech-event	implicit="true" id="ose1" targetFrame-link="tfose1" nested-source="w" 
