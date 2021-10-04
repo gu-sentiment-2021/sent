@@ -87,7 +87,7 @@
 83	535,539	direct-subjective	expression-intensity="neutral" intensity="high" id="ds7" attitude-link="a22,a23" nested-source="w,supporters" 
 84	802,802	direct-subjective	implicit="true" intensity="high" id="ds8" attitude-link="a27,a29,a30" nested-source="w" 
 85	1121,1121	direct-subjective	implicit="true" intensity="high" id="ds5" attitude-link="a32,a33" nested-source="w" 
-86	1869,1883	direct-subjective	expression-intensity="medium" intensity="high" id="ds6" attitude-link="a47" polarity="neutral" nested-source="w,us" 
+86	1870,1883	direct-subjective	expression-intensity="medium" intensity="high" id="ds6" attitude-link="a47" polarity="neutral" nested-source="w,us" 
 87	1445,1467	agent	nested-source="w,eu" 
 88	20,141	attitude	id="a10" intensity="low" attitude-type="sentiment-neg" targetFrame-link="tfa10" 
 89	1442,1617	attitude	id="a42" intensity="medium-high" attitude-type="sentiment-neg" inferred="yes" targetFrame-link="tfa42" 

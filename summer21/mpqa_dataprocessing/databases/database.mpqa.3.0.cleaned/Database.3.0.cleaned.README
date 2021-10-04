@@ -108,7 +108,9 @@ Also some target-links had the value of "n/a" which are now set to "none". (34)
         233, 235, 238, 240, 245, 246, 265, 270, 273, 275, 281, 282, 286, 292,
         976, 977, 980, 998, 1002, 1005, 1007, 1008, 1013, 1016
 
-* The following annotation line(s) had a wrong span. They've been fixed. (699)
+* The following annotation line(s) had a wrong span. They've been fixed. (700)
+    - 20020106/20.26.14-23928: (1)
+        86
     - non_fbis/05.20.33-11163: (585)
         1, 2, 3, 4, 6, 10, 11, 12, 15, 17, 20, 22, 23, 24, 25, 26, 27, 28, 29,
         30, 31, 33, 34, 35, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
