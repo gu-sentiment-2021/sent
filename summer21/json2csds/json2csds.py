@@ -9,12 +9,13 @@ class JSON2CSDS:
     This is a class in order to convert json file to csds.
     """
 
-    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0"):
+    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=False):
         """
         The init method (constructor) for JSON2CSDS class.
         """
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
+        self.talkative = talkative
 
     def produce_json_file(self):
         """
@@ -47,11 +48,14 @@ class JSON2CSDS:
         :param annot: The annotation that error(s) were happening in its process.
         :param error: The error(s) that happened.
         """
-        print('===================\nWrong annotation!!')
-        print(annot)
-        print('Error details: (doc_id: ', doc_id, ')')
-        print(error)
-        print('===================')
+        if self.talkative:
+            print('===================\nWrong annotation!!')
+            print(annot)
+            print('Error details: (doc_id: ', doc_id, ')')
+            print(error)
+            print('===================')
+        else:
+            pass
 
     def go_get_targets(self, annots, target_id):
         """

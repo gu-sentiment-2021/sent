@@ -1,4 +1,6 @@
 from sent.summer21.json2csds import json2csds
+import transformers
+from transformers import AutoTokenizer
 
 
 class extCsds2hfV1:
@@ -25,7 +27,34 @@ class extCsds2hfV1:
         csds_objs, target_objs = json2csds_obj.doc2csds(mpqa_json_file)
         return csds_objs, target_objs
 
+    def extract_csds_collection(self, tuple_result):
+        """
+        It receives a tuple which is returned by mpqa->csds conversion procedure.
+        :return: A collection of csds objects.
+        """
+        csds_coll = tuple_result[0]
+        return csds_coll
+
+    def extract_csds_objects(self, tuple_result):
+        """
+        It receives a csds collection and returns a list of csds objects.
+        :return: A collection of csds objects.
+        """
+        csds_coll = self.extract_csds_collection(tuple_result)
+        csds_objs = csds_coll.get_all_instances()
+        return csds_objs[0]
+
 
 # test part
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = extCsds2hfV1("MPQA3.0", address)
+tuple_res = obj.get_mpqa_results()
+
+csds_objects = obj.extract_csds_objects(tuple_res)
+
+print(csds_objects[0])
+
+checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+# model_inputs = tokenizer(sequence)
