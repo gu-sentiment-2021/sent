@@ -1,5 +1,6 @@
 import os
 import clipboard as cb
+from mpqa3_to_dict import mpqa3_to_dict
 
 def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mpqa.lre.3.0"):
     """
@@ -34,3 +35,50 @@ def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mp
 
 # Sample:
 # adjustSpansInRange(start_byte=2318, delta=+2)
+
+def findCutPhrases(start_doc, end_doc=None, expand=False, mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'):
+    """
+    Find the phrases that their spans are potentially wrong.
+    It can be one of these 2 types:
+    1) There's whitespace at the first or the last character of the head.
+    2) There's non-whitespace character immediately before the first character
+    or immediately after the last character of the head.
+    :param start_doc: First document id we're going to observe.
+    :param end_doc: Last document id we're going to observe. start_doc is being
+    used, if end_doc is not set.
+    :param expand: prints the dictionary of each potentially broken annotation.
+    :return: None
+    """
+    if end_doc is None:
+        end_doc = start_doc
+    m2d = mpqa3_to_dict(mpqa_dir=mpqa_dir)
+    mpqadict = m2d.corpus_to_dict(doclist_filename=doclist_filename)
+    alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
+    for doc in mpqadict['doclist'][start_doc:end_doc+1]: # Iterate over docs
+        cut_phrases = []
+        print(doc)
+        for v in mpqadict['docs'][doc]['annotations'].values(): # iterate over all annotations
+            if 'implicit' in v.keys(): # skip implicit annotations
+                if v['implicit'] == 'true':
+                    continue
+            if v['span-in-doc'][0] == v['span-in-doc'][1]: # skip annotations of zero length
+                continue
+            if 'text' in v.keys():
+                # Check if there's non-whitespace character immediately before the first
+                # character or immediately after the last character of the head.
+                if v['span-in-sentence'][0] > 0 and v['text'][v['span-in-sentence'][0]-1] in alphabet\
+                or v['span-in-sentence'][1] < len(v['text']) and v['text'][v['span-in-sentence'][1]] in alphabet:
+                    cut_phrases += ['{}:{}'.format(v['line-id'], v['head'])]
+                    if expand:
+                        print(v)
+                # Check if there's whitespace at the first or the last character of the head.
+                if v['text'][v['span-in-sentence'][0]] not in alphabet+'`"(\'' \
+                or v['text'][v['span-in-sentence'][1]-1] not in alphabet+'."%?\'),]':
+                    cut_phrases += ['{}:{}'.format(v['line-id'], v['head'])]
+                    if expand:
+                        print(v)
+        print(repr(cut_phrases))
+        print()
+
+# Sample:
+# findCutPhrases(0, 69, expand=True)
