@@ -108,7 +108,7 @@
 104	868,928	attitude	id="a8" intensity="low-medium" attitude-type="speculation" targetFrame-link="tfa8" 
 105	368,470	attitude	id="a3" intensity="high" attitude-type="sentiment-neg" targetFrame-link="tfa3" 
 106	2415,2594	sentence	nested-source="w" 
-107	933,1043	attitude	id="a9" intensity="medium" attitude-type="arguing-pos" targetFrame-link="tfa9" 
+107	933,1042	attitude	id="a9" intensity="medium" attitude-type="arguing-pos" targetFrame-link="tfa9" 
 108	868,929	sentence	nested-source="w" 
 109	611,779	sentence	nested-source="w" 
 110	609,610	split	
