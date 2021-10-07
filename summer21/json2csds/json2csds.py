@@ -116,8 +116,26 @@ class JSON2CSDS:
 
         # Extract features from ES annotation.
         try:
-            its_polarity = (es_annot['polarity'].split('-')[1] if es_annot['polarity'].find('-') >= 0 else es_annot[
-                'polarity']) if 'polarity' in es_annot else es_annot['ese-type'].split('-')[1]
+            possible = ['positive', 'negative', 'both', 'neutral', 'uncertain', 'pos', 'neg']
+
+            if 'polarity' in es_annot:
+                if es_annot['polarity'].count('-') == 2:
+                    its_polarity = es_annot['polarity'].split('-')[1] + '-' + es_annot['polarity'].split('-')[2]
+                elif es_annot['polarity'].count('-') == 1:
+                    if es_annot['polarity'].split('-')[0] in possible:
+                        its_polarity = es_annot['polarity'].split('-')[0] + '-' + es_annot['polarity'].split('-')[1]
+                    else:
+                        its_polarity = es_annot['polarity'].split('-')[1]
+                else:
+                    its_polarity = es_annot['polarity']
+            else:
+                if es_annot['ese-type'].count('-') == 2:
+                    its_polarity = es_annot['ese-type'].split('-')[1] + '-' + es_annot['ese-type'].split('-')[2]
+                else:
+                    if es_annot['ese-type'].split('-')[0] in possible:
+                        its_polarity = es_annot['ese-type'].split('-')[0] + '-' + es_annot['ese-type'].split('-')[1]
+                    else:
+                        its_polarity = es_annot['ese-type'].split('-')[1]
 
             # Because this is an optional attribute in ES.
             if 'intensity' in es_annot:
