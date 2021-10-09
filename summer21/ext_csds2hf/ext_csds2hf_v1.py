@@ -54,7 +54,12 @@ csds_objects = obj.extract_csds_objects(tuple_res)
 
 print(csds_objects[0])
 
+# for example
+text = "Using a Transformer network is simple!"
+head = "is simple"
+
 checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-
-# model_inputs = tokenizer(sequence)
+sentences = [text, head]
+model_inputs = tokenizer(sentences, padding=True)
+print(model_inputs)
