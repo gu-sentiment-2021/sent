@@ -44,8 +44,7 @@ class extCsds2hfV1:
         csds_objs = csds_coll.get_all_instances()
         return csds_objs[0]
 
-def findHead(sequence, head_text):
-    symbols = ['.', '!', ',', '?']
+def findHead(sequence, head_text, symbols):
     head_start = -1
     head_end = -1
     j = 0
@@ -75,8 +74,7 @@ def findHead(sequence, head_text):
 
     return head_start, head_end
 
-def findHeadInToken(tokens, head_start, head_end):
-    symbols = ['.', '!', ',', '?']
+def findHeadInToken(tokens, head_start, head_end, symbols):
     head_start_in_model = -1
     head_end_in_model = -1
     j = 0
@@ -109,12 +107,13 @@ def tokenizer_and_model(sequence, head_text):
     print('tokens_model (output of prepare tokens for model): ', tokens_model['input_ids'])
 
     # for highlight head in tokens
+    symbols = ['.', '!', ',', '?'] #extend?
     # find head in sequence
-    head_start, head_end = findHead(sequence, head_text)
+    head_start, head_end = findHead(sequence, head_text, symbols)
     print('head_start: ', head_start, ', head_end: ', head_end)
 
     # find pos of head in tokens
-    head_start_in_model, head_end_in_model = findHeadInToken(tokens_model['input_ids'], head_start, head_end)
+    head_start_in_model, head_end_in_model = findHeadInToken(tokens_model['input_ids'], head_start, head_end, symbols)
     print('head_start_in_model: ', head_start_in_model, ', head_end_in_model: ', head_end_in_model)
     print('check head_start/end_in_model: ')
     for i in range(head_start_in_model, head_end_in_model + 1):
