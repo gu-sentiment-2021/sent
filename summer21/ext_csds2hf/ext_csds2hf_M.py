@@ -46,46 +46,50 @@ class extCsds2hfV1:
 
 def findHead(sequence, head_text):
     symbols = ['.', '!', ',', '?']
-    a = -1
-    b = -1
+    head_start = -1
+    head_end = -1
     j = 0
 
     for symbol in symbols:
         sequence = sequence.replace(symbol, '')
+
     tokenized_sequence = sequence.split()
-    print(tokenized_sequence)
+    print('sequence: ', tokenized_sequence)
 
     tokenized_head_text = head_text.split()
-    print(tokenized_head_text)
+    print('head_text: ', tokenized_head_text)
 
     for i in range(len(tokenized_sequence)):
         if j <= len(tokenized_head_text):
             if tokenized_head_text[j] == tokenized_sequence[i]:
                 if j == 0:
-                    a = i
+                    head_start = i
                 if j == len(tokenized_head_text) - 1:
-                    b = i
+                    head_end = i
                 j += 1
             else:
                 j = 0
-                a = -1
+                head_start = -1
         else:
             break
 
-    return a, b
+    return head_start, head_end
 
-def findHeadInToken(tokens, a, b):
+def findHeadInToken(tokens, head_start, head_end):
     symbols = ['.', '!', ',', '?']
-    c = -1
-    d = -1
+    head_start_in_model = -1
+    head_end_in_model = -1
     j = 0
     for i in range(len(tokens)):
         flag = True
-        if j == a:
-            c = i
-        if j == b:
-            d = i
-        if tokens[i].startswith('##'):
+        if j == head_start:
+            head_start_in_model = i
+        if j == head_end:
+            head_end_in_model = i
+        if type(tokens[i]) is int:
+            if tokens[i] == 101 or tokens[i] == 102: #need?
+                j = j
+        elif tokens[i].startswith('##'):
             j = j
         else:
             for symbol in symbols:
@@ -93,32 +97,45 @@ def findHeadInToken(tokens, a, b):
                     flag = False
             if flag == True:
                 j += 1
+    return head_start_in_model, head_end_in_model
 
-    return c, d
+def tokenizer_and_model(sequence, head_text):
+    checkpoint = "bert-base-cased"
+    tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+    tokens = tokenizer.tokenize(sequence)
+    print('tokens (output of tokenize): ', tokens)
+    tokens_model = tokenizer.prepare_for_model(tokens)
+    print('tokens_model (output of prepare tokens for model): ', tokens_model['input_ids'])
+
+    # for highlight head in tokens
+    # find head in sequence
+    head_start, head_end = findHead(sequence, head_text)
+    print('head_start: ', head_start, ', head_end: ', head_end)
+
+    # find pos of head in tokens
+    head_start_in_model, head_end_in_model = findHeadInToken(tokens_model['input_ids'], head_start, head_end)
+    print('head_start_in_model: ', head_start_in_model, ', head_end_in_model: ', head_end_in_model)
+    print('check head_start/end_in_model: ')
+    for i in range(head_start_in_model, head_end_in_model + 1):
+        print(tokens_model['input_ids'][i])
+
+    input_ids = tokenizer.convert_tokens_to_ids(tokens)
+    print('input_ids (output of convert tokens to ids): ', input_ids)
+    final_inputs = tokenizer.prepare_for_model(input_ids)
+    print('final_inputs (output of prepare input_ids for model): ', final_inputs)
+
+    return head_start_in_model, head_end_in_model, final_inputs
+
 # test part
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = extCsds2hfV1("MPQA3.0", address)
 tuple_res = obj.get_mpqa_results()
 
 csds_objects = obj.extract_csds_objects(tuple_res)
-
 print(csds_objects[0])
 
-checkpoint = "bert-base-cased"
-tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-
+# tokenizer part
 sequence = "Using a Transformer network is simple."
 head_text = "is simple"
-tokens = tokenizer.tokenize(sequence)
-print(tokens)
-
-# for highlight head in tokens
-# find head in sequence
-a, b = findHead(sequence, head_text)
-print(a, ',', b)
-# find pos of head in tokens
-c, d = findHeadInToken(tokens, a, b)
-print(c, ',', d)
-for i in range(c, d + 1):
-    print(tokens[i])
-# model_inputs = tokenizer(sequence)
+head_start_in_model, head_end_in_model, final_inputs = tokenizer_and_model(sequence, head_text)
