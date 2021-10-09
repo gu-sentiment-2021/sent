@@ -136,6 +136,6 @@ csds_objects = obj.extract_csds_objects(tuple_res)
 print(csds_objects[0])
 
 # tokenizer part
-sequence = "Using a Transformer network is simple."
+sequence = "This is first sentence. Using a Transformer network is simple!"
 head_text = "is simple"
 head_start_in_model, head_end_in_model, final_inputs = tokenizer_and_model(sequence, head_text)
