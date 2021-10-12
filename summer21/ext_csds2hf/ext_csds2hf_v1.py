@@ -60,6 +60,6 @@ head = "is simple"
 
 checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-sentences = [text, head]
-model_inputs = tokenizer(sentences, padding=True)
+raw_inputs = [text, head]
+model_inputs = tokenizer(raw_inputs, padding=True, truncation=True, return_tensors="pt")
 print(model_inputs)
