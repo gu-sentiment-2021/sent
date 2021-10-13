@@ -6,7 +6,7 @@ from sent.summer21.json2csds.Target import sTarget, eTarget, Target, TargetColle
 
 class JSON2CSDS:
     """
-    This is a class in order to convert json file to csds.
+    This is a class in order to convert JSON file to CSDS.
     """
 
     def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=False):
@@ -19,8 +19,8 @@ class JSON2CSDS:
 
     def produce_json_file(self):
         """
-        It uses the mpqa3_to_dict module in order to convert mpqa to json (dict) file.
-        :return: A json file which is obtained from mpqa corpus.
+        It uses the mpqa3_to_dict module in order to convert MPQA to JSON (dict) file.
+        :return: A JSON file which is obtained from MPQA corpus.
         """
         m2d = mpqa3_to_dict(self.corpus_name, self.mpqa_dir)
         result = m2d.corpus_to_dict()
@@ -62,7 +62,7 @@ class JSON2CSDS:
         It goes after the targets in the target-links and fetches them.
         :param annots: A Python dict which represents all annotations in the doc.
         :param target_id: ID of the target.
-        :return: A python list of the targets.
+        :return: A Python list of the targets.
         """
         targets = annots[target_id]['newETarget-link'] + annots[target_id]['sTarget-link']
 
@@ -73,7 +73,7 @@ class JSON2CSDS:
         It processes an agent type annotation.
         :param agent_annot: A Python dict which represents an agent annotation.
         :param doc_id: ID of the doc.
-        :return: A csds object.
+        :return: A CSDS object.
         """
         try:
             # Extract features from agent annotation.
@@ -88,7 +88,7 @@ class JSON2CSDS:
                 its_head_end = agent_annot['span-in-sentence'][1]
                 its_sentence_id = agent_annot['sentence-id']
 
-            # Create a csds object based on the values of the agent annotation.
+            # Create a CSDS object based on the values of the agent annotation.
             csds_object = ExtendedCSDS(this_text=its_text,
                                        this_head_start=its_head_start,
                                        this_head_end=its_head_end,
@@ -111,13 +111,15 @@ class JSON2CSDS:
         :param all_annot: A Python dict which represents all annotations in the doc.
         :param es_annot: A Python dict which represents an ES annotation.
         :param doc_id: ID of the doc.
-        :return: A csds object.
+        :return: A CSDS object.
         """
 
         # Extract features from ES annotation.
         try:
+            # All possibilities
             possible = ['positive', 'negative', 'both', 'neutral', 'uncertain', 'pos', 'neg']
 
+            # [WHY] -> needs more commenting
             if 'polarity' in es_annot:
                 if es_annot['polarity'].count('-') == 2:
                     its_polarity = es_annot['polarity'].split('-')[1] + '-' + es_annot['polarity'].split('-')[2]
@@ -143,7 +145,7 @@ class JSON2CSDS:
             else:
                 its_intensity = None
 
-            # Create a csds object based on the values of the ES annotation.
+            # Create a CSDS object based on the values of the ES annotation.
             csds_object = ExtendedCSDS(this_text=es_annot['text'],
                                        this_head_start=es_annot['span-in-sentence'][0],
                                        this_head_end=es_annot['span-in-sentence'][1],
@@ -167,7 +169,7 @@ class JSON2CSDS:
         :param all_annot: A Python dict which represents all annotations in the doc.
         :param att_annot: A Python dict which represents an attitude annotation.
         :param doc_id: ID of the doc.
-        :return: A csds object.
+        :return: A CSDS object.
         """
         its_pol = None
         its_type = self.__type_mapper('unknown')
@@ -325,8 +327,8 @@ class JSON2CSDS:
 
     def doc2csds(self, json_file):
         """
-        It converts a document annotation from json to csds and target.
-        :param json_file: The json file which is obtained from mpqa to json conversion.
+        It converts a document annotation from json to CSDS and target.
+        :param json_file: The JSON file which is obtained from MPQA to JSON conversion.
         :return: A pair of collections:
         1. A csds collection (several csds objects).
         2. A target collection (several target objects).
@@ -334,14 +336,15 @@ class JSON2CSDS:
         # List of all document names extracted from the json file.
         doc_list = json_file['doclist']
 
+        # Retrieve all of the document annotations.
         docs = json_file['docs']
 
-        # In here, we create a csds collection that stores the csds objects.
+        # In here, we create a CSDS collection that stores the CSDS objects.
         ext_csds_coll = ExtendedCSDSCollection(self.corpus_name)
-        # And here, we create a target collection that stores the target objects.
+        # And here, we create a Target collection that stores the Target objects.
         target_coll = TargetCollection(self.corpus_name)
 
-        # Process each document
+        # Process each document.
         for doc_name in doc_list:
             curr_doc = docs[doc_name]
 
