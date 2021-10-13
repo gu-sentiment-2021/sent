@@ -325,13 +325,24 @@ class JSON2CSDS:
         return None
     '''
 
-    def doc2csds(self, json_file):
+    def __csds_object2json(self, csds_object):
         """
-        It converts a document annotation from json to CSDS and target.
+        It simply converts a CSDS object to JSON file.
+        :param csds_object: The CSDS object.
+        :return: A JSON file.
+        """
+        if csds_object:
+            return json.dumps(csds_object.__dict__)
+        else:
+            return {}
+
+    def doc2csds(self, json_file, json_output=False):
+        """
+        It converts a document annotation from JSON to CSDS and target.
         :param json_file: The JSON file which is obtained from MPQA to JSON conversion.
         :return: A pair of collections:
-        1. A csds collection (several csds objects).
-        2. A target collection (several target objects).
+        1. A CSDS collection (several CSDS objects).
+        2. A Target collection (several Target objects).
         """
         # List of all document names extracted from the json file.
         doc_list = json_file['doclist']
@@ -468,7 +479,19 @@ class JSON2CSDS:
 
             del annotations
             '''
-        return ext_csds_coll, target_coll
+        if json_output:
+            csds_coll_lst = ext_csds_coll.get_all_instances()[0]
+            target_coll_lst = target_coll.get_all_instances()
+            csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
+            target_json_files = list(map(self.__csds_object2json, target_coll_lst))
+            overall_result = {
+                'corpus_name': self.corpus_name,
+                'csds_objects': csds_json_files,
+                'target_objects': target_json_files
+            }
+            return overall_result
+        else:
+            return ext_csds_coll, target_coll
 
 
 ########################
@@ -476,4 +499,5 @@ class JSON2CSDS:
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = JSON2CSDS("MPQA3.0", address)
 mpqa_json = obj.produce_json_file()
-csds_coll_result, _ = obj.doc2csds(mpqa_json)
+# csds_coll_result, _ = obj.doc2csds(mpqa_json, json_output=True)
+json_output = obj.doc2csds(mpqa_json, json_output=True)

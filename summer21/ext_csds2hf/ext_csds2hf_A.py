@@ -1,7 +1,11 @@
+import json
+
 from sent.summer21.json2csds import json2csds
 import transformers
 from transformers import AutoTokenizer, TrainingArguments, AutoModelForSequenceClassification, Trainer, \
     DataCollatorWithPadding
+
+from sent.summer21.json2csds.json2csds import JSON2CSDS
 
 
 class extCsds2hfV1:
@@ -46,6 +50,7 @@ class extCsds2hfV1:
         return csds_objs[0]
 
 
+'''
 # test part
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = extCsds2hfV1("MPQA3.0", address)
@@ -56,10 +61,10 @@ csds_objects = obj.extract_csds_objects(tuple_res)
 sentences_pair1 = []
 sentences_pair2 = []
 
-
 for csds_object in csds_objects:
     sentences_pair1.append(csds_object.text)
     sentences_pair2.append(csds_object.head)
+
 
 checkpoint = "bert-base-uncased"
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -76,4 +81,13 @@ trainer = Trainer(
 )
 
 trainer.train()
+'''
 
+# test
+address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
+obj = JSON2CSDS("MPQA3.0", address)
+mpqa_json = obj.produce_json_file()
+csds_coll_result, _ = obj.doc2csds(mpqa_json)
+path = 'C:\\Users\\arash\\Desktop\\'
+json_output = obj.doc2csds(mpqa_json, json_output=True)
+print(json_output)
