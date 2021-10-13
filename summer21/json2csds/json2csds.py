@@ -26,7 +26,7 @@ class JSON2CSDS:
         result = m2d.corpus_to_dict()
         return result
 
-    def type_mapper(self, key):
+    def __type_mapper(self, key):
         """
         A mapping between types and their corresponding number based on the enum.
         :param key: type of the annotation.
@@ -42,7 +42,7 @@ class JSON2CSDS:
                          'unknown': 8}
         return type_map_dict[key]
 
-    def alert_wrong_annot(self, annot, doc_id, error=None):
+    def __alert_wrong_annot(self, annot, doc_id, error=None):
         """
         It is used for alerting wrong annotation(s).
         :param annot: The annotation that error(s) were happening in its process.
@@ -57,7 +57,7 @@ class JSON2CSDS:
         else:
             pass
 
-    def go_get_targets(self, annots, target_id):
+    def __go_get_targets(self, annots, target_id):
         """
         It goes after the targets in the target-links and fetches them.
         :param annots: A Python dict which represents all annotations in the doc.
@@ -68,7 +68,7 @@ class JSON2CSDS:
 
         return targets
 
-    def process_agent(self, agent_annot, doc_id):
+    def __process_agent(self, agent_annot, doc_id):
         """
         It processes an agent type annotation.
         :param agent_annot: A Python dict which represents an agent annotation.
@@ -95,17 +95,17 @@ class JSON2CSDS:
                                        this_belief=None,
                                        this_polarity=None,
                                        this_intensity=None,
-                                       this_annotation_type=self.type_mapper('unknown'),
+                                       this_annotation_type=self.__type_mapper('unknown'),
                                        this_head=agent_annot['head'],
                                        this_doc_id=doc_id,
                                        this_sentence_id=its_sentence_id
                                        )
         except Exception as err:
-            self.alert_wrong_annot(agent_annot, doc_id, error=err)
+            self.__alert_wrong_annot(agent_annot, doc_id, error=err)
             return None
         return csds_object
 
-    def process_es(self, all_annot, es_annot, doc_id):
+    def __process_es(self, all_annot, es_annot, doc_id):
         """
         It processes an ES (expressive-subjectivity) type annotation.
         :param all_annot: A Python dict which represents all annotations in the doc.
@@ -150,18 +150,18 @@ class JSON2CSDS:
                                        this_belief=None,
                                        this_polarity=its_polarity,
                                        this_intensity=its_intensity,
-                                       this_annotation_type=self.type_mapper('expressive_subjectivity'),
-                                       this_target_link=self.go_get_targets(all_annot, es_annot['targetFrame-link']),
+                                       this_annotation_type=self.__type_mapper('expressive_subjectivity'),
+                                       this_target_link=self.__go_get_targets(all_annot, es_annot['targetFrame-link']),
                                        this_head=es_annot['head'],
                                        this_doc_id=doc_id,
                                        this_sentence_id=es_annot['sentence-id']
                                        )
         except Exception as err:
-            self.alert_wrong_annot(es_annot, doc_id, error=err)
+            self.__alert_wrong_annot(es_annot, doc_id, error=err)
             return None
         return csds_object
 
-    def process_att(self, all_annot, att_annot, doc_id):
+    def __process_att(self, all_annot, att_annot, doc_id):
         """
         It processes an attitude type annotation.
         :param all_annot: A Python dict which represents all annotations in the doc.
@@ -170,22 +170,22 @@ class JSON2CSDS:
         :return: A csds object.
         """
         its_pol = None
-        its_type = self.type_mapper('unknown')
+        its_type = self.__type_mapper('unknown')
 
         # Extract features from attitude annotation.
         try:
             if att_annot['attitude-type'].find('other') >= 0:
-                its_type = self.type_mapper('other-attitude')
+                its_type = self.__type_mapper('other-attitude')
             else:
                 # Extract polarity and type: check all of the cases such as corner cases.
                 if att_annot['attitude-type'].find('-') != -1:
                     its_attitude_type = att_annot['attitude-type'].split('-')
                     length = len(its_attitude_type)
                     its_pol = 'positive' if its_attitude_type[length - 1].find('pos') >= 0 else 'negative'
-                    its_type = self.type_mapper('agreement') if its_attitude_type[length - 2].find(
-                        'agree') >= 0 else self.type_mapper(its_attitude_type[length - 2])
+                    its_type = self.__type_mapper('agreement') if its_attitude_type[length - 2].find(
+                        'agree') >= 0 else self.__type_mapper(its_attitude_type[length - 2])
                 else:
-                    its_type = self.type_mapper(att_annot['attitude-type'])
+                    its_type = self.__type_mapper(att_annot['attitude-type'])
 
             # Extract features from attitude annotation.
             csds_object = ExtendedCSDS(this_text=att_annot['text'],
@@ -195,7 +195,7 @@ class JSON2CSDS:
                                        this_polarity=its_pol,
                                        this_intensity=att_annot['intensity'],
                                        this_annotation_type=its_type,
-                                       this_target_link=self.go_get_targets(all_annot, att_annot['targetFrame-link']),
+                                       this_target_link=self.__go_get_targets(all_annot, att_annot['targetFrame-link']),
                                        this_head=att_annot['head'],
                                        this_doc_id=doc_id,
                                        this_sentence_id=att_annot['sentence-id']
@@ -203,10 +203,10 @@ class JSON2CSDS:
             return csds_object
 
         except Exception as err:
-            self.alert_wrong_annot(att_annot, doc_id, error=err)
+            self.__alert_wrong_annot(att_annot, doc_id, error=err)
             return None
 
-    def process_tf(self, tf_annot, tf_id, doc_id):
+    def __process_tf(self, tf_annot, tf_id, doc_id):
         """
         It processes a target frame type annotation.
         :param tf_annot: A Python dict which represents a targetFrame annotation.
@@ -220,10 +220,10 @@ class JSON2CSDS:
                                    this_span_end=tf_annot['span-in-sentence'][1])
             return target_object
         except Exception as err:
-            self.alert_wrong_annot(tf_annot, doc_id, error=err)
+            self.__alert_wrong_annot(tf_annot, doc_id, error=err)
             return None
 
-    def process_starget(self, starget_annot, starget_id, doc_id):
+    def __process_starget(self, starget_annot, starget_id, doc_id):
         """
         It processes a sTarget type annotation.
         :param starget_annot: A Python dict which represents a sTarget annotation.
@@ -241,12 +241,12 @@ class JSON2CSDS:
             if 'target-uncertain' in starget_annot:
                 starget_object.target_uncertain = starget_annot['target-uncertain']
         except Exception as err:
-            self.alert_wrong_annot(starget_annot, doc_id, error=err)
+            self.__alert_wrong_annot(starget_annot, doc_id, error=err)
             return None
 
         return starget_object
 
-    def process_etarget(self, etarget_annot, etarget_id, doc_id):
+    def __process_etarget(self, etarget_annot, etarget_id, doc_id):
         """
         It processes an eTarget type annotation.
         :param etarget_annot: A Python dict which represents an eTarget annotation.
@@ -260,7 +260,7 @@ class JSON2CSDS:
                                      this_span_end=etarget_annot['span-in-sentence'][1],
                                      this_type_etarget=etarget_annot['type'])
 
-            # Check 'isNegated' and 'isReferredInSpan which are optional attributes.
+            # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
             if 'isNegated' in etarget_annot:
                 etarget_object.is_negated = etarget_annot['isNegated']
 
@@ -268,7 +268,7 @@ class JSON2CSDS:
                 etarget_object.is_referred_in_span = etarget_annot['isReferredInSpan']
 
         except Exception as err:
-            self.alert_wrong_annot(etarget_annot, doc_id, error=err)
+            self.__alert_wrong_annot(etarget_annot, doc_id, error=err)
             return None
 
         return etarget_object
@@ -355,7 +355,7 @@ class JSON2CSDS:
                 # Process each agent item by its corresponding ID.
                 for agent_id in agent_list:
                     annotation_item = annotations[agent_id]
-                    csds_object = self.process_agent(annotation_item, doc_name)
+                    csds_object = self.__process_agent(annotation_item, doc_name)
                     # Store the object!
                     if not csds_object is None:
                         ext_csds_coll.add_labeled_instance(csds_object)
@@ -368,7 +368,7 @@ class JSON2CSDS:
                 # Process each ES item by its corresponding ID.
                 for es_id in es_list:
                     annotation_item = annotations[es_id]
-                    csds_object = self.process_es(annotations, annotation_item, doc_name)
+                    csds_object = self.__process_es(annotations, annotation_item, doc_name)
                     # Store the object!
                     if not csds_object is None:
                         ext_csds_coll.add_labeled_instance(csds_object)
@@ -381,7 +381,7 @@ class JSON2CSDS:
                 # Process each attitude item by its corresponding ID.
                 for att_id in att_list:
                     annotation_item = annotations[att_id]
-                    csds_object = self.process_att(annotations, annotation_item, doc_name)
+                    csds_object = self.__process_att(annotations, annotation_item, doc_name)
                     if not csds_object is None:
                         ext_csds_coll.add_labeled_instance(csds_object)
                     del csds_object
@@ -393,7 +393,7 @@ class JSON2CSDS:
                 # Process each target frame item by its corresponding ID.
                 for tf_id in tf_list:
                     annotation_item = annotations[tf_id]
-                    tf_object = self.process_tf(annotation_item, tf_id, doc_name)
+                    tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
                     # Store the object.
                     if not tf_object is None:
                         target_coll.add_instance(tf_object)
@@ -406,7 +406,7 @@ class JSON2CSDS:
                 # Process each sTarget item by its corresponding ID.
                 for starget_id in starget_list:
                     annotation_item = annotations[starget_id]
-                    starget_object = self.process_starget(annotation_item, starget_id, doc_name)
+                    starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
                     # Store the object.
                     if not starget_object is None:
                         target_coll.add_instance(starget_object)
@@ -419,7 +419,7 @@ class JSON2CSDS:
                 # Process each eTarget item by its corresponding ID.
                 for etarget_id in etarget_list:
                     annotation_item = annotations[etarget_id]
-                    etarget_object = self.process_etarget(annotation_item, etarget_id, doc_name)
+                    etarget_object = self.__process_etarget(annotation_item, etarget_id, doc_name)
                     # Store the object.
                     if not etarget_object is None:
                         target_coll.add_instance(etarget_object)
