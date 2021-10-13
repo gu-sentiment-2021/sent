@@ -1,6 +1,8 @@
 from sent.summer21.json2csds import json2csds
 import transformers
-from transformers import AutoTokenizer, TrainingArguments
+from transformers import AutoTokenizer, TrainingArguments, AutoModelForSequenceClassification, Trainer, \
+    DataCollatorWithPadding
+
 
 class extCsds2hfV1:
     """
@@ -53,4 +55,25 @@ csds_objects = obj.extract_csds_objects(tuple_res)
 
 sentences_pair1 = []
 sentences_pair2 = []
+
+
+for csds_object in csds_objects:
+    sentences_pair1.append(csds_object.text)
+    sentences_pair2.append(csds_object.head)
+
+checkpoint = "bert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+training_args = TrainingArguments("test-trainer")
+model = AutoModelForSequenceClassification.from_pretrained(checkpoint, num_labels=2)
+data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+trainer = Trainer(
+    model,
+    training_args,
+    train_dataset=sentences_pair1,
+    # eval_dataset=None,
+    data_collator=data_collator,
+    tokenizer=tokenizer,
+)
+
+trainer.train()
 
