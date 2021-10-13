@@ -25,7 +25,7 @@ class mpqa3_to_dict:
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
 
-    def cleanup_data(self, anno_lines):
+    def __cleanup_data(self, anno_lines): ### IT ACTUALLY DOES NOTHING AT THE MOMENT !!!
         """
         It cleans up the annotation lines by correcting misspelled values, attributes and more.
         :param anno_lines: a list of the annotation lines of a document
@@ -49,7 +49,7 @@ class mpqa3_to_dict:
         with open(os.path.join(self.mpqa_dir, "man_anns", docname, "gateman.mpqa.lre.3.0")) as anno_file:
             anno_lines = anno_file.readlines()
         if cleaning: # Clean up the data, if requested.
-            anno_lines = self.cleanup_data(anno_lines)
+            anno_lines = self.__cleanup_data(anno_lines)
 
         # Final output
         output = {
@@ -141,7 +141,7 @@ class mpqa3_to_dict:
         :return: A python dictionary representing the corpus.
         """
         if doclist is None:
-            doclist = self.doclistfile_to_doclist(doclist_filename)
+            doclist = self.__doclistfile_to_doclist(doclist_filename)
         output = {
             "corpus": self.corpus_name, # Name of the corpus from which the documents were drawn.
             "doclist": doclist,         # List of the document names.
@@ -151,7 +151,7 @@ class mpqa3_to_dict:
             output["docs"][docname] = self.doc_to_dict(docname, cleaning)
         return output
     
-    def doclistfile_to_doclist(self, doclist_filename='doclist'):
+    def __doclistfile_to_doclist(self, doclist_filename='doclist'):
         """
         An auxiliary function for converting a file of a list of document names to a list of document names.
         :param doclist_filename: The name of the file which contains a list of the document names.
