@@ -19,9 +19,9 @@ class mpqa3_to_dict:
     """
 
     corpus_name = "" # Name of the corpus from which the documents were drawn.
-    mpqa_dir = "database.mpqa.3.0" # mpqa 3.0 root directory
+    mpqa_dir = "mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned" # mpqa 3.0 root directory
 
-    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0"):
+    def __init__(self, corpus_name="", mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned"):
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
 
