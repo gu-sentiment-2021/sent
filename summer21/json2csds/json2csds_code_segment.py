@@ -10,7 +10,7 @@ mpqa_json = obj.produce_json_file()
 json_output = obj.doc2csds(mpqa_json, json_output=True)
 
 # Path is where you want to save the JSON file.
-path = 'C:\\Users\\arash\\Desktop\\'
+path = ''
 
 with open(path + 'data.json', 'w', encoding='utf-8') as f:
     json.dump(json_output, f, ensure_ascii=False, indent=4)
