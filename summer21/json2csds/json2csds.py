@@ -485,7 +485,6 @@ class JSON2CSDS:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
             csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
-            print(type(csds_json_files[0]))
             target_json_files = list(map(self.__csds_object2json, target_coll_lst))
             overall_result = {
                 'corpus_name': self.corpus_name,
@@ -495,6 +494,5 @@ class JSON2CSDS:
             return overall_result
         else:
             return ext_csds_coll, target_coll
-
 
 ########################
