@@ -1,21 +1,36 @@
+from enum import Enum
+
+class TypeTarget(str, Enum):
+    ETARGET = 'eTarget'
+    STARGET = 'sTarget'
+    TARGETFRAME = 'targetFrame'
+
 class Target:
     """
     This class is a parent class for eTarget(s) and sTarget(s).
     This class has target_id, span_start and span_end that both eTarget(s) and sTarget(s)
     include these parameters.
     """
+    sentence_id = -1  # index of sentence within document
+    text = ""  # sentence in which the annotated head occurs
     target_id = ""  # id of eTarget or sTarget
-    span_start = -1  # start span of eTarget or sTarget
-    span_end = -1  # end span of eTarget or sTarget
+    head_start = -1  # start span of eTarget or sTarget
+    head_end = -1  # end span of eTarget or sTarget
+    head = ""  # target of annotation within sentence
+    annotation_type: TypeTarget  # The type of annotation
 
-    def __init__(self, this_id, this_span_start, this_span_end):
+    def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
+                 this_head="", this_sentence_id=-1):
         """
         The init method (constructor) for Target class.
         """
         self.target_id = this_id
-        self.span_start = this_span_start
-        self.span_end = this_span_end
-
+        self.sentence_id = this_sentence_id
+        self.text = this_text
+        self.head_start = this_head_start
+        self.head_end = this_head_end
+        self.head = this_head
+        self.annotation_type = TypeTarget(this_annotation_type)
 
 class eTarget(Target):
     """
