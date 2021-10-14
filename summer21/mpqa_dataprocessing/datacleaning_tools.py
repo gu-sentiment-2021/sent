@@ -13,7 +13,7 @@ def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mp
     with open(os.path.join(filename)) as doc_file:
         doc_text = doc_file.readlines()
         for line in doc_text:
-            if line[0] == '#': # Skip comment lines
+            if line[0] == '#': # Skip comment lines without modifing them
                 modified_file += line
                 continue
             id, span, anno_type, attr = line.split('\t')
@@ -34,9 +34,12 @@ def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mp
     print("ids:", ids)
 
 # Sample:
-# adjustSpansInRange(start_byte=2318, delta=+2)
+# adjustSpansInRange(start_byte=2318, delta=+2) # You should run it inside the same directory of the annotation file.
 
-def findCutPhrases(start_doc, end_doc=None, expand=False, mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'):
+def findCutPhrases(
+    start_doc, end_doc=None, expand=False,
+    mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'
+):
     """
     Find the phrases that their spans are potentially wrong.
     It can be one of these 2 types:
@@ -56,7 +59,7 @@ def findCutPhrases(start_doc, end_doc=None, expand=False, mpqa_dir="mpqa_datapro
     alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
     for doc in mpqadict['doclist'][start_doc:end_doc+1]: # Iterate over docs
         cut_phrases = []
-        print(doc)
+        print(doc) # The name of the doc we're processing right now
         for v in mpqadict['docs'][doc]['annotations'].values(): # iterate over all annotations
             if 'implicit' in v.keys(): # skip implicit annotations
                 if v['implicit'] == 'true':
@@ -82,3 +85,22 @@ def findCutPhrases(start_doc, end_doc=None, expand=False, mpqa_dir="mpqa_datapro
 
 # Sample:
 # findCutPhrases(0, 69, expand=True)
+
+def CountAllAttributeTypes(
+    mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'
+):
+    """
+    It counts all types of attributs available in all annotation lines in all documents of a corpus.
+    :return: a python dictionary with attribute names as keys and number of times they appeared in annotation files as values
+    """
+    m2d = mpqa3_to_dict(mpqa_dir=mpqa_dir)
+    mpqadict = m2d.corpus_to_dict(doclist_filename=doclist_filename)
+    attr_types = {}
+    for doc in mpqadict['doclist']: # Iterate over all docs
+        for anno_id, attributes in mpqadict['docs'][doc]['annotations'].items(): # Iterate over all annotations
+            for attr_type, attr_value in attributes.items(): # Iterate over all attributes
+                attr_types[attr_type] = attr_types.get(attr_type, 0) + 1 # Counter
+    return attr_types
+
+# Sample:
+# print(CountAllAttributeTypes())
