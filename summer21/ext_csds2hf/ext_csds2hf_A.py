@@ -1,5 +1,4 @@
 import json
-
 from sent.summer21.json2csds import json2csds
 import transformers
 from transformers import AutoTokenizer, TrainingArguments, AutoModelForSequenceClassification, Trainer, \
@@ -10,7 +9,7 @@ from sent.summer21.json2csds.json2csds import JSON2CSDS
 
 class extCsds2hfV1:
     """
-        This class is for using csds in hugging face models!
+        This class is for using CSDS in hugging face models!
     """
 
     def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0"):
@@ -90,4 +89,8 @@ mpqa_json = obj.produce_json_file()
 csds_coll_result, _ = obj.doc2csds(mpqa_json)
 path = 'C:\\Users\\arash\\Desktop\\'
 json_output = obj.doc2csds(mpqa_json, json_output=True)
-print(json_output)
+with open(path + 'data.json', 'w', encoding='utf-8') as f:
+    json.dump(json_output, f, ensure_ascii=False, indent=4)
+
+with open(path + 'data.json') as json_file:
+    data = json.load(json_file)

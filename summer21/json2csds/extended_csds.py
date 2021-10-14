@@ -17,15 +17,15 @@ from itertools import chain
 from enum import Enum
 
 
-class Type(Enum):
-    sentiment = 1
-    arguing = 2
-    agreement = 3
-    intention = 4
-    speculation = 5
-    other_attitude = 6
-    expressive_subjectivity = 7
-    unknown = 8
+class Type(str, Enum):
+    SENTIMENT = 'sentiment'
+    ARGUING = 'arguing'
+    AGREEMENT = 'agreement'
+    INTENTION = 'intention'
+    SPECULATION = 'speculation'
+    OTHER_ATTITUDE = 'other_attitude'
+    EXPRESSIVE_SUBJECTIVITY = 'expressive_subjectivity'
+    UNKNOWN = 'unknown'
 
 
 class ExtendedCSDS:
@@ -51,8 +51,8 @@ class ExtendedCSDS:
     sentiment = ""  # sentiment value (values are corpus-specific)
     polarity = ""  # polarity of the type of annotation
     intensity = ""  # intensity of the type of annotation
-    annotation_type: Type # The type annotation
-    target_link = [] # A list that contains the id of e/sTargets
+    annotation_type: Type  # The type annotation
+    target_link = []  # A list that contains the id of e/sTargets
 
     def __init__(
             self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,

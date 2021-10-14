@@ -32,14 +32,15 @@ class JSON2CSDS:
         :param key: type of the annotation.
         :return: Type's corresponding number based on the enum.
         """
-        type_map_dict = {'sentiment': 1,
-                         'arguing': 2,
-                         'agreement': 3,
-                         'intention': 4,
-                         'speculation': 5,
-                         'other-attitude': 6,
-                         'expressive_subjectivity': 7,
-                         'unknown': 8}
+        # Currently, it does not do anything special!
+        type_map_dict = {'sentiment': 'sentiment',
+                         'arguing': 'arguing',
+                         'agreement': 'agreement',
+                         'intention': 'intention',
+                         'speculation': 'speculation',
+                         'other-attitude': 'other-attitude',
+                         'expressive_subjectivity': 'expressive_subjectivity',
+                         'unknown': 'unknown'}
         return type_map_dict[key]
 
     def __alert_wrong_annot(self, annot, doc_id, error=None):
@@ -332,7 +333,8 @@ class JSON2CSDS:
         :return: A JSON file.
         """
         if csds_object:
-            return json.dumps(csds_object.__dict__)
+            json_file = csds_object.__dict__
+            return json_file
         else:
             return {}
 
@@ -483,6 +485,7 @@ class JSON2CSDS:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
             csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
+            print(type(csds_json_files[0]))
             target_json_files = list(map(self.__csds_object2json, target_coll_lst))
             overall_result = {
                 'corpus_name': self.corpus_name,
@@ -499,5 +502,4 @@ class JSON2CSDS:
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = JSON2CSDS("MPQA3.0", address)
 mpqa_json = obj.produce_json_file()
-# csds_coll_result, _ = obj.doc2csds(mpqa_json, json_output=True)
-json_output = obj.doc2csds(mpqa_json, json_output=True)
+csds_coll_result, _ = obj.doc2csds(mpqa_json)

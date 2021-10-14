@@ -26,7 +26,7 @@ class eTarget(Target):
     is_referred_in_span = False  # this is optional attribute
 
     def __init__(self, this_id, this_span_start, this_span_end, this_type_etarget,
-                 this_is_negated=False, this_is_referred_in_span=False):
+                 this_is_negated=None, this_is_referred_in_span=None):
         """
         The init method (constructor) for eTarget class.
         """
