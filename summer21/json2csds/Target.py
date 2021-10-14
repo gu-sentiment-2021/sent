@@ -37,8 +37,8 @@ class eTarget(Target):
     This class is for entity/event level target(s).
     """
     type_etarget = ""  # type of eTarget, possible values: entity, event, other
-    is_negated = False  # this is True when eTarget is nagated
-    is_referred_in_span = False  # this is optional attribute
+    is_negated = None  # this is True when eTarget is nagated
+    is_referred_in_span = None  # this is optional attribute
 
     def __init__(self, this_id, this_span_start, this_span_end, this_type_etarget,
                  this_is_negated=None, this_is_referred_in_span=None):
