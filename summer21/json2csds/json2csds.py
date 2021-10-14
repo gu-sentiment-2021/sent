@@ -9,7 +9,7 @@ class JSON2CSDS:
     This is a class in order to convert JSON file to CSDS.
     """
 
-    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=False):
+    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=True):
         """
         The init method (constructor) for JSON2CSDS class.
         """
@@ -219,8 +219,13 @@ class JSON2CSDS:
         try:
             # Extract features from target frame annotation and create an object from them.
             target_object = Target(this_id=tf_id,
+                                   this_sentence_id=tf_annot['sentence-id'],
+                                   this_text=tf_annot['text'],
                                    this_span_start=tf_annot['span-in-sentence'][0],
-                                   this_span_end=tf_annot['span-in-sentence'][1])
+                                   this_span_end=tf_annot['span-in-sentence'][1],
+                                   this_head=tf_annot['head'],
+                                   this_annotation_type=tf_annot['anno-type']
+                                   )
             return target_object
         except Exception as err:
             self.__alert_wrong_annot(tf_annot, doc_id, error=err)
@@ -236,8 +241,12 @@ class JSON2CSDS:
         try:
             # Extract features from sTarget annotation and create an object from them.
             starget_object = sTarget(this_id=starget_id,
+                                     this_sentence_id=starget_annot['sentence-id'],
+                                     this_text=starget_annot['text'],
                                      this_span_start=starget_annot['span-in-sentence'][0],
                                      this_span_end=starget_annot['span-in-sentence'][1],
+                                     this_head=starget_annot['head'],
+                                     this_annotation_type=starget_annot['anno-type'],
                                      this_etarget_link=starget_annot['eTarget-link'])
 
             # Check 'target-uncertain' which is an optional attribute.
@@ -259,8 +268,12 @@ class JSON2CSDS:
         try:
             # Extract features from eTarget annotation and create an object from them.
             etarget_object = eTarget(this_id=etarget_id,
+                                     this_sentence_id=etarget_annot['sentence-id'],
+                                     this_text=etarget_annot['text'],
                                      this_span_start=etarget_annot['span-in-sentence'][0],
                                      this_span_end=etarget_annot['span-in-sentence'][1],
+                                     this_head=etarget_annot['head'],
+                                     this_annotation_type=etarget_annot['anno-type'],
                                      this_type_etarget=etarget_annot['type'])
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
