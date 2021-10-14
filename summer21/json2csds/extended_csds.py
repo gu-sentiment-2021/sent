@@ -51,7 +51,7 @@ class ExtendedCSDS:
     sentiment = ""  # sentiment value (values are corpus-specific)
     polarity = ""  # polarity of the type of annotation
     intensity = ""  # intensity of the type of annotation
-    annotation_type: Type  # The type annotation
+    annotation_type: Type  # The type of annotation
     target_link = []  # A list that contains the id of e/sTargets
 
     def __init__(
