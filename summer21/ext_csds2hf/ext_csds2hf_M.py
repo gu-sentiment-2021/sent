@@ -1,6 +1,6 @@
 from sent.summer21.json2csds import json2csds
 import transformers
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
 class extCsds2hfV1:
@@ -63,3 +63,7 @@ tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 raw_inputs = [text, head]
 model_inputs = tokenizer(raw_inputs, padding=True, truncation=True, return_tensors="pt")
 print(model_inputs)
+model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
+model_outputs = model(**model_inputs)
+print(model_outputs.logits)
+
