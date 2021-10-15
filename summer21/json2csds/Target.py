@@ -40,12 +40,14 @@ class eTarget(Target):
     is_negated = None  # this is True when eTarget is nagated
     is_referred_in_span = None  # this is optional attribute
 
-    def __init__(self, this_id, this_span_start, this_span_end, this_type_etarget,
-                 this_is_negated=None, this_is_referred_in_span=None):
+    def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
+                 this_type_etarget, this_head="", this_sentence_id=-1, this_is_negated=None,
+                 this_is_referred_in_span=None):
         """
         The init method (constructor) for eTarget class.
         """
-        Target.__init__(self, this_id, this_span_start, this_span_end)
+        Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
+                 this_head, this_sentence_id)
         self.type_etarget = this_type_etarget
         self.is_negated = this_is_negated
         self.is_referred_in_span = this_is_referred_in_span
@@ -56,14 +58,16 @@ class sTarget(Target):
     This class is for span based target(s).
     """
     target_uncertain = ""  # Used when an annotator is uncertain about whether this is the correct target for the attitude.
-    etarget_link = ""  # consist id of eTarget(s) that coverer by this sTarget span
+    etarget_link = []  # consist id of eTarget(s) that coverer by this sTarget span
 
-    def __init__(self, this_id, this_span_start, this_span_end, this_target_uncertain="",
+    def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
+                 this_head="", this_sentence_id=-1, this_target_uncertain="",
                  this_etarget_link=[]):
         """
         The init method (constructor) for sTarget class.
         """
-        Target.__init__(self, this_id, this_span_start, this_span_end)
+        Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
+                 this_head, this_sentence_id)
         self.target_uncertain = this_target_uncertain
         self.etarget_link = this_etarget_link
 
