@@ -206,5 +206,10 @@ Those new eTarget(s) are accessible through following modified targetFrame(s).
 
 * The following annotation line(s) had a wrong or duplicate id. Thus they've
 been renamed. (1)
-    - 20020507/17.55.10-20068
+    - 20020507/17.55.10-20068:
         221
+
+* Changed the following annotation line(s), so that its intensity value is set
+to "low", instead of "n". (1)
+    - temp_fbis/20.46.47-22286:
+        244

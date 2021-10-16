@@ -245,7 +245,7 @@
 241	88,96	attitude	id="a100" intensity="medium-high" attitude-type="agree-neg" targetFrame-link="tfa100" 
 242	1748,1778	attitude	intensity="medium-high" id="a2100" attitude-type="arguing-pos" targetFrame-link="tfa2100" 
 243	919,960	attitude	id="a5200" intensity="high" attitude-type="sentiment-neg" targetFrame-link="tfa5200" 
-244	445,464	attitude	id="a700" intensity="n" attitude-type="sentiment-neg" targetFrame-link="tfa700" 
+244	445,464	attitude	id="a700" intensity="low" attitude-type="sentiment-neg" targetFrame-link="tfa700" 
 245	2276,2366	attitude	id="a2900" intensity="high" attitude-type="sentiment-neg" sarcastic="yes" targetFrame-link="tfa2900" 
 246	727,844	attitude	id="a850" intensity="high-extreme" attitude-type="sentiment-neg" targetFrame-link="tfa850" 
 247	1717,1875	sentence	nested-source="w" 
