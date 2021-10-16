@@ -2,6 +2,7 @@ from sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
 from sent.summer21.json2csds.extended_csds import ExtendedCSDS, ExtendedCSDSCollection
 from sent.summer21.json2csds.Target import sTarget, eTarget, Target, TargetCollection
+from sent.summer21.json2csds.Agent import Agent, AgentCollection
 
 
 class JSON2CSDS:
@@ -38,7 +39,7 @@ class JSON2CSDS:
                          'agreement': 'agreement',
                          'intention': 'intention',
                          'speculation': 'speculation',
-                         'other-attitude': 'other-attitude',
+                         'other-attitude': 'other_attitude',
                          'expressive_subjectivity': 'expressive_subjectivity',
                          'unknown': 'unknown'}
         return type_map_dict[key]
@@ -69,13 +70,14 @@ class JSON2CSDS:
 
         return targets
 
-    def __process_agent(self, agent_annot, doc_id):
+    def __process_agent(self, agent_annot, doc_id, agent_id=""):
         """
         It processes an agent type annotation.
         :param agent_annot: A Python dict which represents an agent annotation.
         :param doc_id: ID of the doc.
-        :return: A CSDS object.
+        :return: An Agent object.
         """
+
         try:
             # Extract features from agent annotation.
             if agent_annot['span-in-doc'][0] == 0 and agent_annot['span-in-doc'][1] == 0:
@@ -89,22 +91,26 @@ class JSON2CSDS:
                 its_head_end = agent_annot['span-in-sentence'][1]
                 its_sentence_id = agent_annot['sentence-id']
 
-            # Create a CSDS object based on the values of the agent annotation.
-            csds_object = ExtendedCSDS(this_text=its_text,
-                                       this_head_start=its_head_start,
-                                       this_head_end=its_head_end,
-                                       this_belief=None,
-                                       this_polarity=None,
-                                       this_intensity=None,
-                                       this_annotation_type=self.__type_mapper('unknown'),
-                                       this_head=agent_annot['head'],
-                                       this_doc_id=doc_id,
-                                       this_sentence_id=its_sentence_id
-                                       )
+            # Create an Agent object based on the values of the agent annotation.
+            agent_object = Agent(text=its_text,
+                                 head_start=its_head_start,
+                                 head_end=its_head_end,
+                                 head=agent_annot['head'],
+                                 doc_id=doc_id,
+                                 sentence_id=its_sentence_id,
+                                 id=agent_id
+                                 )
+
+            # Extract the optional attributes' values if they exist
+            if 'agent-uncertain' in agent_annot:
+                agent_object.agent_uncertain = agent_annot['agent-uncertain']
+            if 'nested-source' in agent_annot:
+                agent_object.nested_source = agent_annot['nested-source']
+
         except Exception as err:
             self.__alert_wrong_annot(agent_annot, doc_id, error=err)
             return None
-        return csds_object
+        return agent_object
 
     def __process_es(self, all_annot, es_annot, doc_id):
         """
@@ -157,7 +163,8 @@ class JSON2CSDS:
                                        this_target_link=self.__go_get_targets(all_annot, es_annot['targetFrame-link']),
                                        this_head=es_annot['head'],
                                        this_doc_id=doc_id,
-                                       this_sentence_id=es_annot['sentence-id']
+                                       this_sentence_id=es_annot['sentence-id'],
+                                       this_agent_link=es_annot['nested-source']
                                        )
         except Exception as err:
             self.__alert_wrong_annot(es_annot, doc_id, error=err)
@@ -221,8 +228,8 @@ class JSON2CSDS:
             target_object = Target(this_id=tf_id,
                                    this_sentence_id=tf_annot['sentence-id'],
                                    this_text=tf_annot['text'],
-                                   this_span_start=tf_annot['span-in-sentence'][0],
-                                   this_span_end=tf_annot['span-in-sentence'][1],
+                                   this_head_start=tf_annot['span-in-sentence'][0],
+                                   this_head_end=tf_annot['span-in-sentence'][1],
                                    this_head=tf_annot['head'],
                                    this_annotation_type=tf_annot['anno-type']
                                    )
@@ -243,8 +250,8 @@ class JSON2CSDS:
             starget_object = sTarget(this_id=starget_id,
                                      this_sentence_id=starget_annot['sentence-id'],
                                      this_text=starget_annot['text'],
-                                     this_span_start=starget_annot['span-in-sentence'][0],
-                                     this_span_end=starget_annot['span-in-sentence'][1],
+                                     this_head_start=starget_annot['span-in-sentence'][0],
+                                     this_head_end=starget_annot['span-in-sentence'][1],
                                      this_head=starget_annot['head'],
                                      this_annotation_type=starget_annot['anno-type'],
                                      this_etarget_link=starget_annot['eTarget-link'])
@@ -270,8 +277,8 @@ class JSON2CSDS:
             etarget_object = eTarget(this_id=etarget_id,
                                      this_sentence_id=etarget_annot['sentence-id'],
                                      this_text=etarget_annot['text'],
-                                     this_span_start=etarget_annot['span-in-sentence'][0],
-                                     this_span_end=etarget_annot['span-in-sentence'][1],
+                                     this_head_start=etarget_annot['span-in-sentence'][0],
+                                     this_head_end=etarget_annot['span-in-sentence'][1],
                                      this_head=etarget_annot['head'],
                                      this_annotation_type=etarget_annot['anno-type'],
                                      this_type_etarget=etarget_annot['type'])
@@ -353,11 +360,12 @@ class JSON2CSDS:
 
     def doc2csds(self, json_file, json_output=False):
         """
-        It converts a document annotation from JSON to CSDS and target.
+        It converts a document annotation from JSON to CSDS and Target and Agent.
         :param json_file: The JSON file which is obtained from MPQA to JSON conversion.
-        :return: A pair of collections:
+        :return: A triple of collections:
         1. A CSDS collection (several CSDS objects).
         2. A Target collection (several Target objects).
+        3. A Agent collection (several Agent objects).
         """
         # List of all document names extracted from the json file.
         doc_list = json_file['doclist']
@@ -369,6 +377,8 @@ class JSON2CSDS:
         ext_csds_coll = ExtendedCSDSCollection(self.corpus_name)
         # And here, we create a Target collection that stores the Target objects.
         target_coll = TargetCollection(self.corpus_name)
+        # And here, we create a Agent collection that stores the Agent objects.
+        agent_coll = AgentCollection(self.corpus_name)
 
         # Process each document.
         for doc_name in doc_list:
@@ -384,10 +394,10 @@ class JSON2CSDS:
                 # Process each agent item by its corresponding ID.
                 for agent_id in agent_list:
                     annotation_item = annotations[agent_id]
-                    csds_object = self.__process_agent(annotation_item, doc_name)
+                    agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
                     # Store the object!
-                    if not csds_object is None:
-                        ext_csds_coll.add_labeled_instance(csds_object)
+                    if not agent_object is None:
+                        agent_coll.add_instance(agent_object)
                     del annotation_item
                 del agent_list
             # Check for "expressive-subjectivity" annotation type.
@@ -497,15 +507,18 @@ class JSON2CSDS:
         if json_output:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
+            agent_coll_lst = agent_coll.get_all_instances()
             csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
             target_json_files = list(map(self.__csds_object2json, target_coll_lst))
+            agent_json_files = list(map(self.__csds_object2json, agent_coll_lst))
             overall_result = {
                 'corpus_name': self.corpus_name,
                 'csds_objects': csds_json_files,
-                'target_objects': target_json_files
+                'target_objects': target_json_files,
+                'agent_objects': agent_json_files
             }
             return overall_result
         else:
-            return ext_csds_coll, target_coll
+            return ext_csds_coll, target_coll, agent_coll
 
 ########################
