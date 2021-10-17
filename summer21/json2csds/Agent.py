@@ -3,9 +3,10 @@ class Agent:
     This class is used for agent annotation type.
     """
     id = ""  # ID of this agent.
-    nested_source = []  # The nested-source is a list of agent IDs beginning with the writer and ending with the ID.
-    # for the immediate agent being referenced.
-    agent_uncertain = ""  # Used when the annotator is uncertain whether the agent is the correct source of a private.
+    nested_source = []  # The nested-source is a list of agent IDs beginning with the writer and ending with
+    # the ID for the immediate agent being referenced.
+    agent_uncertain = ""  # Used when the annotator is uncertain whether the agent is the correct source of a
+    # private state/speech event.
     doc_id = ""  # ID of the document.
     sentence_id = -1  # index of sentence within document.
     text = ""  # sentence in which the annotated head occurs.
@@ -34,8 +35,8 @@ class AgentCollection:
     Holds a collection of Agent objects for a single corpus, each of which represents
     a single Agent annotation in the corpus.
     """
-    # A dict which holds agent objects which are made from agent annotations from the MPQA corpus. This dict's keys
-    # are IDs of agent objects and its values are the corresponding objects.
+    # A dict which holds agent objects which are made from agent annotations from the MPQA corpus.
+    # This dict's keys are IDs of agent objects and its values are the corresponding objects.
     agent_instances = {}
 
     # Name of the corpus from which the objects in this collection were drawn.

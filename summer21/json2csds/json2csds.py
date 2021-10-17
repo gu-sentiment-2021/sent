@@ -34,14 +34,16 @@ class JSON2CSDS:
         :return: Type's corresponding number based on the enum.
         """
         # Currently, it does not do anything special!
-        type_map_dict = {'sentiment': 'sentiment',
-                         'arguing': 'arguing',
-                         'agreement': 'agreement',
-                         'intention': 'intention',
-                         'speculation': 'speculation',
-                         'other-attitude': 'other_attitude',
-                         'expressive_subjectivity': 'expressive_subjectivity',
-                         'unknown': 'unknown'}
+        type_map_dict = {
+            'sentiment': 'sentiment',
+            'arguing': 'arguing',
+            'agreement': 'agreement',
+            'intention': 'intention',
+            'speculation': 'speculation',
+            'other-attitude': 'other_attitude',
+            'expressive_subjectivity': 'expressive_subjectivity',
+            'unknown': 'unknown'
+        }
         return type_map_dict[key]
 
     def __alert_wrong_annot(self, annot, doc_id, error=None):
@@ -75,6 +77,7 @@ class JSON2CSDS:
         It processes an agent type annotation.
         :param agent_annot: A Python dict which represents an agent annotation.
         :param doc_id: ID of the doc.
+        :param agent_id: ID of the agent annotation.
         :return: An Agent object.
         """
 
@@ -92,14 +95,15 @@ class JSON2CSDS:
                 its_sentence_id = agent_annot['sentence-id']
 
             # Create an Agent object based on the values of the agent annotation.
-            agent_object = Agent(text=its_text,
-                                 head_start=its_head_start,
-                                 head_end=its_head_end,
-                                 head=agent_annot['head'],
-                                 doc_id=doc_id,
-                                 sentence_id=its_sentence_id,
-                                 id=agent_id
-                                 )
+            agent_object = Agent(
+                text = its_text,
+                head_start = its_head_start,
+                head_end = its_head_end,
+                head = agent_annot['head'],
+                doc_id = doc_id,
+                sentence_id = its_sentence_id,
+                id = agent_id
+            )
 
             # Extract the optional attributes' values if they exist
             if 'agent-uncertain' in agent_annot:
@@ -110,6 +114,7 @@ class JSON2CSDS:
         except Exception as err:
             self.__alert_wrong_annot(agent_annot, doc_id, error=err)
             return None
+        
         return agent_object
 
     def __process_es(self, all_annot, es_annot, doc_id):
@@ -146,29 +151,32 @@ class JSON2CSDS:
                     else:
                         its_polarity = es_annot['ese-type'].split('-')[1]
 
-            # Because this is an optional attribute in ES.
+            # Check 'intensity' which is an optional attribute.
             if 'intensity' in es_annot:
                 its_intensity = es_annot['intensity']
             else:
                 its_intensity = None
 
             # Create a CSDS object based on the values of the ES annotation.
-            csds_object = ExtendedCSDS(this_text=es_annot['text'],
-                                       this_head_start=es_annot['span-in-sentence'][0],
-                                       this_head_end=es_annot['span-in-sentence'][1],
-                                       this_belief=None,
-                                       this_polarity=its_polarity,
-                                       this_intensity=its_intensity,
-                                       this_annotation_type=self.__type_mapper('expressive_subjectivity'),
-                                       this_target_link=self.__go_get_targets(all_annot, es_annot['targetFrame-link']),
-                                       this_head=es_annot['head'],
-                                       this_doc_id=doc_id,
-                                       this_sentence_id=es_annot['sentence-id'],
-                                       this_agent_link=es_annot['nested-source']
-                                       )
+            csds_object = ExtendedCSDS(
+                this_text = es_annot['text'],
+                this_head_start = es_annot['span-in-sentence'][0],
+                this_head_end = es_annot['span-in-sentence'][1],
+                this_belief = None,
+                this_polarity = its_polarity,
+                this_intensity = its_intensity,
+                this_annotation_type = self.__type_mapper('expressive_subjectivity'),
+                this_target_link = self.__go_get_targets(all_annot, es_annot['targetFrame-link']),
+                this_head = es_annot['head'],
+                this_doc_id = doc_id,
+                this_sentence_id = es_annot['sentence-id'],
+                this_agent_link = es_annot['nested-source']
+            )
+        
         except Exception as err:
             self.__alert_wrong_annot(es_annot, doc_id, error=err)
             return None
+        
         return csds_object
 
     def __process_att(self, all_annot, att_annot, doc_id):
@@ -179,86 +187,96 @@ class JSON2CSDS:
         :param doc_id: ID of the doc.
         :return: A CSDS object.
         """
-        its_pol = None
-        its_type = self.__type_mapper('unknown')
+        its_pol = None # Polarity (default is None)
+        its_type = self.__type_mapper('unknown') # Type (default is unknown)
 
         # Extract features from attitude annotation.
         try:
-            if att_annot['attitude-type'].find('other') >= 0:
+            if att_annot['attitude-type'].find('other') >= 0: # [WHY]
                 its_type = self.__type_mapper('other-attitude')
             else:
-                # Extract polarity and type: check all of the cases such as corner cases.
+                # Extract polarity and type: check all of the cases such as corner cases. [WHY]
                 if att_annot['attitude-type'].find('-') != -1:
                     its_attitude_type = att_annot['attitude-type'].split('-')
                     length = len(its_attitude_type)
                     its_pol = 'positive' if its_attitude_type[length - 1].find('pos') >= 0 else 'negative'
-                    its_type = self.__type_mapper('agreement') if its_attitude_type[length - 2].find(
-                        'agree') >= 0 else self.__type_mapper(its_attitude_type[length - 2])
+                    its_type = self.__type_mapper('agreement') if its_attitude_type[length - 2].find('agree') >= 0 \
+                        else self.__type_mapper(its_attitude_type[length - 2])
                 else:
                     its_type = self.__type_mapper(att_annot['attitude-type'])
 
             # Extract features from attitude annotation.
-            csds_object = ExtendedCSDS(this_text=att_annot['text'],
-                                       this_head_start=att_annot['span-in-sentence'][0],
-                                       this_head_end=att_annot['span-in-sentence'][1],
-                                       this_belief=None,
-                                       this_polarity=its_pol,
-                                       this_intensity=att_annot['intensity'],
-                                       this_annotation_type=its_type,
-                                       this_target_link=self.__go_get_targets(all_annot, att_annot['targetFrame-link']),
-                                       this_head=att_annot['head'],
-                                       this_doc_id=doc_id,
-                                       this_sentence_id=att_annot['sentence-id']
-                                       )
-            return csds_object
+            csds_object = ExtendedCSDS(
+                this_text = att_annot['text'],
+                this_head_start = att_annot['span-in-sentence'][0],
+                this_head_end = att_annot['span-in-sentence'][1],
+                this_belief = None,
+                this_polarity = its_pol,
+                this_intensity = att_annot['intensity'],
+                this_annotation_type = its_type,
+                this_target_link = self.__go_get_targets(all_annot, att_annot['targetFrame-link']),
+                this_head = att_annot['head'],
+                this_doc_id = doc_id,
+                this_sentence_id = att_annot['sentence-id']
+            )
 
         except Exception as err:
             self.__alert_wrong_annot(att_annot, doc_id, error=err)
             return None
+
+        return csds_object
 
     def __process_tf(self, tf_annot, tf_id, doc_id):
         """
         It processes a target frame type annotation.
         :param tf_annot: A Python dict which represents a targetFrame annotation.
         :param tf_id: ID of the targetFrame.
+        :param doc_id: ID of the doc.
         :return: A target (target frame) object.
         """
         try:
             # Extract features from target frame annotation and create an object from them.
-            target_object = Target(this_id=tf_id,
-                                   this_sentence_id=tf_annot['sentence-id'],
-                                   this_text=tf_annot['text'],
-                                   this_head_start=tf_annot['span-in-sentence'][0],
-                                   this_head_end=tf_annot['span-in-sentence'][1],
-                                   this_head=tf_annot['head'],
-                                   this_annotation_type=tf_annot['anno-type']
-                                   )
-            return target_object
+            target_object = Target(
+                this_id = tf_id,
+                this_sentence_id = tf_annot['sentence-id'],
+                this_text = tf_annot['text'],
+                this_head_start = tf_annot['span-in-sentence'][0],
+                this_head_end = tf_annot['span-in-sentence'][1],
+                this_head = tf_annot['head'],
+                this_annotation_type = tf_annot['anno-type']
+            )
+        
         except Exception as err:
             self.__alert_wrong_annot(tf_annot, doc_id, error=err)
             return None
+        
+        return target_object
 
     def __process_starget(self, starget_annot, starget_id, doc_id):
         """
         It processes a sTarget type annotation.
         :param starget_annot: A Python dict which represents a sTarget annotation.
         :param starget_id: ID of the sTarget.
+        :param doc_id: ID of the doc.
         :return: A sTarget object.
         """
         try:
             # Extract features from sTarget annotation and create an object from them.
-            starget_object = sTarget(this_id=starget_id,
-                                     this_sentence_id=starget_annot['sentence-id'],
-                                     this_text=starget_annot['text'],
-                                     this_head_start=starget_annot['span-in-sentence'][0],
-                                     this_head_end=starget_annot['span-in-sentence'][1],
-                                     this_head=starget_annot['head'],
-                                     this_annotation_type=starget_annot['anno-type'],
-                                     this_etarget_link=starget_annot['eTarget-link'])
+            starget_object = sTarget(
+                this_id = starget_id,
+                this_sentence_id = starget_annot['sentence-id'],
+                this_text = starget_annot['text'],
+                this_head_start = starget_annot['span-in-sentence'][0],
+                this_head_end = starget_annot['span-in-sentence'][1],
+                this_head = starget_annot['head'],
+                this_annotation_type = starget_annot['anno-type'],
+                this_etarget_link = starget_annot['eTarget-link']
+            )
 
             # Check 'target-uncertain' which is an optional attribute.
             if 'target-uncertain' in starget_annot:
                 starget_object.target_uncertain = starget_annot['target-uncertain']
+        
         except Exception as err:
             self.__alert_wrong_annot(starget_annot, doc_id, error=err)
             return None
@@ -270,18 +288,21 @@ class JSON2CSDS:
         It processes an eTarget type annotation.
         :param etarget_annot: A Python dict which represents an eTarget annotation.
         :param etarget_id: ID of the eTarget.
+        :param doc_id: ID of the doc.
         :return: An eTarget object.
         """
         try:
             # Extract features from eTarget annotation and create an object from them.
-            etarget_object = eTarget(this_id=etarget_id,
-                                     this_sentence_id=etarget_annot['sentence-id'],
-                                     this_text=etarget_annot['text'],
-                                     this_head_start=etarget_annot['span-in-sentence'][0],
-                                     this_head_end=etarget_annot['span-in-sentence'][1],
-                                     this_head=etarget_annot['head'],
-                                     this_annotation_type=etarget_annot['anno-type'],
-                                     this_type_etarget=etarget_annot['type'])
+            etarget_object = eTarget(
+                this_id = etarget_id,
+                this_sentence_id = etarget_annot['sentence-id'],
+                this_text = etarget_annot['text'],
+                this_head_start = etarget_annot['span-in-sentence'][0],
+                this_head_end = etarget_annot['span-in-sentence'][1],
+                this_head = etarget_annot['head'],
+                this_annotation_type = etarget_annot['anno-type'],
+                this_type_etarget = etarget_annot['type']
+            )
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
             if 'isNegated' in etarget_annot:
