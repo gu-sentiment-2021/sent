@@ -1,9 +1,11 @@
 from enum import Enum
 
+
 class TypeTarget(str, Enum):
     ETARGET = 'eTarget'
     STARGET = 'sTarget'
     TARGETFRAME = 'targetFrame'
+
 
 class Target:
     """
@@ -32,6 +34,7 @@ class Target:
         self.head = this_head
         self.annotation_type = TypeTarget(this_annotation_type)
 
+
 class eTarget(Target):
     """
     This class is for entity/event level target(s).
@@ -47,7 +50,7 @@ class eTarget(Target):
         The init method (constructor) for eTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                 this_head, this_sentence_id)
+                        this_head, this_sentence_id)
         self.type_etarget = this_type_etarget
         self.is_negated = this_is_negated
         self.is_referred_in_span = this_is_referred_in_span
@@ -67,7 +70,7 @@ class sTarget(Target):
         The init method (constructor) for sTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                 this_head, this_sentence_id)
+                        this_head, this_sentence_id)
         self.target_uncertain = this_target_uncertain
         self.etarget_link = this_etarget_link
 
@@ -77,11 +80,9 @@ class TargetCollection:
     Holds a collection of Target objects for a single corpus, each of which represents
     a single Target annotation in the corpus.
     """
-    # List of target objects which are made from target annotations from the mpqa corpus.
-    target_instances = []
-
-    # A python dict that is used for indexing the target objects based on their ID
-    indexer = dict()
+    # A dict which holds target objects which are made from target annotations from the MPQA corpus. This dict's keys
+    # are IDs of target objects and its values are the corresponding objects.
+    target_instances = {}
 
     # Name of the corpus from which the objects in this collection were drawn.
     # This collection represents a single corpus.
@@ -100,11 +101,8 @@ class TargetCollection:
         :param new_instance: The Target object representing the Target annotation.
         :return: None.
         """
-        # Add the new Target instance to the list
-        self.target_instances.append(new_instance)
-
-        # Index the new Target instance based on its ID
-        self.indexer[new_instance.target_id] = len(self.target_instances)
+        # Add the new Target instance to the collection, indeed using the object's ID to put the object in a dict.
+        self.target_instances[new_instance.target_id] = new_instance
 
     def get_instance(self, instance_id):
         """
@@ -112,10 +110,11 @@ class TargetCollection:
         :param instance_id: The ID of the Target annotation which is desired to be received.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity
-        if instance_id in self.indexer:
+        # Check if the desired Target object is available in the collection by searching the instance_id in the keys
+        # set of target_instances dict.
+        if instance_id in self.target_instances.keys():
             # Return the corresponding Target object by using its ID.
-            return self.target_instances[self.indexer[instance_id]]
+            return self.target_instances[instance_id]
         return None
 
     def get_all_instances(self):
@@ -123,7 +122,7 @@ class TargetCollection:
         Returns the list of Target objects.
         :return: A list of Target objects.
         """
-        return self.target_instances
+        return self.target_instances.values()
 
     def get_num_instances(self):
         """
@@ -131,27 +130,23 @@ class TargetCollection:
         to actual annotations in the corpus.
         :return:  An integer, the count of Target objects.
         """
-        return len(self.target_instances)
+        return len(self.target_instances.keys())
 
     # Under construction: The following method is not using the storage efficiently! But it is not being used very much.
     def del_instance(self, instance_id):
         """
-        Deletes a single Target object from the collection by its ID.
+        Deletes a single Target object from the collection by its ID (instance_id).
         :param instance_id: The ID of the Target annotation which is desired to be deleted.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity
-        if instance_id in self.indexer:
-            # Put None in the corresponding place of the object which is going to be deleted.
-            self.target_instances[self.indexer[instance_id]] = None
-
-            # Delete the index value of the object which is going to be deleted.
-            del self.indexer[instance_id]
+        # Check if the instance_id is available in the collection by using the ID.
+        if instance_id in self.target_instances.keys():
+            # Delete the object which is desired to be deleted.
+            del self.target_instances[instance_id]
 
     def reset_collection(self):
         """
         Reset (set empty) the Target objects collection.
         :return: None.
         """
-        self.indexer = dict()
-        self.target_instances = []
+        self.target_instances = dict()
