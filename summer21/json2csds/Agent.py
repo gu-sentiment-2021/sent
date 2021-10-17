@@ -34,11 +34,9 @@ class AgentCollection:
     Holds a collection of Agent objects for a single corpus, each of which represents
     a single Agent annotation in the corpus.
     """
-    # List of agent objects which are made from agent annotations from the MPQA corpus.
-    agent_instances = []
-
-    # A python dict that is used for indexing the agent objects based on their ID
-    indexer = dict()
+    # A dict which holds agent objects which are made from agent annotations from the MPQA corpus. This dict's keys
+    # are IDs of agent objects and its values are the corresponding objects.
+    agent_instances = {}
 
     # Name of the corpus from which the objects in this collection were drawn.
     # This collection represents a single corpus.
@@ -57,11 +55,8 @@ class AgentCollection:
         :param new_instance: The Agent object representing the Agent annotation.
         :return: None.
         """
-        # Add the new Agent instance to the list
-        self.agent_instances.append(new_instance)
-
-        # Index the new Agent instance based on its ID
-        self.indexer[new_instance.id] = len(self.agent_instances)
+        # Add the new agent instance to the collection, indeed using the object's ID to put the object in a dict.
+        self.agent_instances[new_instance.id] = new_instance
 
     def get_instance(self, instance_id):
         """
@@ -69,10 +64,11 @@ class AgentCollection:
         :param instance_id: The ID of the Agent annotation which is desired to be received.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity.
-        if instance_id in self.indexer:
-            # Return the corresponding Agent object by using its ID.
-            return self.agent_instances[self.indexer[instance_id]]
+        # Check if the desired agent object is available in the collection by searching the instance_id in the keys
+        # set of agent_instances dict.
+        if instance_id in self.agent_instances.keys():
+            # Return the corresponding agent object by using its ID.
+            return self.agent_instances[instance_id]
         return None
 
     def get_all_instances(self):
@@ -80,7 +76,7 @@ class AgentCollection:
         Returns the list of Agent objects.
         :return: A list of Agent objects.
         """
-        return self.agent_instances
+        return self.agent_instances.values()
 
     def get_num_instances(self):
         """
@@ -88,27 +84,22 @@ class AgentCollection:
         to actual annotations in the corpus.
         :return:  An integer, the count of Agent objects.
         """
-        return len(self.agent_instances)
+        return len(self.agent_instances.keys())
 
-    # Under construction: The following method is not using the storage efficiently! But it is not being used very much.
     def del_instance(self, instance_id):
         """
         Deletes a single Agent object from the collection by its ID.
         :param instance_id: The ID of the Agent annotation which is desired to be deleted.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity.
-        if instance_id in self.indexer:
-            # Put None in the corresponding place of the object which is going to be deleted.
-            self.agent_instances[self.indexer[instance_id]] = None
-
-            # Delete the index value of the object which is going to be deleted.
-            del self.indexer[instance_id]
+        # Check if the desired object (which its ID is instance_id) is available in the collection by using the ID.
+        if instance_id in self.agent_instances.keys():
+            # Delete the object which is desired to be deleted.
+            del self.agent_instances[instance_id]
 
     def reset_collection(self):
         """
         Reset (set empty) the Agent objects collection.
         :return: None.
         """
-        self.indexer = dict()
-        self.agent_instances = []
+        self.agent_instances = dict()
