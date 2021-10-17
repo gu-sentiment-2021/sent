@@ -132,14 +132,14 @@ class TargetCollection:
         """
         return len(self.target_instances.keys())
 
-    # Under construction: The following method is not using the storage efficiently! But it is not being used very much.
+
     def del_instance(self, instance_id):
         """
         Deletes a single Target object from the collection by its ID (instance_id).
         :param instance_id: The ID of the Target annotation which is desired to be deleted.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the ID.
+        # Check if the desired object (which its ID is instance_id) is available in the collection by using the ID.
         if instance_id in self.target_instances.keys():
             # Delete the object which is desired to be deleted.
             del self.target_instances[instance_id]
