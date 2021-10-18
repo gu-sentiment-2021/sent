@@ -86,7 +86,7 @@ def findCutPhrases(
 # Sample:
 # findCutPhrases(0, 69, expand=True)
 
-def CountAllAttributeTypes(
+def countAllAttributeTypes(
     mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'
 ):
     """
