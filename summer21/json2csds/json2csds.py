@@ -409,123 +409,114 @@ class JSON2CSDS:
             # Extracts the list of all annotations.
             annotations = curr_doc['annotations']
 
-            # Check for "agent" annotation type.
-            if 'agent' in curr_doc:
-                # In the following line of code, we extract the IDs of agent type annotations.
-                agent_list = curr_doc['agent']
-                # Process each agent item by its corresponding ID.
-                for agent_id in agent_list:
-                    annotation_item = annotations[agent_id]
-                    agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
-                    # Store the object!
-                    if not agent_object is None:
-                        agent_coll.add_instance(agent_object)
-                    del annotation_item
-                del agent_list
-            # Check for "expressive-subjectivity" annotation type.
-            if 'expressive-subjectivity' in curr_doc:
-                # In the following line of code, we extract the IDs of ES type annotations.
-                es_list = curr_doc['expressive-subjectivity']
-                # Process each ES item by its corresponding ID.
-                for es_id in es_list:
-                    annotation_item = annotations[es_id]
-                    csds_object = self.__process_es(annotations, annotation_item, doc_name)
-                    # Store the object!
-                    if not csds_object is None:
-                        ext_csds_coll.add_labeled_instance(csds_object)
-                    del csds_object
-                del es_list
-            # Check for "attitude" annotation type.
-            if 'attitude' in curr_doc:
-                # In the following line of code, we extract the IDs of attitude type annotations.
-                att_list = curr_doc['attitude']
-                # Process each attitude item by its corresponding ID.
-                for att_id in att_list:
-                    annotation_item = annotations[att_id]
-                    csds_object = self.__process_att(annotations, annotation_item, doc_name)
-                    if not csds_object is None:
-                        ext_csds_coll.add_labeled_instance(csds_object)
-                    del csds_object
-                del att_list
-            # Check for "targetFrame" annotation type.
-            if 'targetFrame' in curr_doc:
-                # In the following line of code, we extract the IDs of target frame type annotations.
-                tf_list = curr_doc['targetFrame']
-                # Process each target frame item by its corresponding ID.
-                for tf_id in tf_list:
-                    annotation_item = annotations[tf_id]
-                    tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
-                    # Store the object.
-                    if not tf_object is None:
-                        target_coll.add_instance(tf_object)
-                    del tf_object
-                del tf_list
-            # Check for "sTarget" annotation type.
-            if 'sTarget' in curr_doc:
-                # In the following line of code, we extract the IDs of sTarget type annotations.
-                starget_list = curr_doc['sTarget']
-                # Process each sTarget item by its corresponding ID.
-                for starget_id in starget_list:
-                    annotation_item = annotations[starget_id]
-                    starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
-                    # Store the object.
-                    if not starget_object is None:
-                        target_coll.add_instance(starget_object)
-                    del starget_object
-                del starget_list
-            # Check for "eTarget" annotation type.
-            if 'eTarget' in curr_doc:
-                # In the following line of code, we extract the IDs of eTarget type annotations.
-                etarget_list = curr_doc['eTarget']
-                # Process each eTarget item by its corresponding ID.
-                for etarget_id in etarget_list:
-                    annotation_item = annotations[etarget_id]
-                    etarget_object = self.__process_etarget(annotation_item, etarget_id, doc_name)
-                    # Store the object.
-                    if not etarget_object is None:
-                        target_coll.add_instance(etarget_object)
-                    del etarget_object
-                del etarget_list
-            '''
-            # Check for "direct-subjective" annotation type
-            if 'direct-subjective' in curr_doc:
-                # In the following line of code, we extract the IDs of DS type annotations
-                ds_list = curr_doc['direct-subjective']
-                # Process each DS item by its corresponding ID
-                for ds_id in ds_list:
-                    annotation_item = annotations[ds_id]
-                    csds_object = self.process_ds(annotation_item, doc_name)
-                    # Store the object!
+            # In the following line of code, we extract the IDs of agent type annotations.
+            agent_list = curr_doc['agent']
+            # Process each agent item by its corresponding ID.
+            for agent_id in agent_list:
+                annotation_item = annotations[agent_id]
+                agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
+                # Store the object!
+                if not agent_object is None:
+                    agent_coll.add_instance(agent_object)
+                del annotation_item
+            del agent_list
+            
+            # In the following line of code, we extract the IDs of ES type annotations.
+            es_list = curr_doc['expressive-subjectivity']
+            # Process each ES item by its corresponding ID.
+            for es_id in es_list:
+                annotation_item = annotations[es_id]
+                csds_object = self.__process_es(annotations, annotation_item, doc_name)
+                # Store the object!
+                if not csds_object is None:
                     ext_csds_coll.add_labeled_instance(csds_object)
-                    del csds_object
-                del ds_list
-            # Check for "objective-speech-event" annotation type, this part is not activated yet!
-            if 'objective-speech-event' in curr_doc:
-                # In the following line of code, we extract the IDs of OSE type annotations
-                ose_list = curr_doc['objective-speech-event']
-                # Process each OSE item by its corresponding ID
-                for ose_id in ose_list:
-                    annotation_item = annotations[ose_id]
-                    csds_object = self.process_ose(annotation_item)
-                    # must store the object!
-                    # WHAT TO DO?
-                    del csds_object
-                del ose_list
-            # Check for "sentence" annotation type, this part is not activated yet!
-            if 'sentence' in curr_doc:
-                # In the following line of code, we extract the IDs of sentence type annotations
-                sentence_list = curr_doc['sentence']
-                # Process each sentence item by its corresponding ID
-                for sentence_id in sentence_list:
-                    annotation_item = annotations[sentence_id]
-                    csds_object = self.process_sentence(annotation_item)
-                    # must store the object!
-                    # WHAT TO DO?
-                    del csds_object
-                del sentence_list
+                del csds_object
+            del es_list
+
+            # In the following line of code, we extract the IDs of attitude type annotations.
+            att_list = curr_doc['attitude']
+            # Process each attitude item by its corresponding ID.
+            for att_id in att_list:
+                annotation_item = annotations[att_id]
+                csds_object = self.__process_att(annotations, annotation_item, doc_name)
+                if not csds_object is None:
+                    ext_csds_coll.add_labeled_instance(csds_object)
+                del csds_object
+            del att_list
+
+            # In the following line of code, we extract the IDs of target frame type annotations.
+            tf_list = curr_doc['targetFrame']
+            # Process each target frame item by its corresponding ID.
+            for tf_id in tf_list:
+                annotation_item = annotations[tf_id]
+                tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
+                # Store the object.
+                if not tf_object is None:
+                    target_coll.add_instance(tf_object)
+                del tf_object
+            del tf_list
+
+            # In the following line of code, we extract the IDs of sTarget type annotations.
+            starget_list = curr_doc['sTarget']
+            # Process each sTarget item by its corresponding ID.
+            for starget_id in starget_list:
+                annotation_item = annotations[starget_id]
+                starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
+                # Store the object.
+                if not starget_object is None:
+                    target_coll.add_instance(starget_object)
+                del starget_object
+            del starget_list
+
+            # In the following line of code, we extract the IDs of eTarget type annotations.
+            etarget_list = curr_doc['eTarget']
+            # Process each eTarget item by its corresponding ID.
+            for etarget_id in etarget_list:
+                annotation_item = annotations[etarget_id]
+                etarget_object = self.__process_etarget(annotation_item, etarget_id, doc_name)
+                # Store the object.
+                if not etarget_object is None:
+                    target_coll.add_instance(etarget_object)
+                del etarget_object
+            del etarget_list
+
+            '''
+            # In the following line of code, we extract the IDs of DS type annotations
+            ds_list = curr_doc['direct-subjective']
+            # Process each DS item by its corresponding ID
+            for ds_id in ds_list:
+                annotation_item = annotations[ds_id]
+                csds_object = self.process_ds(annotation_item, doc_name)
+                # Store the object!
+                ext_csds_coll.add_labeled_instance(csds_object)
+                del csds_object
+            del ds_list
+
+            # In the following line of code, we extract the IDs of OSE type annotations
+            ose_list = curr_doc['objective-speech-event']
+            # Process each OSE item by its corresponding ID
+            for ose_id in ose_list:
+                annotation_item = annotations[ose_id]
+                csds_object = self.process_ose(annotation_item)
+                # must store the object!
+                # WHAT TO DO?
+                del csds_object
+            del ose_list
+
+            # In the following line of code, we extract the IDs of sentence type annotations
+            sentence_list = curr_doc['sentence']
+            # Process each sentence item by its corresponding ID
+            for sentence_id in sentence_list:
+                annotation_item = annotations[sentence_id]
+                csds_object = self.process_sentence(annotation_item)
+                # must store the object!
+                # WHAT TO DO?
+                del csds_object
+            del sentence_list
+            '''
 
             del annotations
-            '''
+
         if json_output:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
