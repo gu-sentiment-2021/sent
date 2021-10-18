@@ -77,7 +77,7 @@ class TargetCollection:
     Holds a collection of Target objects for a single corpus, each of which represents
     a single Target annotation in the corpus.
     """
-    # List of target objects which are made from target annotations from the mpqa corpus.
+    # List of target objects which are made from target annotations from the MPQA corpus.
     target_instances = []
 
     # A python dict that is used for indexing the target objects based on their ID
@@ -112,7 +112,7 @@ class TargetCollection:
         :param instance_id: The ID of the Target annotation which is desired to be received.
         :return: None.
         """
-        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity
+        # Check if the instance_id is available in the collection by using the indexer in O(1) average time complexity.
         if instance_id in self.indexer:
             # Return the corresponding Target object by using its ID.
             return self.target_instances[self.indexer[instance_id]]
