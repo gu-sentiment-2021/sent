@@ -845,7 +845,7 @@
 841	2053,2072	direct-subjective	expression-intensity="medium" intensity="medium" id="ds41" attitude-link="a31" polarity="both" nested-source="w,craner" 
 842	1214,1233	direct-subjective	expression-intensity="medium" intensity="medium" id="ds47" attitude-link="a503,a504" polarity="uncertain-negative" nested-source="w,indiarep" 
 843	5476,5477	direct-subjective	intensity="medium" id="ds46" implicit="true" attitude-link="a67" nested-source="w,media" 
-844	5859,5863	direct-subjective	expression-intensity="neutral" intensity="neutral" id="ds28" attitude-link="a75" nested-source="w,media,craner" 
+844	5859,5863	direct-subjective	expression-intensity="neutral" intensity="low" id="ds28" attitude-link="a75" nested-source="w,media,craner" 
 845	4409,4410	direct-subjective	intensity="medium" id="ds29" implicit="true" attitude-link="a55" nested-source="w,media" 
 846	3862,3863	direct-subjective	intensity="low" id="ds51" implicit="true" attitude-link="a48" nested-source="w,media" 
 847	1915,1933	direct-subjective	expression-intensity="medium" intensity="medium" id="ds50" attitude-link="a28" polarity="negative" nested-source="w,critics" 

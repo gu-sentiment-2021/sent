@@ -210,6 +210,8 @@ been renamed. (1)
         221
 
 * Changed the following annotation line(s), so that its intensity value is set
-to "low", instead of "n". (1)
+to "low", instead of "n". (2)
+    - non_fbis/05.20.33-11163:
+        844
     - temp_fbis/20.46.47-22286:
         244

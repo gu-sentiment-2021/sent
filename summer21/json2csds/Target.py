@@ -80,9 +80,11 @@ class TargetCollection:
     Holds a collection of Target objects for a single corpus, each of which represents
     a single Target annotation in the corpus.
     """
+
     # A dict which holds target objects which are made from target annotations from the MPQA corpus. This dict's keys
     # are IDs of target objects and its values are the corresponding objects.
     target_instances = {}
+
 
     # Name of the corpus from which the objects in this collection were drawn.
     # This collection represents a single corpus.
@@ -110,6 +112,7 @@ class TargetCollection:
         :param instance_id: The ID of the Target annotation which is desired to be received.
         :return: None.
         """
+
         # Check if the desired Target object is available in the collection by searching the instance_id in the keys
         # set of target_instances dict.
         if instance_id in self.target_instances.keys():
