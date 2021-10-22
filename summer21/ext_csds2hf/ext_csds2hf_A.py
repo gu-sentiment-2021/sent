@@ -1,10 +1,10 @@
 import json
-from sent.summer21.json2csds import json2csds
+from json2csds import json2csds
 import transformers
 from transformers import AutoTokenizer, TrainingArguments, AutoModelForSequenceClassification, Trainer, \
     DataCollatorWithPadding
 
-from sent.summer21.json2csds.json2csds import JSON2CSDS
+from json2csds.json2csds import JSON2CSDS
 
 
 class extCsds2hfV1:

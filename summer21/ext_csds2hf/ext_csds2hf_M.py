@@ -1,4 +1,4 @@
-from sent.summer21.json2csds import json2csds
+from json2csds import json2csds
 import transformers
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 

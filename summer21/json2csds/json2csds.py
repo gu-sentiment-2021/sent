@@ -1,8 +1,8 @@
-from sent.summer21.mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
+from mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
-from sent.summer21.json2csds.extended_csds import ExtendedCSDS, ExtendedCSDSCollection
-from sent.summer21.json2csds.Target import sTarget, eTarget, Target, TargetCollection
-from sent.summer21.json2csds.Agent import Agent, AgentCollection
+from extended_csds import ExtendedCSDS, ExtendedCSDSCollection
+from Target import sTarget, eTarget, Target, TargetCollection
+from Agent import Agent, AgentCollection
 
 
 class JSON2CSDS:
