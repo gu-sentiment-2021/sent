@@ -1,7 +1,7 @@
 # Just for testing new features of json2csds module.
 import json
 
-from sent.summer21.json2csds.json2csds import JSON2CSDS
+from json2csds import JSON2CSDS
 
 address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
 obj = JSON2CSDS("MPQA3.0", address)
