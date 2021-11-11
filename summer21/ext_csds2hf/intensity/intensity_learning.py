@@ -55,6 +55,8 @@ class IntensityLearning:
 
     tokenizer = None
     device = None
+    aug = False
+    possible_classes = 0
 
     mapping_dict = {'high-extreme': 6, 'extreme': 5, 'medium': 2, 'medium-high': 3, 'low': 0, 'high': 4,
                     'low-medium': 1}
@@ -71,20 +73,24 @@ class IntensityLearning:
     RANDOM_SEED = 42
     MAX_LENGTH = 256
 
-    def __init__(self, path='data.json', aug_path='', model_name='bert-base-cased'):
+    def __init__(self, path='dataset/data.json', aug_path='', aug=False, model_name='bert-base-cased'):
         self.path = path
         self.aug_path = aug_path
         self.model_name = model_name
+        self.aug = aug
+        self.possible_classes = self.get_possible_classes()[0]
 
         ## Define pretrained tokenizer and model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        aug_bert = naw.ContextualWordEmbsAug(
+        self.aug_bert = naw.ContextualWordEmbsAug(
             model_path=model_name,  # 'distilbert-base-uncased',
             # device='cuda',
             action=self.ACT, top_k=self.TOPK)
+
+        self.collect_data(self.load_json_file())
 
     def load_json_file(self):
         # Loading the saved JSON file.
@@ -114,19 +120,19 @@ class IntensityLearning:
                     self.classes_counts[item['intensity']] += 1
 
     def augment_add(self):
+        if self.aug:
+            for cl in self.mapping_dict.keys():
+                if self.mapping_dict[cl] > -1:
+                    # Loading the saved JSON file.
+                    with open(self.aug_path + cl + '_data_aug.json') as json_file:
+                        data_aug = json.load(json_file)
 
-        for cl in self.mapping_dict.keys():
-            if self.mapping_dict[cl] > -1:
-                # Loading the saved JSON file.
-                with open(self.aug_path + cl + '_data_aug.json') as json_file:
-                    data_aug = json.load(json_file)
-
-                x_data = data_aug['X']
-                y_data = data_aug['y']
-                for i in range(len(x_data)):
-                    self.X.append([x_data[i][0], x_data[i][1]])
-                    self.y.append(self.mapping_dict[y_data[i]])
-                    self.classes_counts[y_data[i]] += 1
+                    x_data = data_aug['X']
+                    y_data = data_aug['y']
+                    for i in range(len(x_data)):
+                        self.X.append([x_data[i][0], x_data[i][1]])
+                        self.y.append(self.mapping_dict[y_data[i]])
+                        self.classes_counts[y_data[i]] += 1
 
     def get_possible_classes(self):
         possible_classes = set()
@@ -349,7 +355,7 @@ class IntensityLearning:
         self.show_confusion_matrix(df_cm)
         return model
 
-    def train_test_split_train(self, possible_classes, test_size=0.33, show_labels=False):
+    def train_test_split_train(self, test_size=0.33, show_labels=False):
         X_tr, X_va, y_train, y_val = train_test_split(self.X, self.y, test_size=test_size, random_state=42,
                                                       shuffle=True,
                                                       stratify=self.y)
@@ -366,7 +372,7 @@ class IntensityLearning:
             X_p_val.append(item[1])
 
         ###
-        num_possible_classes = len(possible_classes)
+        num_possible_classes = len(self.possible_classes)
         ###
         model = AutoModelForSequenceClassification.from_pretrained(self.model_name, num_labels=num_possible_classes)
         X_train_tokenized = self.tokenizer(X_train, X_p_train, padding=True, truncation=True,
@@ -407,9 +413,9 @@ class IntensityLearning:
 
         # Show confusion matrix
         cm = confusion_matrix(y_val, y_pred)
-        df_cm = pd.DataFrame(cm, index=possible_classes, columns=possible_classes)
+        df_cm = pd.DataFrame(cm, index=self.possible_classes, columns=self.possible_classes)
         if show_labels:
-            self.show_confusion_matrix(df_cm, possible_classes=possible_classes)
+            self.show_confusion_matrix(df_cm, possible_classes=self.possible_classes)
         else:
             self.show_confusion_matrix(df_cm)
         return model
@@ -425,8 +431,6 @@ class IntensityLearning:
         model.load_state_dict(torch.load(load_path))
         return model
 
-##'xlm-roberta-base' #'albert-base-v1' #'albert-base-v2' #'roberta-large' #'distilbert-base-cased' #"bert-base-cased"  #'deepset/roberta-base-squad2' #"bert-base-uncased"  #'bert-base-multilingual-cased'
-##'google/bert_uncased_L-2_H-128_A-2' 'google/bert_uncased_L-8_H-512_A-8'
 
-# n_gpu = torch.cuda.device_count()
-# torch.cuda.get_device_name(0)
+obj = IntensityLearning()
+obj.train_test_split_train()
