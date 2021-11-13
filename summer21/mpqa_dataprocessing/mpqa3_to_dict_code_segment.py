@@ -1,8 +1,10 @@
+# By running this code segment you'll get a python dictionary or
+# a json file that helps you to further examine the MPQA 3.0 dataset
 from mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
 
 # Specifies the path of the mpqa v3.0 database
-address = "..\mpqa_dataprocessing\databases\database.mpqa.3.0.cleaned"
+address = "database.mpqa.cleaned"
 
 # Uses the mpqa3_to_dict module to convert mpqa to json file
 m2d = mpqa3_to_dict("MPQA3.0", address)

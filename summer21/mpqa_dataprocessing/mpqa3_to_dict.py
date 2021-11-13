@@ -19,9 +19,9 @@ class mpqa3_to_dict:
     """
 
     corpus_name = "" # Name of the corpus from which the documents were drawn.
-    mpqa_dir = "mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned" # mpqa 3.0 root directory
+    mpqa_dir = "mpqa_dataprocessing\\database.mpqa.cleaned" # mpqa root directory
 
-    def __init__(self, corpus_name="", mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned"):
+    def __init__(self, corpus_name="", mpqa_dir="mpqa_dataprocessing\\database.mpqa.cleaned"):
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
 
@@ -40,11 +40,11 @@ class mpqa3_to_dict:
         :param cleaning: It cleans up the data, if set to true.
         :return: A python dictionary representing the document.
         """
-        # example: ./database.mpqa.3.0/docs/20011024/21.53.09-11428
+        # example: ./docs/20011024/21.53.09-11428
         with open(os.path.join(self.mpqa_dir, "docs", docname)) as doc_file:
             doc_text = doc_file.read()
         
-        # example: ./database.mpqa.3.0/man_anns/20011024/21.53.09-11428/gateman.mpqa.lre.3.0
+        # example: ./man_anns/20011024/21.53.09-11428/gateman.mpqa.lre.3.0
         anno_lines = []
         with open(os.path.join(self.mpqa_dir, "man_anns", docname, "gateman.mpqa.lre.3.0")) as anno_file:
             anno_lines = anno_file.readlines()
@@ -132,7 +132,7 @@ class mpqa3_to_dict:
 
         return output
 
-    def corpus_to_dict(self, doclist=None, doclist_filename='doclist', cleaning=True):
+    def corpus_to_dict(self, doclist=None, doclist_filename='doclist.3.0', cleaning=True):
         """
         It converts an entire list of MPQA documents to a python dictionary.
         :param doclist: The list of document names to be converted. If set, doclist_filename will be ignored.
@@ -151,13 +151,13 @@ class mpqa3_to_dict:
             output["docs"][docname] = self.doc_to_dict(docname, cleaning)
         return output
     
-    def __doclistfile_to_doclist(self, doclist_filename='doclist'):
+    def __doclistfile_to_doclist(self, doclist_filename='doclist.3.0'):
         """
         An auxiliary function for converting a file of a list of document names to a list of document names.
         :param doclist_filename: The name of the file which contains a list of the document names.
         :return: A python list containing the document names.
         """
-        # example: ./database.mpqa.3.0/doclist
+        # example: ./doclist.3.0
         doclist = []
         with open(os.path.join(self.mpqa_dir, doclist_filename)) as doclist_file:
             for doc in doclist_file.readlines():
