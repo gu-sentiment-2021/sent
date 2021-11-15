@@ -145,7 +145,7 @@ class JSON2CSDS:
                         its_polarity = es_anno['polarity'].split('-')[1]
                 else:
                     its_polarity = es_anno['polarity']
-            else:
+            elif 'ese-type' in es_anno:
                 if es_anno['ese-type'].count('-') == 2:
                     its_polarity = es_anno['ese-type'].split('-')[1] + '-' + es_anno['ese-type'].split('-')[2]
                 else:
@@ -153,6 +153,8 @@ class JSON2CSDS:
                         its_polarity = es_anno['ese-type'].split('-')[0] + '-' + es_anno['ese-type'].split('-')[1]
                     else:
                         its_polarity = es_anno['ese-type'].split('-')[1]
+            else:
+                its_polarity = 'nothing'
 
             # Check 'intensity' which is an optional attribute.
             if 'intensity' in es_anno:
