@@ -83,7 +83,9 @@ class IntensityLearning:
         ## Define pretrained tokenizer and model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda:0') #torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        print(self.device)
 
         self.aug_bert = naw.ContextualWordEmbsAug(
             model_path=model_name,  # 'distilbert-base-uncased',

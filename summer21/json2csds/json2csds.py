@@ -1,3 +1,4 @@
+from mpqa_dataprocessing.mpqa2_to_dict import mpqa2_to_dict
 from mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
 from extended_csds import ExtendedCSDS, ExtendedCSDSCollection
@@ -20,10 +21,10 @@ class JSON2CSDS:
 
     def produce_json_file(self):
         """
-        It uses the mpqa3_to_dict module in order to convert MPQA to JSON (dict) file.
+        It uses the mpqa2_to_dict module in order to convert MPQA to JSON (dict) file.
         :return: A JSON file which is obtained from MPQA corpus.
         """
-        m2d = mpqa3_to_dict(self.corpus_name, self.mpqa_dir)
+        m2d = mpqa2_to_dict(self.corpus_name, self.mpqa_dir)
         result = m2d.corpus_to_dict()
         return result
 
@@ -114,7 +115,7 @@ class JSON2CSDS:
         except Exception as err:
             self.__alert_wrong_anno(agent_anno, doc_id, error=err)
             return None
-        
+
         return agent_object
 
     def __process_es(self, all_anno, es_anno, doc_id):
@@ -172,11 +173,11 @@ class JSON2CSDS:
                 this_sentence_id = es_anno['sentence-id'],
                 this_agent_link = es_anno['nested-source']
             )
-        
+
         except Exception as err:
             self.__alert_wrong_anno(es_anno, doc_id, error=err)
             return None
-        
+
         return csds_object
 
     def __process_att(self, all_anno, att_anno, doc_id):
@@ -245,11 +246,11 @@ class JSON2CSDS:
                 this_head = tf_anno['head'],
                 this_annotation_type = tf_anno['anno-type']
             )
-        
+
         except Exception as err:
             self.__alert_wrong_anno(tf_anno, doc_id, error=err)
             return None
-        
+
         return target_object
 
     def __process_starget(self, starget_anno, starget_id, doc_id):
@@ -276,7 +277,7 @@ class JSON2CSDS:
             # Check 'target-uncertain' which is an optional attribute.
             if 'target-uncertain' in starget_anno:
                 starget_object.target_uncertain = starget_anno['target-uncertain']
-        
+
         except Exception as err:
             self.__alert_wrong_anno(starget_anno, doc_id, error=err)
             return None
@@ -420,7 +421,7 @@ class JSON2CSDS:
                     agent_coll.add_instance(agent_object)
                 del annotation_item
             del agent_list
-            
+
             # In the following line of code, we extract the IDs of ES type annotations.
             es_list = curr_doc['expressive-subjectivity']
             # Process each ES item by its corresponding ID.
@@ -444,41 +445,44 @@ class JSON2CSDS:
                 del csds_object
             del att_list
 
-            # In the following line of code, we extract the IDs of target frame type annotations.
-            tf_list = curr_doc['targetFrame']
-            # Process each target frame item by its corresponding ID.
-            for tf_id in tf_list:
-                annotation_item = annotations[tf_id]
-                tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
-                # Store the object.
-                if not tf_object is None:
-                    target_coll.add_instance(tf_object)
-                del tf_object
-            del tf_list
+            if 'targetFrame' in curr_doc:
+                # In the following line of code, we extract the IDs of target frame type annotations.
+                tf_list = curr_doc['targetFrame']
+                # Process each target frame item by its corresponding ID.
+                for tf_id in tf_list:
+                    annotation_item = annotations[tf_id]
+                    tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
+                    # Store the object.
+                    if not tf_object is None:
+                        target_coll.add_instance(tf_object)
+                    del tf_object
+                del tf_list
 
-            # In the following line of code, we extract the IDs of sTarget type annotations.
-            starget_list = curr_doc['sTarget']
-            # Process each sTarget item by its corresponding ID.
-            for starget_id in starget_list:
-                annotation_item = annotations[starget_id]
-                starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
-                # Store the object.
-                if not starget_object is None:
-                    target_coll.add_instance(starget_object)
-                del starget_object
-            del starget_list
+            if 'sTarget' in curr_doc:
+                # In the following line of code, we extract the IDs of sTarget type annotations.
+                starget_list = curr_doc['sTarget']
+                # Process each sTarget item by its corresponding ID.
+                for starget_id in starget_list:
+                    annotation_item = annotations[starget_id]
+                    starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
+                    # Store the object.
+                    if not starget_object is None:
+                        target_coll.add_instance(starget_object)
+                    del starget_object
+                del starget_list
 
-            # In the following line of code, we extract the IDs of eTarget type annotations.
-            etarget_list = curr_doc['eTarget']
-            # Process each eTarget item by its corresponding ID.
-            for etarget_id in etarget_list:
-                annotation_item = annotations[etarget_id]
-                etarget_object = self.__process_etarget(annotation_item, etarget_id, doc_name)
-                # Store the object.
-                if not etarget_object is None:
-                    target_coll.add_instance(etarget_object)
-                del etarget_object
-            del etarget_list
+            if 'eTarget' in curr_doc:
+                # In the following line of code, we extract the IDs of eTarget type annotations.
+                etarget_list = curr_doc['eTarget']
+                # Process each eTarget item by its corresponding ID.
+                for etarget_id in etarget_list:
+                    annotation_item = annotations[etarget_id]
+                    etarget_object = self.__process_etarget(annotation_item, etarget_id, doc_name)
+                    # Store the object.
+                    if not etarget_object is None:
+                        target_coll.add_instance(etarget_object)
+                    del etarget_object
+                del etarget_list
 
             '''
             # In the following line of code, we extract the IDs of DS type annotations
