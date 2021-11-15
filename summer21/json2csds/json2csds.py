@@ -11,13 +11,14 @@ class JSON2CSDS:
     This is a class in order to convert JSON file to CSDS.
     """
 
-    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=True):
+    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=True, version=2):
         """
         The init method (constructor) for JSON2CSDS class.
         """
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
         self.talkative = talkative
+        self.version = version
 
     def produce_json_file(self):
         """
@@ -58,6 +59,7 @@ class JSON2CSDS:
             print(anno)
             print('Error details: (doc_id: ', doc_id, ')')
             print(error)
+            print(f'Type of error: {error.__class__.__name__}')
             print('===================')
         else:
             pass
@@ -97,13 +99,13 @@ class JSON2CSDS:
 
             # Create an Agent object based on the values of the agent annotation.
             agent_object = Agent(
-                text = its_text,
-                head_start = its_head_start,
-                head_end = its_head_end,
-                head = agent_anno['head'],
-                doc_id = doc_id,
-                sentence_id = its_sentence_id,
-                id = agent_id
+                text=its_text,
+                head_start=its_head_start,
+                head_end=its_head_end,
+                head=agent_anno['head'],
+                doc_id=doc_id,
+                sentence_id=its_sentence_id,
+                id=agent_id
             )
 
             # Extract the optional attributes' values if they exist
@@ -160,18 +162,19 @@ class JSON2CSDS:
 
             # Create a CSDS object based on the values of the ES annotation.
             csds_object = ExtendedCSDS(
-                this_text = es_anno['text'],
-                this_head_start = es_anno['span-in-sentence'][0],
-                this_head_end = es_anno['span-in-sentence'][1],
-                this_belief = None,
-                this_polarity = its_polarity,
-                this_intensity = its_intensity,
-                this_annotation_type = self.__type_mapper('expressive_subjectivity'),
-                this_target_link = self.__go_get_targets(all_anno, es_anno['targetFrame-link']),
-                this_head = es_anno['head'],
-                this_doc_id = doc_id,
-                this_sentence_id = es_anno['sentence-id'],
-                this_agent_link = es_anno['nested-source']
+                this_text=es_anno['text'],
+                this_head_start=es_anno['span-in-sentence'][0],
+                this_head_end=es_anno['span-in-sentence'][1],
+                this_belief=None,
+                this_polarity=its_polarity,
+                this_intensity=its_intensity,
+                this_annotation_type=self.__type_mapper('expressive_subjectivity'),
+                this_target_link=self.__go_get_targets(all_anno,
+                                                       es_anno['targetFrame-link']) if self.version == 3 else [],
+                this_head=es_anno['head'],
+                this_doc_id=doc_id,
+                this_sentence_id=es_anno['sentence-id'],
+                this_agent_link=es_anno['nested-source']
             )
 
         except Exception as err:
@@ -188,12 +191,12 @@ class JSON2CSDS:
         :param doc_id: ID of the doc.
         :return: A CSDS object.
         """
-        its_pol = None # Polarity (default is None)
-        its_type = self.__type_mapper('unknown') # Type (default is unknown)
+        its_pol = None  # Polarity (default is None)
+        its_type = self.__type_mapper('unknown')  # Type (default is unknown)
 
         # Extract features from attitude annotation.
         try:
-            if att_anno['attitude-type'].find('other') >= 0: # [WHY]
+            if att_anno['attitude-type'].find('other') >= 0:  # [WHY]
                 its_type = self.__type_mapper('other-attitude')
             else:
                 # Extract polarity and type: check all of the cases such as corner cases. [WHY]
@@ -208,17 +211,18 @@ class JSON2CSDS:
 
             # Extract features from attitude annotation.
             csds_object = ExtendedCSDS(
-                this_text = att_anno['text'],
-                this_head_start = att_anno['span-in-sentence'][0],
-                this_head_end = att_anno['span-in-sentence'][1],
-                this_belief = None,
-                this_polarity = its_pol,
-                this_intensity = att_anno['intensity'],
-                this_annotation_type = its_type,
-                this_target_link = self.__go_get_targets(all_anno, att_anno['targetFrame-link']),
-                this_head = att_anno['head'],
-                this_doc_id = doc_id,
-                this_sentence_id = att_anno['sentence-id']
+                this_text=att_anno['text'],
+                this_head_start=att_anno['span-in-sentence'][0],
+                this_head_end=att_anno['span-in-sentence'][1],
+                this_belief=None,
+                this_polarity=its_pol,
+                this_intensity=att_anno['intensity'],
+                this_annotation_type=its_type,
+                this_target_link=self.__go_get_targets(all_anno,
+                                                       att_anno['targetFrame-link']) if self.version == 3 else [],
+                this_head=att_anno['head'],
+                this_doc_id=doc_id,
+                this_sentence_id=att_anno['sentence-id']
             )
 
         except Exception as err:
@@ -238,13 +242,13 @@ class JSON2CSDS:
         try:
             # Extract features from target frame annotation and create an object from them.
             target_object = Target(
-                this_id = tf_id,
-                this_sentence_id = tf_anno['sentence-id'],
-                this_text = tf_anno['text'],
-                this_head_start = tf_anno['span-in-sentence'][0],
-                this_head_end = tf_anno['span-in-sentence'][1],
-                this_head = tf_anno['head'],
-                this_annotation_type = tf_anno['anno-type']
+                this_id=tf_id,
+                this_sentence_id=tf_anno['sentence-id'],
+                this_text=tf_anno['text'],
+                this_head_start=tf_anno['span-in-sentence'][0],
+                this_head_end=tf_anno['span-in-sentence'][1],
+                this_head=tf_anno['head'],
+                this_annotation_type=tf_anno['anno-type']
             )
 
         except Exception as err:
@@ -264,14 +268,14 @@ class JSON2CSDS:
         try:
             # Extract features from sTarget annotation and create an object from them.
             starget_object = sTarget(
-                this_id = starget_id,
-                this_sentence_id = starget_anno['sentence-id'],
-                this_text = starget_anno['text'],
-                this_head_start = starget_anno['span-in-sentence'][0],
-                this_head_end = starget_anno['span-in-sentence'][1],
-                this_head = starget_anno['head'],
-                this_annotation_type = starget_anno['anno-type'],
-                this_etarget_link = starget_anno['eTarget-link']
+                this_id=starget_id,
+                this_sentence_id=starget_anno['sentence-id'],
+                this_text=starget_anno['text'],
+                this_head_start=starget_anno['span-in-sentence'][0],
+                this_head_end=starget_anno['span-in-sentence'][1],
+                this_head=starget_anno['head'],
+                this_annotation_type=starget_anno['anno-type'],
+                this_etarget_link=starget_anno['eTarget-link']
             )
 
             # Check 'target-uncertain' which is an optional attribute.
@@ -295,14 +299,14 @@ class JSON2CSDS:
         try:
             # Extract features from eTarget annotation and create an object from them.
             etarget_object = eTarget(
-                this_id = etarget_id,
-                this_sentence_id = etarget_anno['sentence-id'],
-                this_text = etarget_anno['text'],
-                this_head_start = etarget_anno['span-in-sentence'][0],
-                this_head_end = etarget_anno['span-in-sentence'][1],
-                this_head = etarget_anno['head'],
-                this_annotation_type = etarget_anno['anno-type'],
-                this_type_etarget = etarget_anno['type']
+                this_id=etarget_id,
+                this_sentence_id=etarget_anno['sentence-id'],
+                this_text=etarget_anno['text'],
+                this_head_start=etarget_anno['span-in-sentence'][0],
+                this_head_end=etarget_anno['span-in-sentence'][1],
+                this_head=etarget_anno['head'],
+                this_annotation_type=etarget_anno['anno-type'],
+                this_type_etarget=etarget_anno['type']
             )
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
