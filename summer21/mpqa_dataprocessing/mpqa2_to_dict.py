@@ -120,6 +120,8 @@ class mpqa2_to_dict:
             # We probably know the identifier assigned to the annotation by now
             # except some of the agnets and the sentences
             id = temp_dict.pop("id", line_id)
+            if anno_type == 'sentence': # Sentences are stored in a seperate file and have their own IDs
+                id = 'sentence' + id    # So we add a special string before them to prevent duplicate IDs
             
             # Updating the final output
             output["annotations"][id] = temp_dict
