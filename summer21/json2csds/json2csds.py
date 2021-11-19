@@ -55,12 +55,13 @@ class JSON2CSDS:
         :param error: The error(s) that happened.
         """
         if self.talkative:
-            print('===================\nWrong annotation!!')
-            print(anno)
-            print('Error details: (doc_id: ', doc_id, ')')
-            print(error)
-            print(f'Type of error: {error.__class__.__name__}')
-            print('===================')
+            if str(error) != str("'text'"):
+                print('===================\nWrong annotation!!')
+                print(anno)
+                print('Error details: (doc_id: ', doc_id, ')')
+                print(error)
+                print(f'Type of error: {error.__class__.__name__}')
+                print('===================')
         else:
             pass
 
