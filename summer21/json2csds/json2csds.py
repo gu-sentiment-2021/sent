@@ -11,22 +11,27 @@ class JSON2CSDS:
     This is a class in order to convert JSON file to CSDS.
     """
 
-    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=True, version=2):
+    def __init__(self, corpus_name="", mpqa_dir="database.mpqa.3.0", talkative=True, mpqa_version=2):
         """
         The init method (constructor) for JSON2CSDS class.
         """
         self.corpus_name = corpus_name
         self.mpqa_dir = mpqa_dir
         self.talkative = talkative
-        self.version = version
+        self.mpqa_version = mpqa_version
 
     def produce_json_file(self):
         """
-        It uses the mpqa2_to_dict module in order to convert MPQA to JSON (dict) file.
+        It uses the mpqa2_to_dict or module mpqa3_to_dict in order to convert MPQA to JSON (dict) file.
         :return: A JSON file which is obtained from MPQA corpus.
         """
-        m2d = mpqa2_to_dict(self.corpus_name, self.mpqa_dir)
-        result = m2d.corpus_to_dict()
+        result = {}
+        if self.mpqa_version == 2:
+            m2d = mpqa2_to_dict(self.corpus_name, self.mpqa_dir)
+            result = m2d.corpus_to_dict()
+        elif self.mpqa_version == 3:
+            m2d = mpqa3_to_dict(self.corpus_name, self.mpqa_dir)
+            result = m2d.corpus_to_dict()
         return result
 
     def __type_mapper(self, key):
@@ -75,6 +80,19 @@ class JSON2CSDS:
         targets = annos[target_id]['newETarget-link'] + annos[target_id]['sTarget-link']
 
         return targets
+
+    def __go_get_targets_mpqa2(self, annos, curr_annot):
+        """
+        It goes after the targets in the target-links and fetches them.
+        :param annos: A Python dict which represents all annotations in the doc.
+        :param target_id: ID of the target.
+        :return: A Python list of the targets.
+        """
+        target_id = []
+        if curr_annot['target-link'] != "none":
+            target_id = curr_annot['target-link'].replace(" ", "").split(",")
+
+        return target_id
 
     def __process_agent(self, agent_anno, doc_id, agent_id=""):
         """
@@ -173,7 +191,7 @@ class JSON2CSDS:
                 this_intensity=its_intensity,
                 this_annotation_type=self.__type_mapper('expressive_subjectivity'),
                 this_target_link=self.__go_get_targets(all_anno,
-                                                       es_anno['targetFrame-link']) if self.version == 3 else [],
+                                                       es_anno['targetFrame-link']) if self.mpqa_version == 3 else [],
                 this_head=es_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=es_anno['sentence-id'],
@@ -222,7 +240,8 @@ class JSON2CSDS:
                 this_intensity=att_anno['intensity'],
                 this_annotation_type=its_type,
                 this_target_link=self.__go_get_targets(all_anno,
-                                                       att_anno['targetFrame-link']) if self.version == 3 else [],
+                                                       att_anno['targetFrame-link']) if self.mpqa_version == 3 else
+                self.__go_get_targets_mpqa2(all_anno, att_anno),
                 this_head=att_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=att_anno['sentence-id']
