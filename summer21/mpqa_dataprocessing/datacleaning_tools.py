@@ -1,6 +1,7 @@
 import os
 import clipboard as cb
 from mpqa3_to_dict import mpqa3_to_dict
+from mpqa2_to_dict import mpqa2_to_dict
 
 def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mpqa.lre.3.0"):
     """
@@ -38,7 +39,7 @@ def adjustSpansInRange(start_byte=0, end_byte=1e9, delta=0, filename="gateman.mp
 
 def findCutPhrases(
     start_doc, end_doc=None, expand=False,
-    mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'
+    mpqa_dir="mpqa_dataprocessing\\database.mpqa.cleaned", doclist_filename='doclist.2.0'
 ):
     """
     Find the phrases that their spans are potentially wrong.
@@ -54,10 +55,10 @@ def findCutPhrases(
     """
     if end_doc is None:
         end_doc = start_doc
-    m2d = mpqa3_to_dict(mpqa_dir=mpqa_dir)
+    m2d = mpqa2_to_dict(mpqa_dir=mpqa_dir)
     mpqadict = m2d.corpus_to_dict(doclist_filename=doclist_filename)
     alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
-    for doc in mpqadict['doclist'][start_doc:end_doc+1]: # Iterate over docs
+    for doc in mpqadict['doclist'][start_doc:end_doc]: # Iterate over docs
         cut_phrases = []
         print(doc) # The name of the doc we're processing right now
         for v in mpqadict['docs'][doc]['annotations'].values(): # iterate over all annotations
@@ -74,26 +75,45 @@ def findCutPhrases(
                     cut_phrases += ['{}:{}'.format(v['line-id'], v['head'])]
                     if expand:
                         print(v)
+                    continue
                 # Check if there's whitespace at the first or the last character of the head.
                 if v['text'][v['span-in-sentence'][0]] not in alphabet+'`"(\'' \
                 or v['text'][v['span-in-sentence'][1]-1] not in alphabet+'."%?\'),]':
                     cut_phrases += ['{}:{}'.format(v['line-id'], v['head'])]
                     if expand:
                         print(v)
-        print(repr(cut_phrases))
-        print()
+            print(repr(cut_phrases))
+            print(len(cut_phrases))
+            print()
 
 # Sample:
-# findCutPhrases(0, 69, expand=True)
+# findCutPhrases(0, 692, expand=True)
+
+def countAllAnnotationLines(
+    mpqa_dir="mpqa_dataprocessing\\database.mpqa.cleaned", doclist_filename='doclist.2.0'
+):
+    """
+    It counts all annotation lines available in all documents of a corpus.
+    :return: an integer
+    """
+    m2d = mpqa2_to_dict(mpqa_dir=mpqa_dir)
+    mpqadict = m2d.corpus_to_dict(doclist_filename=doclist_filename)
+    count = 0
+    for doc in mpqadict['doclist']: # Iterate over all docs
+        count += len(mpqadict['docs'][doc]['annotations'].keys())
+    return count
+
+# Sample:
+# print(countAllAnnotationLines())
 
 def countAllAttributeTypes(
-    mpqa_dir="mpqa_dataprocessing\\databases\\database.mpqa.3.0.cleaned", doclist_filename='doclist'
+    mpqa_dir="mpqa_dataprocessing\\database.mpqa.cleaned", doclist_filename='doclist.2.0'
 ):
     """
     It counts all types of attributs available in all annotation lines in all documents of a corpus.
     :return: a python dictionary with attribute names as keys and number of times they appeared in annotation files as values
     """
-    m2d = mpqa3_to_dict(mpqa_dir=mpqa_dir)
+    m2d = mpqa2_to_dict(mpqa_dir=mpqa_dir)
     mpqadict = m2d.corpus_to_dict(doclist_filename=doclist_filename)
     attr_types = {}
     for doc in mpqadict['doclist']: # Iterate over all docs
@@ -103,4 +123,4 @@ def countAllAttributeTypes(
     return attr_types
 
 # Sample:
-# print(CountAllAttributeTypes())
+# print(countAllAttributeTypes())
