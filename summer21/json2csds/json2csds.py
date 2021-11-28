@@ -253,6 +253,32 @@ class JSON2CSDS:
 
         return csds_object
 
+    def __process_tar(self, tar_anno, tar_id, doc_id):
+        """
+        It processes a target type annotation (specific for MPQA V2.0).
+        :param tar_anno: A Python dict which represents a target annotation.
+        :param tar_id: ID of the target.
+        :param doc_id: ID of the doc.
+        :return: A target object.
+        """
+        try:
+            # Extract features from target annotation and create an object from them.
+            target_object = Target(
+                this_id=tar_id,
+                this_sentence_id=tar_anno['sentence-id'],
+                this_text=tar_anno['text'],
+                this_head_start=tar_anno['span-in-sentence'][0],
+                this_head_end=tar_anno['span-in-sentence'][1],
+                this_head=tar_anno['head'],
+                this_annotation_type=tar_anno['anno-type']
+            )
+
+        except Exception as err:
+            self.__alert_wrong_anno(tar_anno, doc_id, error=err)
+            return None
+
+        return target_object
+
     def __process_tf(self, tf_anno, tf_id, doc_id):
         """
         It processes a target frame type annotation.
@@ -470,6 +496,20 @@ class JSON2CSDS:
                     ext_csds_coll.add_labeled_instance(csds_object)
                 del csds_object
             del att_list
+
+            if 'target' in curr_doc:
+                # In the following line of code, we extract the IDs of target type annotations.
+                # Specific for MPQA V2.0
+                tar_list = curr_doc['target']
+                # Process each target frame item by its corresponding ID.
+                for tar_id in tar_list:
+                    annotation_item = annotations[tar_id]
+                    tar_object = self.__process_tar(annotation_item, tar_id, doc_name)
+                    # Store the object.
+                    if not tar_object is None:
+                        target_coll.add_instance(tar_object)
+                    del tar_object
+                del tar_list
 
             if 'targetFrame' in curr_doc:
                 # In the following line of code, we extract the IDs of target frame type annotations.
