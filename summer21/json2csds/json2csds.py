@@ -124,7 +124,8 @@ class JSON2CSDS:
                 head=agent_anno['head'],
                 doc_id=doc_id,
                 sentence_id=its_sentence_id,
-                id=agent_id
+                id=agent_id,
+                unique_id=doc_id+'&&'+str(agent_anno['line-id'])
             )
 
             # Extract the optional attributes' values if they exist
@@ -195,7 +196,8 @@ class JSON2CSDS:
                 this_head=es_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=es_anno['sentence-id'],
-                this_agent_link=es_anno['nested-source']
+                this_agent_link=es_anno['nested-source'],
+                unique_id=doc_id + '&&' + str(es_anno['line-id'])
             )
 
         except Exception as err:
@@ -244,7 +246,8 @@ class JSON2CSDS:
                 self.__go_get_targets_mpqa2(all_anno, att_anno),
                 this_head=att_anno['head'],
                 this_doc_id=doc_id,
-                this_sentence_id=att_anno['sentence-id']
+                this_sentence_id=att_anno['sentence-id'],
+                unique_id=doc_id + '&&' + str(att_anno['line-id'])
             )
 
         except Exception as err:
@@ -270,7 +273,8 @@ class JSON2CSDS:
                 this_head_start=tar_anno['span-in-sentence'][0],
                 this_head_end=tar_anno['span-in-sentence'][1],
                 this_head=tar_anno['head'],
-                this_annotation_type=tar_anno['anno-type']
+                this_annotation_type=tar_anno['anno-type'],
+                unique_id=doc_id + '&&' + str(tar_anno['line-id'])
             )
 
         except Exception as err:
@@ -296,7 +300,8 @@ class JSON2CSDS:
                 this_head_start=tf_anno['span-in-sentence'][0],
                 this_head_end=tf_anno['span-in-sentence'][1],
                 this_head=tf_anno['head'],
-                this_annotation_type=tf_anno['anno-type']
+                this_annotation_type=tf_anno['anno-type'],
+                unique_id=doc_id + '&&' + str(tf_anno['line-id'])
             )
 
         except Exception as err:
@@ -323,7 +328,8 @@ class JSON2CSDS:
                 this_head_end=starget_anno['span-in-sentence'][1],
                 this_head=starget_anno['head'],
                 this_annotation_type=starget_anno['anno-type'],
-                this_etarget_link=starget_anno['eTarget-link']
+                this_etarget_link=starget_anno['eTarget-link'],
+                unique_id=doc_id + '&&' + str(starget_anno['line-id'])
             )
 
             # Check 'target-uncertain' which is an optional attribute.
@@ -354,7 +360,8 @@ class JSON2CSDS:
                 this_head_end=etarget_anno['span-in-sentence'][1],
                 this_head=etarget_anno['head'],
                 this_annotation_type=etarget_anno['anno-type'],
-                this_type_etarget=etarget_anno['type']
+                this_type_etarget=etarget_anno['type'],
+                unique_id=doc_id + '&&' + str(etarget_anno['line-id'])
             )
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
@@ -390,7 +397,8 @@ class JSON2CSDS:
                                        this_target_link=ds_anno['attitude-link'],
                                        this_head=ds_anno['head'],
                                        this_doc_id=doc_id,
-                                       this_sentence_id=ds_anno['sentence-id']
+                                       this_sentence_id=ds_anno['sentence-id'],
+                                       unique_id=doc_id+'&&'+str(ds_anno['line-id'])
                                        )
             return csds_object
         except Exception as err:
