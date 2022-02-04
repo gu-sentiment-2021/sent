@@ -40,7 +40,9 @@ class ExtendedCSDS:
         2. added intensity. Its possible values: low, medium, high, extreme.
         3. added Enum for Type of annotation.
         4. added target_link that contains a list of the id of e/sTargets.
+        5. added unique_id to each annotation
     """
+    unique_id = -1 # unique id of each annotation
     doc_id = -1  # unique index of origin document within corpus, value: name of doc.
     sentence_id = -1  # index of sentence within document.
     text = ""  # sentence in which the annotated head occurs.
@@ -58,8 +60,9 @@ class ExtendedCSDS:
     def __init__(
             self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,
             this_annotation_type, this_target_link=[], this_agent_link=[], this_head="", this_doc_id=-1,
-            this_sentence_id=-1
+            this_sentence_id=-1, unique_id=-1
     ):
+        self.unique_id = unique_id
         self.doc_id = this_doc_id
         self.sentence_id = this_sentence_id
         self.text = this_text

@@ -2,6 +2,8 @@ class Agent:
     """
     This class is used for agent annotation type.
     """
+
+    unique_id = -1 # unique id of each annotation
     id = ""  # ID of this agent.
     nested_source = []  # The nested-source is a list of agent IDs beginning with the writer and ending with
     # the ID for the immediate agent being referenced.
@@ -15,10 +17,11 @@ class Agent:
     head = ""  # target of annotation.
 
     def __init__(self, id="", agent_uncertain="", text="", head_start=-1, head_end=-1,
-                 head="", doc_id="", sentence_id=-1, nested_source=[]):
+                 head="", doc_id="", sentence_id=-1, nested_source=[], unique_id=-1):
         """
         The init method (constructor) for Agent class.
         """
+        self.unique_id = unique_id
         self.id = id
         self.agent_uncertain = agent_uncertain
         self.doc_id = doc_id

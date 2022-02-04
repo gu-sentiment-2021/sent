@@ -14,6 +14,7 @@ class Target:
     This class has target_id, span_start and span_end that both eTarget(s) and sTarget(s)
     include these parameters.
     """
+    unique_id = -1 # unique id of each annotation
     sentence_id = -1  # index of sentence within document
     text = ""  # sentence in which the annotated head occurs
     target_id = ""  # id of eTarget or sTarget
@@ -23,10 +24,11 @@ class Target:
     annotation_type: TypeTarget  # The type of annotation
 
     def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                 this_head="", this_sentence_id=-1):
+                 this_head="", this_sentence_id=-1, unique_id=-1):
         """
         The init method (constructor) for Target class.
         """
+        self.unique_id = unique_id
         self.target_id = this_id
         self.sentence_id = this_sentence_id
         self.text = this_text
@@ -46,12 +48,12 @@ class eTarget(Target):
 
     def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
                  this_type_etarget, this_head="", this_sentence_id=-1, this_is_negated=None,
-                 this_is_referred_in_span=None):
+                 this_is_referred_in_span=None, unique_id=-1):
         """
         The init method (constructor) for eTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                        this_head, this_sentence_id)
+                        this_head, this_sentence_id, unique_id=-1)
         self.type_etarget = this_type_etarget
         self.is_negated = this_is_negated
         self.is_referred_in_span = this_is_referred_in_span
@@ -66,12 +68,12 @@ class sTarget(Target):
 
     def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
                  this_head="", this_sentence_id=-1, this_target_uncertain="",
-                 this_etarget_link=[]):
+                 this_etarget_link=[], unique_id=-1):
         """
         The init method (constructor) for sTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                        this_head, this_sentence_id)
+                        this_head, this_sentence_id, unique_id=-1)
         self.target_uncertain = this_target_uncertain
         self.etarget_link = this_etarget_link
 
