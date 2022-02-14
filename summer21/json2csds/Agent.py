@@ -60,7 +60,7 @@ class AgentCollection:
         :return: None.
         """
         # Add the new agent instance to the collection, indeed using the object's ID to put the object in a dict.
-        self.agent_instances[new_instance.id] = new_instance
+        self.agent_instances[new_instance.unique_id] = new_instance
 
     def get_instance(self, instance_id):
         """
@@ -80,7 +80,7 @@ class AgentCollection:
         Returns the list of Agent objects.
         :return: A list of Agent objects.
         """
-        return self.agent_instances.values()
+        return self.agent_instances
 
     def get_num_instances(self):
         """

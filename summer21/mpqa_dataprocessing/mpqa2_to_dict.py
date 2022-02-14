@@ -9,7 +9,7 @@ import re
 
 HAS_LIST_OF_IDS = [ # These attributes may have any number of ids. (>= 0)
     "nested-source", "attitude-link", "insubstantial",
-    "target-speech-link"
+    "target-speech-link", "target-link"
 ]
 
 class mpqa2_to_dict:
@@ -113,7 +113,7 @@ class mpqa2_to_dict:
                     key, val = key.strip(), val.strip()
                     val = val[1:-1] # Removes double quotation marks
                     if key in HAS_LIST_OF_IDS:
-                        temp_dict[key] = [] if val == "none" else val.split(',')
+                        temp_dict[key] = [] if val == "none" or val == "" else [v.strip() for v in val.split(',')]
                     else:
                         temp_dict[key] = val
 

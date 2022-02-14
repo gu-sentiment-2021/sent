@@ -53,7 +53,7 @@ class eTarget(Target):
         The init method (constructor) for eTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                        this_head, this_sentence_id, unique_id=-1)
+                        this_head, this_sentence_id, unique_id)
         self.type_etarget = this_type_etarget
         self.is_negated = this_is_negated
         self.is_referred_in_span = this_is_referred_in_span
@@ -73,7 +73,7 @@ class sTarget(Target):
         The init method (constructor) for sTarget class.
         """
         Target.__init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                        this_head, this_sentence_id, unique_id=-1)
+                        this_head, this_sentence_id, unique_id)
         self.target_uncertain = this_target_uncertain
         self.etarget_link = this_etarget_link
 
@@ -107,7 +107,7 @@ class TargetCollection:
         :return: None.
         """
         # Add the new Target instance to the collection, indeed using the object's ID to put the object in a dict.
-        self.target_instances[new_instance.target_id] = new_instance
+        self.target_instances[new_instance.unique_id] = new_instance
 
     def get_instance(self, instance_id):
         """
@@ -128,7 +128,7 @@ class TargetCollection:
         Returns the list of Target objects.
         :return: A list of Target objects.
         """
-        return self.target_instances.values()
+        return self.target_instances
 
     def get_num_instances(self):
         """

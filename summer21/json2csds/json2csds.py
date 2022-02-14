@@ -1,3 +1,4 @@
+from re import A
 from mpqa_dataprocessing.mpqa2_to_dict import mpqa2_to_dict
 from mpqa_dataprocessing.mpqa3_to_dict import mpqa3_to_dict
 import json
@@ -78,21 +79,25 @@ class JSON2CSDS:
         :return: A Python list of the targets.
         """
         targets = annos[target_id]['newETarget-link'] + annos[target_id]['sTarget-link']
-
         return targets
 
-    def __go_get_targets_mpqa2(self, annos, curr_annot):
+    def __go_get_targets_mpqa2(self, curr_annot):
         """
         It goes after the targets in the target-links and fetches them.
-        :param annos: A Python dict which represents all annotations in the doc.
         :param target_id: ID of the target.
         :return: A Python list of the targets.
         """
-        target_id = []
-        if curr_annot['target-link'] != "none":
-            target_id = curr_annot['target-link'].replace(" ", "").split(",")
+        targets = curr_annot['target-link'] if 'target-link' in curr_annot else []
+        return targets
 
-        return target_id
+    def __add_docname_to_list(self, doc_id, array):
+        """
+        Add doc_id to the begginging of each element in the array.
+        :param doc_id: ID of the doc.
+        :param array: Array of strings. (Possibley target/agent ids)
+        :return: A python list of altered strings.
+        """
+        return [f'{doc_id}&&{s}' for s in array]
 
     def __process_agent(self, agent_anno, doc_id, agent_id=""):
         """
@@ -125,14 +130,14 @@ class JSON2CSDS:
                 doc_id=doc_id,
                 sentence_id=its_sentence_id,
                 id=agent_id,
-                unique_id=doc_id+'&&'+str(agent_anno['line-id'])
+                unique_id=doc_id+'&&'+agent_id
             )
 
             # Extract the optional attributes' values if they exist
             if 'agent-uncertain' in agent_anno:
                 agent_object.agent_uncertain = agent_anno['agent-uncertain']
             if 'nested-source' in agent_anno:
-                agent_object.nested_source = agent_anno['nested-source']
+                agent_object.nested_source = self.__add_docname_to_list(doc_id, agent_anno['nested-source'])
 
         except Exception as err:
             self.__alert_wrong_anno(agent_anno, doc_id, error=err)
@@ -140,10 +145,11 @@ class JSON2CSDS:
 
         return agent_object
 
-    def __process_es(self, all_anno, es_anno, doc_id):
+    def __process_es(self, all_anno, es_id, es_anno, doc_id):
         """
         It processes an ES (expressive-subjectivity) type annotation.
         :param all_anno: A Python dict which represents all annotations in the doc.
+        :param es_id: ID of the annotation.
         :param es_anno: A Python dict which represents an ES annotation.
         :param doc_id: ID of the doc.
         :return: A CSDS object.
@@ -191,13 +197,17 @@ class JSON2CSDS:
                 this_polarity=its_polarity,
                 this_intensity=its_intensity,
                 this_annotation_type=self.__type_mapper('expressive_subjectivity'),
-                this_target_link=self.__go_get_targets(all_anno,
-                                                       es_anno['targetFrame-link']) if self.mpqa_version == 3 else [],
+                this_target_link=self.__add_docname_to_list(
+                    doc_id,
+                    self.__go_get_targets(all_anno, es_anno['targetFrame-link']) if self.mpqa_version == 3 else []
+                ),
                 this_head=es_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=es_anno['sentence-id'],
-                this_agent_link=es_anno['nested-source'],
-                unique_id=doc_id + '&&' + str(es_anno['line-id'])
+                this_agent_link=self.__add_docname_to_list(
+                    doc_id, es_anno['nested-source'] if 'nested-source' in es_anno else []
+                ),
+                unique_id=doc_id + '&&' + es_id
             )
 
         except Exception as err:
@@ -206,10 +216,11 @@ class JSON2CSDS:
 
         return csds_object
 
-    def __process_att(self, all_anno, att_anno, doc_id):
+    def __process_att(self, all_anno, att_id, att_anno, doc_id):
         """
         It processes an attitude type annotation.
         :param all_anno: A Python dict which represents all annotations in the doc.
+        :param att_id: ID of the annotation.
         :param att_anno: A Python dict which represents an attitude annotation.
         :param doc_id: ID of the doc.
         :return: A CSDS object.
@@ -241,13 +252,15 @@ class JSON2CSDS:
                 this_polarity=its_pol,
                 this_intensity=att_anno['intensity'],
                 this_annotation_type=its_type,
-                this_target_link=self.__go_get_targets(all_anno,
-                                                       att_anno['targetFrame-link']) if self.mpqa_version == 3 else
-                self.__go_get_targets_mpqa2(all_anno, att_anno),
+                this_target_link=self.__add_docname_to_list(
+                    doc_id,
+                    self.__go_get_targets(all_anno, att_anno['targetFrame-link']) if self.mpqa_version == 3 else
+                    self.__go_get_targets_mpqa2(att_anno)
+                ),
                 this_head=att_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=att_anno['sentence-id'],
-                unique_id=doc_id + '&&' + str(att_anno['line-id'])
+                unique_id=doc_id + '&&' + att_id
             )
 
         except Exception as err:
@@ -274,7 +287,7 @@ class JSON2CSDS:
                 this_head_end=tar_anno['span-in-sentence'][1],
                 this_head=tar_anno['head'],
                 this_annotation_type=tar_anno['anno-type'],
-                unique_id=doc_id + '&&' + str(tar_anno['line-id'])
+                unique_id=doc_id + '&&' + tar_id
             )
 
         except Exception as err:
@@ -301,7 +314,7 @@ class JSON2CSDS:
                 this_head_end=tf_anno['span-in-sentence'][1],
                 this_head=tf_anno['head'],
                 this_annotation_type=tf_anno['anno-type'],
-                unique_id=doc_id + '&&' + str(tf_anno['line-id'])
+                unique_id=doc_id + '&&' + tf_id
             )
 
         except Exception as err:
@@ -329,7 +342,7 @@ class JSON2CSDS:
                 this_head=starget_anno['head'],
                 this_annotation_type=starget_anno['anno-type'],
                 this_etarget_link=starget_anno['eTarget-link'],
-                unique_id=doc_id + '&&' + str(starget_anno['line-id'])
+                unique_id=doc_id + '&&' + starget_id
             )
 
             # Check 'target-uncertain' which is an optional attribute.
@@ -361,7 +374,7 @@ class JSON2CSDS:
                 this_head=etarget_anno['head'],
                 this_annotation_type=etarget_anno['anno-type'],
                 this_type_etarget=etarget_anno['type'],
-                unique_id=doc_id + '&&' + str(etarget_anno['line-id'])
+                unique_id=doc_id + '&&' + etarget_id
             )
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
@@ -487,7 +500,7 @@ class JSON2CSDS:
             # Process each ES item by its corresponding ID.
             for es_id in es_list:
                 annotation_item = annotations[es_id]
-                csds_object = self.__process_es(annotations, annotation_item, doc_name)
+                csds_object = self.__process_es(annotations, es_id, annotation_item, doc_name)
                 # Store the object!
                 if not csds_object is None:
                     ext_csds_coll.add_labeled_instance(csds_object)
@@ -499,7 +512,7 @@ class JSON2CSDS:
             # Process each attitude item by its corresponding ID.
             for att_id in att_list:
                 annotation_item = annotations[att_id]
-                csds_object = self.__process_att(annotations, annotation_item, doc_name)
+                csds_object = self.__process_att(annotations, att_id, annotation_item, doc_name)
                 if not csds_object is None:
                     ext_csds_coll.add_labeled_instance(csds_object)
                 del csds_object
@@ -599,9 +612,17 @@ class JSON2CSDS:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
             agent_coll_lst = agent_coll.get_all_instances()
+            
             csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
-            target_json_files = list(map(self.__csds_object2json, target_coll_lst))
-            agent_json_files = list(map(self.__csds_object2json, agent_coll_lst))
+            
+            target_json_keys = list(target_coll_lst.keys())
+            target_json_values = list(map(self.__csds_object2json, target_coll_lst.values()))
+            target_json_files = dict(zip(target_json_keys, target_json_values))
+            
+            agent_json_keys = list(agent_coll_lst.keys())
+            agent_json_values = list(map(self.__csds_object2json, agent_coll_lst.values()))
+            agent_json_files = dict(zip(agent_json_keys, agent_json_values))
+            
             overall_result = {
                 'corpus_name': self.corpus_name,
                 'csds_objects': csds_json_files,
