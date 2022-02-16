@@ -341,7 +341,7 @@ class JSON2CSDS:
                 this_head_end=starget_anno['span-in-sentence'][1],
                 this_head=starget_anno['head'],
                 this_annotation_type=starget_anno['anno-type'],
-                this_etarget_link=starget_anno['eTarget-link'],
+                this_etarget_link=self.__add_docname_to_list(doc_id, starget_anno['eTarget-link']),
                 unique_id=doc_id + '&&' + starget_id
             )
 
