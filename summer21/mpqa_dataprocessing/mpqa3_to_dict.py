@@ -99,7 +99,7 @@ class mpqa3_to_dict:
                 key, val = key.strip(), val.strip()
                 val = val[1:-1] # Removes double quotation marks
                 if key in HAS_LIST_OF_IDS:
-                    temp_dict[key] = [] if val == "none" else val.split(',')
+                    temp_dict[key] = [] if val == "none" or val == "" else  [v.strip() for v in val.split(',')]
                 else:
                     temp_dict[key] = val
             # We probably know the identifier assigned to the annotation by now

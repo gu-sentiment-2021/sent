@@ -16,9 +16,9 @@ with open(path + 'data_mpqa.json', 'w', encoding='utf-8') as f:
     json.dump(mpqa_json, f, ensure_ascii=False, indent=4)
 
 
-with open(path + 'dataV2.json', 'w', encoding='utf-8') as f:
+with open(path + 'dataV3.json', 'w', encoding='utf-8') as f:
     json.dump(json_output, f, ensure_ascii=False, indent=4)
 
 # Loading the saved JSON file.
-with open(path + 'dataV2.json') as json_file:
+with open(path + 'dataV3.json') as json_file:
     data = json.load(json_file)
