@@ -56,10 +56,11 @@ class ExtendedCSDS:
     annotation_type: Type  # The type of annotation.
     target_link = []  # A list that contains the ID of e/sTargets.
     nested_source_link = []  # A list that contains the ID of nested-souces.
+    expression_intensity = None #An attribute for expression intensity
 
     def __init__(
             self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,
-            this_annotation_type, this_target_link=[], this_agent_link=[], this_head="", this_doc_id=-1,
+            this_annotation_type, this_expression_intensity=None, this_target_link=[], this_agent_link=[], this_head="", this_doc_id=-1,
             this_sentence_id=-1, unique_id=-1
     ):
         self.unique_id = unique_id
@@ -75,6 +76,7 @@ class ExtendedCSDS:
         self.annotation_type = Type(this_annotation_type)
         self.target_link = this_target_link
         self.nested_source_link = this_agent_link
+        self.expression_intensity = this_expression_intensity
 
     def get_info_short(self):
         return (

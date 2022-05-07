@@ -130,7 +130,7 @@ class JSON2CSDS:
                 doc_id=doc_id,
                 sentence_id=its_sentence_id,
                 id=agent_id,
-                unique_id=doc_id+'&&'+agent_id
+                unique_id=doc_id + '&&' + agent_id
             )
 
             # Extract the optional attributes' values if they exist
@@ -390,8 +390,8 @@ class JSON2CSDS:
 
         return etarget_object
 
-    '''
-    def process_ds(self, ds_anno, doc_id):
+
+    def __process_ds(self, ds_anno, ds_id, doc_id):
         """
         It processes a DS (direct-subjective) type annotation.
         :param ds_anno: A Python dict which represents a DS annotation.
@@ -399,25 +399,26 @@ class JSON2CSDS:
         :return: A csds object.
         """
         try:
-            csds_object = ExtendedCSDS(this_text=ds_anno['text'],
+            ds_object = ExtendedCSDS(this_text=ds_anno['text'],
                                        this_head_start=ds_anno['span-in-sentence'][0],
                                        this_head_end=ds_anno['span-in-sentence'][1],
                                        this_belief=None,
                                        # or maybe the polarity by getting it via attitude-link?
-                                       this_polarity=ds_anno['attitude-type'],
+                                       this_polarity=ds_anno['polarity'],
                                        this_intensity=ds_anno['intensity'],
-                                       this_annotation_type=self.type_mapper('expressive_subjectivity'),  # NOT SURE!
+                                       this_annotation_type=self.type_mapper('unknown'),
+                                       this_expression_intensity=ds_anno['expression-intensity'],
                                        this_target_link=ds_anno['attitude-link'],
                                        this_head=ds_anno['head'],
                                        this_doc_id=doc_id,
                                        this_sentence_id=ds_anno['sentence-id'],
-                                       unique_id=doc_id+'&&'+str(ds_anno['line-id'])
+                                       unique_id=doc_id+'&&'+ds_id
                                        )
-            return csds_object
+            return ds_object
         except Exception as err:
-            self.alert_wrong_anno(ds_anno, doc_id, error=err)
+            self.__alert_wrong_anno(ds_anno, doc_id, error=err)
             return None
-
+    '''
     # This method is not being used till now!
     def process_ose(self, ose_anno, doc_id):
         """
@@ -571,18 +572,20 @@ class JSON2CSDS:
                     del etarget_object
                 del etarget_list
 
+            if 'direct-subjective' in curr_doc:
+                # In the following line of code, we extract the IDs of DS type annotations
+                ds_list = curr_doc['direct-subjective']
+                # Process each DS item by its corresponding ID
+                for ds_id in ds_list:
+                    annotation_item = annotations[ds_id]
+                    print(annotation_item)
+                    ds_object = self.__process_ds(annotation_item, ds_id, doc_name)
+                    # Store the object.
+                    if not ds_object is None:
+                        target_coll.add_instance(ds_object)
+                    del ds_object
+                del ds_list
             '''
-            # In the following line of code, we extract the IDs of DS type annotations
-            ds_list = curr_doc['direct-subjective']
-            # Process each DS item by its corresponding ID
-            for ds_id in ds_list:
-                annotation_item = annotations[ds_id]
-                csds_object = self.process_ds(annotation_item, doc_name)
-                # Store the object!
-                ext_csds_coll.add_labeled_instance(csds_object)
-                del csds_object
-            del ds_list
-
             # In the following line of code, we extract the IDs of OSE type annotations
             ose_list = curr_doc['objective-speech-event']
             # Process each OSE item by its corresponding ID
@@ -593,7 +596,7 @@ class JSON2CSDS:
                 # WHAT TO DO?
                 del csds_object
             del ose_list
-
+            
             # In the following line of code, we extract the IDs of sentence type annotations
             sentence_list = curr_doc['sentence']
             # Process each sentence item by its corresponding ID
@@ -605,24 +608,23 @@ class JSON2CSDS:
                 del csds_object
             del sentence_list
             '''
-
             del annotations
 
         if json_output:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
             agent_coll_lst = agent_coll.get_all_instances()
-            
+
             csds_json_files = list(map(self.__csds_object2json, csds_coll_lst))
-            
+
             target_json_keys = list(target_coll_lst.keys())
             target_json_values = list(map(self.__csds_object2json, target_coll_lst.values()))
             target_json_files = dict(zip(target_json_keys, target_json_values))
-            
+
             agent_json_keys = list(agent_coll_lst.keys())
             agent_json_values = list(map(self.__csds_object2json, agent_coll_lst.values()))
             agent_json_files = dict(zip(agent_json_keys, agent_json_values))
-            
+
             overall_result = {
                 'corpus_name': self.corpus_name,
                 'csds_objects': csds_json_files,
