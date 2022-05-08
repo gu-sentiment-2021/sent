@@ -48,8 +48,10 @@ class JSON2CSDS:
             'agreement': 'agreement',
             'intention': 'intention',
             'speculation': 'speculation',
+            'specilation': 'speculation',
             'other-attitude': 'other_attitude',
             'expressive_subjectivity': 'expressive_subjectivity',
+            'objective-speech-event': 'objective-speech-event',
             'unknown': 'unknown'
         }
         return type_map_dict[key]
@@ -119,7 +121,11 @@ class JSON2CSDS:
                 its_text = agent_anno['text']
                 its_head_start = agent_anno['span-in-sentence'][0]
                 its_head_end = agent_anno['span-in-sentence'][1]
-                its_sentence_id = agent_anno['sentence-id']
+
+                if 'sentence-id' in agent_anno:
+                    its_sentence_id = agent_anno['sentence-id']
+                else:
+                    its_sentence_id = None
 
             # Create an Agent object based on the values of the agent annotation.
             agent_object = Agent(
@@ -228,20 +234,33 @@ class JSON2CSDS:
         its_pol = None  # Polarity (default is None)
         its_type = self.__type_mapper('unknown')  # Type (default is unknown)
 
+        if 'sentence-id' in att_anno:
+            sent_id = att_anno['sentence-id']
+        else:
+            sent_id = None
+
+        if 'intensity' in att_anno:
+            inten = att_anno['intensity']
+        else:
+            inten = None
+
         # Extract features from attitude annotation.
         try:
-            if att_anno['attitude-type'].find('other') >= 0:  # [WHY]
-                its_type = self.__type_mapper('other-attitude')
-            else:
-                # Extract polarity and type: check all of the cases such as corner cases. [WHY]
-                if att_anno['attitude-type'].find('-') != -1:
-                    its_attitude_type = att_anno['attitude-type'].split('-')
-                    length = len(its_attitude_type)
-                    its_pol = 'positive' if its_attitude_type[length - 1].find('pos') >= 0 else 'negative'
-                    its_type = self.__type_mapper('agreement') if its_attitude_type[length - 2].find('agree') >= 0 \
-                        else self.__type_mapper(its_attitude_type[length - 2])
+            if 'attitude-type' in att_anno:
+                if att_anno['attitude-type'].find('other') >= 0:  # [WHY]
+                    its_type = self.__type_mapper('other-attitude')
                 else:
-                    its_type = self.__type_mapper(att_anno['attitude-type'])
+                    # Extract polarity and type: check all of the cases such as corner cases. [WHY]
+                    if att_anno['attitude-type'].find('-') != -1:
+                        its_attitude_type = att_anno['attitude-type'].split('-')
+                        length = len(its_attitude_type)
+                        its_pol = 'positive' if its_attitude_type[length - 1].find('pos') >= 0 else 'negative'
+                        its_type = self.__type_mapper('agreement') if its_attitude_type[length - 2].find('agree') >= 0 \
+                            else self.__type_mapper(its_attitude_type[length - 2])
+                    else:
+                        its_type = self.__type_mapper(att_anno['attitude-type'])
+            else:
+                its_type = self.__type_mapper('unknown')
 
             # Extract features from attitude annotation.
             csds_object = ExtendedCSDS(
@@ -250,7 +269,7 @@ class JSON2CSDS:
                 this_head_end=att_anno['span-in-sentence'][1],
                 this_belief=None,
                 this_polarity=its_pol,
-                this_intensity=att_anno['intensity'],
+                this_intensity=inten,
                 this_annotation_type=its_type,
                 this_target_link=self.__add_docname_to_list(
                     doc_id,
@@ -259,7 +278,7 @@ class JSON2CSDS:
                 ),
                 this_head=att_anno['head'],
                 this_doc_id=doc_id,
-                this_sentence_id=att_anno['sentence-id'],
+                this_sentence_id=sent_id,
                 unique_id=doc_id + '&&' + att_id
             )
 
@@ -277,11 +296,17 @@ class JSON2CSDS:
         :param doc_id: ID of the doc.
         :return: A target object.
         """
+
+        if 'sentence-id' in tar_anno:
+            sent_id = tar_anno['sentence-id']
+        else:
+            sent_id = None
+
         try:
             # Extract features from target annotation and create an object from them.
             target_object = Target(
                 this_id=tar_id,
-                this_sentence_id=tar_anno['sentence-id'],
+                this_sentence_id=sent_id,
                 this_text=tar_anno['text'],
                 this_head_start=tar_anno['span-in-sentence'][0],
                 this_head_end=tar_anno['span-in-sentence'][1],
@@ -304,11 +329,17 @@ class JSON2CSDS:
         :param doc_id: ID of the doc.
         :return: A target (target frame) object.
         """
+
+        if 'sentence-id' in tf_anno:
+            sent_id = tf_anno['sentence-id']
+        else:
+            sent_id = None
+
         try:
             # Extract features from target frame annotation and create an object from them.
             target_object = Target(
                 this_id=tf_id,
-                this_sentence_id=tf_anno['sentence-id'],
+                this_sentence_id=sent_id,
                 this_text=tf_anno['text'],
                 this_head_start=tf_anno['span-in-sentence'][0],
                 this_head_end=tf_anno['span-in-sentence'][1],
@@ -390,7 +421,6 @@ class JSON2CSDS:
 
         return etarget_object
 
-
     def __process_ds(self, ds_anno, ds_id, doc_id):
         """
         It processes a DS (direct-subjective) type annotation.
@@ -398,38 +428,101 @@ class JSON2CSDS:
         :param doc_id: Id of the doc.
         :return: A csds object.
         """
+
+        if 'sentence-id' in ds_anno:
+            sent_id = ds_anno['sentence-id']
+        else:
+            sent_id = None
+
+        if 'attitude-link' in ds_anno:
+            att_link = ds_anno['attitude-link']
+        else:
+            att_link = None
+
+        if 'intensity' in ds_anno:
+            inten = ds_anno['intensity']
+        else:
+            inten = None
+
+        if 'implicit' in ds_anno:
+            imp = ds_anno['implicit']
+        else:
+            imp = None
+
+        if 'polarity' in ds_anno:
+            pol = ds_anno['polarity']
+        else:
+            pol = None
+
+        if 'expression-intensity' in ds_anno:
+            exp_int = ds_anno['expression-intensity']
+        else:
+            exp_int = None
+
         try:
-            ds_object = ExtendedCSDS(this_text=ds_anno['text'],
-                                       this_head_start=ds_anno['span-in-sentence'][0],
-                                       this_head_end=ds_anno['span-in-sentence'][1],
-                                       this_belief=None,
-                                       # or maybe the polarity by getting it via attitude-link?
-                                       this_polarity=ds_anno['polarity'],
-                                       this_intensity=ds_anno['intensity'],
-                                       this_annotation_type=self.type_mapper('unknown'),
-                                       this_expression_intensity=ds_anno['expression-intensity'],
-                                       this_target_link=ds_anno['attitude-link'],
-                                       this_head=ds_anno['head'],
-                                       this_doc_id=doc_id,
-                                       this_sentence_id=ds_anno['sentence-id'],
-                                       unique_id=doc_id+'&&'+ds_id
-                                       )
+            ds_object = ExtendedCSDS(
+                this_text=ds_anno['text'],
+                this_head_start=ds_anno['span-in-sentence'][0],
+                this_head_end=ds_anno['span-in-sentence'][1],
+                this_belief=None,
+                # or maybe the polarity by getting it via attitude-link?
+                this_polarity=pol,
+                this_intensity=inten,
+                this_annotation_type=self.__type_mapper('unknown'),
+                this_expression_intensity=exp_int,
+                this_target_link=att_link,
+                this_head=ds_anno['head'],
+                this_doc_id=doc_id,
+                this_sentence_id=sent_id,
+                this_implicit=imp,
+                unique_id=doc_id + '&&' + ds_id
+            )
             return ds_object
         except Exception as err:
             self.__alert_wrong_anno(ds_anno, doc_id, error=err)
             return None
-    '''
+
     # This method is not being used till now!
-    def process_ose(self, ose_anno, doc_id):
+    def __process_ose(self, ose_anno, ose_id, doc_id):
         """
         It processes an OSE type annotation.
         :param ose_anno: A Python dict which represents an OSE annotation.
         :param doc_id: Id of the doc.
         :return: A csds object.
         """
-        # !
+        if 'sentence-id' in ose_anno:
+            sent_id = ose_anno['sentence-id']
+        else:
+            sent_id = None
+
+        if 'implicit' in ose_anno:
+            imp = ose_anno['implicit']
+        else:
+            imp = None
+
+        try:
+            ose_object = ExtendedCSDS(
+                this_text=ose_anno['text'],
+                this_head_start=ose_anno['span-in-sentence'][0],
+                this_head_end=ose_anno['span-in-sentence'][1],
+                this_belief=None,
+                this_polarity=None,
+                this_intensity=None,
+                this_annotation_type=self.__type_mapper(ose_anno['anno-type']),
+                this_head=ose_anno['head'],
+                this_doc_id=doc_id,
+                this_sentence_id=sent_id,
+                this_implicit=imp,
+                unique_id=doc_id + '&&' + ose_id
+            )
+            return ose_object
+        except Exception as err:
+            self.__alert_wrong_anno(ose_id, doc_id, error=err)
+            return None
+
         return None
 
+    '''
     # This method is not being used till now!
     def process_sentence(self, sentence_anno, doc_id):
         """
@@ -578,25 +671,27 @@ class JSON2CSDS:
                 # Process each DS item by its corresponding ID
                 for ds_id in ds_list:
                     annotation_item = annotations[ds_id]
-                    print(annotation_item)
                     ds_object = self.__process_ds(annotation_item, ds_id, doc_name)
                     # Store the object.
                     if not ds_object is None:
-                        target_coll.add_instance(ds_object)
+                        ext_csds_coll.add_labeled_instance(ds_object)
                     del ds_object
                 del ds_list
+
+            if 'objective-speech-event' in curr_doc:
+                # In the following line of code, we extract the IDs of OSE type annotations
+                ose_list = curr_doc['objective-speech-event']
+                # Process each OSE item by its corresponding ID
+                for ose_id in ose_list:
+                    annotation_item = annotations[ose_id]
+                    ose_object = self.__process_ose(annotation_item, ose_id, doc_name)
+                    # Store the object.
+                    if not ose_object is None:
+                        ext_csds_coll.add_labeled_instance(ose_object)
+                    del ose_object
+                del ose_list
+
             '''
-            # In the following line of code, we extract the IDs of OSE type annotations
-            ose_list = curr_doc['objective-speech-event']
-            # Process each OSE item by its corresponding ID
-            for ose_id in ose_list:
-                annotation_item = annotations[ose_id]
-                csds_object = self.process_ose(annotation_item)
-                # must store the object!
-                # WHAT TO DO?
-                del csds_object
-            del ose_list
-            
             # In the following line of code, we extract the IDs of sentence type annotations
             sentence_list = curr_doc['sentence']
             # Process each sentence item by its corresponding ID

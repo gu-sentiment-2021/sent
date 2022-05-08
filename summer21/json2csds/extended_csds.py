@@ -25,6 +25,7 @@ class Type(str, Enum):
     SPECULATION = 'speculation'
     OTHER_ATTITUDE = 'other_attitude'
     EXPRESSIVE_SUBJECTIVITY = 'expressive_subjectivity'
+    OBJECTIVE_SPEECH_EVENT = 'objective-speech-event'
     UNKNOWN = 'unknown'
 
 
@@ -42,7 +43,7 @@ class ExtendedCSDS:
         4. added target_link that contains a list of the id of e/sTargets.
         5. added unique_id to each annotation
     """
-    unique_id = -1 # unique id of each annotation
+    unique_id = -1  # unique id of each annotation
     doc_id = -1  # unique index of origin document within corpus, value: name of doc.
     sentence_id = -1  # index of sentence within document.
     text = ""  # sentence in which the annotated head occurs.
@@ -56,11 +57,13 @@ class ExtendedCSDS:
     annotation_type: Type  # The type of annotation.
     target_link = []  # A list that contains the ID of e/sTargets.
     nested_source_link = []  # A list that contains the ID of nested-souces.
-    expression_intensity = None #An attribute for expression intensity
+    expression_intensity = None  # An attribute for expression intensity.
+    implicit = None  # An attribute for implicit feature of the direct subjective annotation type.
 
     def __init__(
             self, this_text, this_head_start, this_head_end, this_belief, this_polarity, this_intensity,
-            this_annotation_type, this_expression_intensity=None, this_target_link=[], this_agent_link=[], this_head="", this_doc_id=-1,
+            this_annotation_type, this_expression_intensity=None, this_implicit=None, this_target_link=[],
+            this_agent_link=[], this_head="", this_doc_id=-1,
             this_sentence_id=-1, unique_id=-1
     ):
         self.unique_id = unique_id
@@ -77,6 +80,7 @@ class ExtendedCSDS:
         self.target_link = this_target_link
         self.nested_source_link = this_agent_link
         self.expression_intensity = this_expression_intensity
+        self.implicit = this_implicit
 
     def get_info_short(self):
         return (
