@@ -27,7 +27,6 @@ class Type(str, Enum):
     EXPRESSIVE_SUBJECTIVITY = 'expressive_subjectivity'
     OBJECTIVE_SPEECH_EVENT = 'objective-speech-event'
     SENTENCE = 'sentence'
-    AGENT = 'agent'
     UNKNOWN = 'unknown'
 
 
