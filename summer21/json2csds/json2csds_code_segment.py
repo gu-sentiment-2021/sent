@@ -20,5 +20,7 @@ with open(path + 'dataV3.json', 'w', encoding='utf-8') as f:
     json.dump(json_output, f, ensure_ascii=False, indent=4)
 
 # Loading the saved JSON file.
-with open(path + 'dataV3.json') as json_file:
+with open(path + 'dataV3.json', encoding='utf-8') as json_file:
     data = json.load(json_file)
+
+print(data.keys())

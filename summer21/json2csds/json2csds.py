@@ -52,6 +52,9 @@ class JSON2CSDS:
             'other-attitude': 'other_attitude',
             'expressive_subjectivity': 'expressive_subjectivity',
             'objective-speech-event': 'objective-speech-event',
+            'sentence': 'sentence',
+            'agent': 'agent',
+            'attitude': 'attitude',
             'unknown': 'unknown'
         }
         return type_map_dict[key]
@@ -425,6 +428,7 @@ class JSON2CSDS:
         """
         It processes a DS (direct-subjective) type annotation.
         :param ds_anno: A Python dict which represents a DS annotation.
+        :param ds_id: ID of the DS (direct-subjective) annotation item.
         :param doc_id: Id of the doc.
         :return: A csds object.
         """
@@ -482,11 +486,11 @@ class JSON2CSDS:
             self.__alert_wrong_anno(ds_anno, doc_id, error=err)
             return None
 
-    # This method is not being used till now!
     def __process_ose(self, ose_anno, ose_id, doc_id):
         """
         It processes an OSE type annotation.
         :param ose_anno: A Python dict which represents an OSE annotation.
+        :param ose_id: ID of the OSE (objective-speech-event) annotation item.
         :param doc_id: Id of the doc.
         :return: A csds object.
         """
@@ -522,18 +526,36 @@ class JSON2CSDS:
 
         return None
 
-    '''
-    # This method is not being used till now!
-    def process_sentence(self, sentence_anno, doc_id):
+    def __process_sentence(self, sent_anno, sent_id, doc_id):
         """
         It processes a sentence type annotation.
-        :param sentence_anno: A Python dict which represents a sentence annotation.
+        :param sent_anno: A Python dict which represents a sentence annotation.
+        :param sent_id: ID of the sentence annotation item.
         :param doc_id: Id of the doc.
         :return: A csds object.
         """
-        # !
+
+        try:
+            sent_object = ExtendedCSDS(
+                this_text=None,
+                this_head_start=sent_anno['span-in-doc'][0],
+                this_head_end=sent_anno['span-in-doc'][1],
+                this_belief=None,
+                this_polarity=None,
+                this_intensity=None,
+                this_annotation_type=sent_anno['anno-type'],
+                this_head=sent_anno['head'],
+                this_doc_id=doc_id,
+                this_sentence_id=sent_id,
+                this_implicit=None,
+                unique_id=doc_id + '&&' + sent_id
+            )
+            return sent_object
+        except Exception as err:
+            self.__alert_wrong_anno(sent_id, doc_id, error=err)
+            return None
+
         return None
-    '''
 
     def __csds_object2json(self, csds_object):
         """
@@ -577,17 +599,18 @@ class JSON2CSDS:
             # Extracts the list of all annotations.
             annotations = curr_doc['annotations']
 
-            # In the following line of code, we extract the IDs of agent type annotations.
-            agent_list = curr_doc['agent']
-            # Process each agent item by its corresponding ID.
-            for agent_id in agent_list:
-                annotation_item = annotations[agent_id]
-                agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
-                # Store the object!
-                if not agent_object is None:
-                    agent_coll.add_instance(agent_object)
-                del annotation_item
-            del agent_list
+            if 'agent' in curr_doc:
+                # In the following line of code, we extract the IDs of agent type annotations.
+                agent_list = curr_doc['agent']
+                # Process each agent item by its corresponding ID.
+                for agent_id in agent_list:
+                    annotation_item = annotations[agent_id]
+                    agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
+                    # Store the object!
+                    if not agent_object is None:
+                        agent_coll.add_instance(agent_object)
+                    del annotation_item
+                del agent_list
 
             # In the following line of code, we extract the IDs of ES type annotations.
             es_list = curr_doc['expressive-subjectivity']
@@ -691,18 +714,19 @@ class JSON2CSDS:
                     del ose_object
                 del ose_list
 
-            '''
-            # In the following line of code, we extract the IDs of sentence type annotations
-            sentence_list = curr_doc['sentence']
-            # Process each sentence item by its corresponding ID
-            for sentence_id in sentence_list:
-                annotation_item = annotations[sentence_id]
-                csds_object = self.process_sentence(annotation_item)
-                # must store the object!
-                # WHAT TO DO?
-                del csds_object
-            del sentence_list
-            '''
+            if 'sentence' in curr_doc:
+                # In the following line of code, we extract the IDs of sentence type annotations
+                sentence_list = curr_doc['sentence']
+                # Process each sentence item by its corresponding ID
+                for sentence_id in sentence_list:
+                    annotation_item = annotations[sentence_id]
+                    sentence_object = self.__process_sentence(annotation_item, sentence_id, doc_name)
+                    # Store the object.
+                    if not sentence_object is None:
+                        ext_csds_coll.add_labeled_instance(sentence_object)
+                    del sentence_object
+                del sentence_list
+
             del annotations
 
         if json_output:
