@@ -51,10 +51,9 @@ class JSON2CSDS:
             'specilation': 'speculation',
             'other-attitude': 'other_attitude',
             'expressive_subjectivity': 'expressive_subjectivity',
-            'objective-speech-event': 'objective-speech-event',
+            'objective_speech_event': 'objective_speech_event',
+            'direct_subjective': 'direct_subjective',
             'sentence': 'sentence',
-            'agent': 'agent',
-            'attitude': 'attitude',
             'unknown': 'unknown'
         }
         return type_map_dict[key]
@@ -472,7 +471,7 @@ class JSON2CSDS:
                 # or maybe the polarity by getting it via attitude-link?
                 this_polarity=pol,
                 this_intensity=inten,
-                this_annotation_type=self.__type_mapper('unknown'),
+                this_annotation_type=self.__type_mapper('direct_subjective'),
                 this_expression_intensity=exp_int,
                 this_target_link=att_link,
                 this_head=ds_anno['head'],
@@ -512,7 +511,7 @@ class JSON2CSDS:
                 this_belief=None,
                 this_polarity=None,
                 this_intensity=None,
-                this_annotation_type=self.__type_mapper(ose_anno['anno-type']),
+                this_annotation_type=self.__type_mapper('objective_speech_event'),
                 this_head=ose_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=sent_id,

@@ -25,7 +25,8 @@ class Type(str, Enum):
     SPECULATION = 'speculation'
     OTHER_ATTITUDE = 'other_attitude'
     EXPRESSIVE_SUBJECTIVITY = 'expressive_subjectivity'
-    OBJECTIVE_SPEECH_EVENT = 'objective-speech-event'
+    OBJECTIVE_SPEECH_EVENT = 'objective_speech_event'
+    DIRECT_SUBJECTIVE = 'direct_subjective'
     SENTENCE = 'sentence'
     UNKNOWN = 'unknown'
 
