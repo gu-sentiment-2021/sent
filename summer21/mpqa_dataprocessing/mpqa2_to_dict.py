@@ -12,6 +12,13 @@ HAS_LIST_OF_IDS = [ # These attributes may have any number of ids. (>= 0)
     "target-speech-link", "target-link"
 ]
 
+PREFIXES_FOR_LINKS = { # Add a prefix to links
+    'nested-source': 'agent-',
+    'attitude-link': 'attitude-',
+    'target-link': 'target-',
+    'target-speech-link': 'target-speech-',
+}
+
 class mpqa2_to_dict:
     """
     mpqa2_to_dict helps to clean up the corpus and convert MPQA stand-off format to python dictionaries.
@@ -31,6 +38,9 @@ class mpqa2_to_dict:
         :return: The cleaned up list of the annotation lines of the document
         """
         return anno_lines
+
+    def __add_prefix_to_links(self, key, val):
+        return PREFIXES_FOR_LINKS.get(key, '') + val
 
     def doc_to_dict(self, docname, cleaning=True):
         """
@@ -113,18 +123,27 @@ class mpqa2_to_dict:
                     key, val = key.strip(), val.strip()
                     val = val[1:-1] # Removes double quotation marks
                     if key in HAS_LIST_OF_IDS:
-                        temp_dict[key] = [] if val == "none" or val == "" else [v.strip() for v in val.split(',')]
+                        temp_dict[key] = [] if val == "none" or val == "" else [self.__add_prefix_to_links(key, v.strip()) for v in val.split(',')]
                     else:
-                        temp_dict[key] = val
+                        temp_dict[key] = self.__add_prefix_to_links(key, val.strip())
 
             # We probably know the identifier assigned to the annotation by now
             # except some of the agnets and the sentences
             id = temp_dict.pop("id", line_id)
-            if anno_type == 'sentence': # Sentences are stored in a seperate file and have their own IDs
-                id = 'sentence' + id    # So we add a special string before them to prevent duplicate IDs
+            if id == '': # Replace empty IDs with line IDs
+                id = line_id
             
+            # There are some different annotation lines with the same IDs. Here
+            # we are trying to differentiate between "some" of these cases,
+            # which have different annotation types.
+            id = anno_type + '-' + id 
+
             # Updating the final output
-            output["annotations"][id] = temp_dict
+            if id not in output["annotations"]:
+                output["annotations"][id] = [temp_dict]
+            else:
+                output["annotations"][id].append(temp_dict)
+            
             if anno_type in output:
                 output[anno_type].append(id)
             else: # If there's a new type of annotation, warn us in red!
@@ -133,20 +152,21 @@ class mpqa2_to_dict:
         
         # Set sentence-id, sentence and span-in-sentence
         for key in output["annotations"].keys():
-            if key in output["sentence"]:
-                continue # Skip changing sentences
-            # Search for the corresponding sentence
-            for sentence_id in output["sentence"]:
-                # Checks if the annotation is whithin this sentence
-                if  output["annotations"][sentence_id]["span-in-doc"][0] <= output["annotations"][key]["span-in-doc"][0]\
-                and output["annotations"][sentence_id]["span-in-doc"][1] >= output["annotations"][key]["span-in-doc"][1]:
-                    output["annotations"][key]["sentence-id"] = sentence_id
-                    output["annotations"][key]["text"] = output["annotations"][sentence_id]["head"]
-                    output["annotations"][key]["span-in-sentence"] = (
-                        output["annotations"][key]["span-in-doc"][0] - output["annotations"][sentence_id]["span-in-doc"][0],
-                        output["annotations"][key]["span-in-doc"][1] - output["annotations"][sentence_id]["span-in-doc"][0]
-                    )
-                    break
+            for key_i in range(len(output["annotations"][key])): # For duplicated IDs
+                if key in output["sentence"]:
+                    continue # Skip changing sentences
+                # Search for the corresponding sentence
+                for sentence_id in output["sentence"]:
+                    # Checks if the annotation is whithin this sentence
+                    if  output["annotations"][sentence_id][0]["span-in-doc"][0] <= output["annotations"][key][key_i]["span-in-doc"][0]\
+                    and output["annotations"][sentence_id][0]["span-in-doc"][1] >= output["annotations"][key][key_i]["span-in-doc"][1]:
+                        output["annotations"][key][key_i]["sentence-id"] = sentence_id
+                        output["annotations"][key][key_i]["text"] = output["annotations"][sentence_id][0]["head"]
+                        output["annotations"][key][key_i]["span-in-sentence"] = (
+                            output["annotations"][key][key_i]["span-in-doc"][0] - output["annotations"][sentence_id][0]["span-in-doc"][0],
+                            output["annotations"][key][key_i]["span-in-doc"][1] - output["annotations"][sentence_id][0]["span-in-doc"][0]
+                        )
+                        break
 
         return output
 
