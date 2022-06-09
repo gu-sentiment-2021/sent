@@ -103,7 +103,7 @@ class JSON2CSDS:
         """
         return [f'{doc_id}&&{s}' for s in array]
 
-    def __process_agent(self, agent_anno, doc_id, agent_id=""):
+    def __process_one_agent(self, agent_anno, doc_id, agent_id=""):
         """
         It processes an agent type annotation.
         :param agent_anno: A Python dict which represents an agent annotation.
@@ -153,7 +153,21 @@ class JSON2CSDS:
 
         return agent_object
 
-    def __process_es(self, all_anno, es_id, es_anno, doc_id):
+    def __process_agent(self, agent_annos, doc_id, agent_id=""):
+        """
+        It processes an agent type annotation.
+        :param agent_annos: A Python list which represents some agent annotations.
+        :param doc_id: ID of the doc.
+        :param agent_id: ID of the agent annotations.
+        :return: One or several Agent objects.
+        """
+        all_results = []
+        for anno in agent_annos:
+            res = self.__process_one_agent(self, anno, doc_id, agent_id=agent_id)
+            all_results.append(res)
+        return all_results
+
+    def __process_one_es(self, all_anno, es_id, es_anno, doc_id):
         """
         It processes an ES (expressive-subjectivity) type annotation.
         :param all_anno: A Python dict which represents all annotations in the doc.
@@ -224,7 +238,24 @@ class JSON2CSDS:
 
         return csds_object
 
-    def __process_att(self, all_anno, att_id, att_anno, doc_id):
+
+    def __process_es(self, all_anno, es_id, es_anno, doc_id):
+        """
+        It processes an ES (expressive-subjectivity) type annotation.
+        :param all_anno: A Python dict which represents all annotations in the doc.
+        :param es_id: ID of the annotation.
+        :param es_anno: A Python dict which represents an ES annotation.
+        :param doc_id: ID of the doc.
+        :return: A CSDS object.
+        """
+        all_results = []
+        for anno in es_anno:
+            res = self.__process_one_es(all_anno, es_id, anno, doc_id)
+            all_results.append(res)
+        return all_results
+
+
+    def __process_one_att(self, all_anno, att_id, att_anno, doc_id):
         """
         It processes an attitude type annotation.
         :param all_anno: A Python dict which represents all annotations in the doc.
@@ -290,7 +321,24 @@ class JSON2CSDS:
 
         return csds_object
 
-    def __process_tar(self, tar_anno, tar_id, doc_id):
+
+    def __process_att(self, all_anno, att_id, att_annos, doc_id):
+        """
+        It processes some attitude type annotations.
+        :param all_anno: A Python dict which represents all annotations in the doc.
+        :param att_id: ID of the annotation.
+        :param att_anno: A Python list which represents some attitude annotations.
+        :param doc_id: ID of the doc.
+        :return: one or several CSDS objects.
+        """
+        all_results = []
+        for anno in att_annos:
+            res = self.__process_one_att(all_anno, att_id, anno, doc_id)
+            all_results.append(res)
+        return all_results
+        return all_results
+
+    def __process_one_tar(self, tar_anno, tar_id, doc_id):
         """
         It processes a target type annotation (specific for MPQA V2.0).
         :param tar_anno: A Python dict which represents a target annotation.
@@ -322,6 +370,22 @@ class JSON2CSDS:
             return None
 
         return target_object
+
+    def __process_tar(self, tar_annos, tar_id, doc_id):
+        """
+        It processes a target type annotation (specific for MPQA V2.0).
+        :param tar_annos: A Python list which represents some target annotations.
+        :param tar_id: ID of the target.
+        :param doc_id: ID of the doc.
+        :return: A target object.
+        """
+
+        all_results = []
+        for anno in tar_annos:
+            res = self.__process_one_tar(anno, tar_id, doc_id)
+            all_results.append(res)
+        return all_results
+        return all_results
 
     def __process_tf(self, tf_anno, tf_id, doc_id):
         """
@@ -423,7 +487,7 @@ class JSON2CSDS:
 
         return etarget_object
 
-    def __process_ds(self, ds_anno, ds_id, doc_id):
+    def __process_one_ds(self, ds_anno, ds_id, doc_id):
         """
         It processes a DS (direct-subjective) type annotation.
         :param ds_anno: A Python dict which represents a DS annotation.
@@ -485,7 +549,22 @@ class JSON2CSDS:
             self.__alert_wrong_anno(ds_anno, doc_id, error=err)
             return None
 
-    def __process_ose(self, ose_anno, ose_id, doc_id):
+    def __process_ds(self, ds_annos, ds_id, doc_id):
+        """
+        It processes a DS (direct-subjective) type annotation.
+        :param ds_annos: A Python list which represents some DS annotations.
+        :param ds_id: ID of the DS (direct-subjective) annotation item.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+        all_results = []
+        for anno in ds_annos:
+            res = self.__process_one_ds(self, anno, ds_id, doc_id)
+            all_results.append(res)
+        return all_results
+
+
+    def __process_one_ose(self, ose_anno, ose_id, doc_id):
         """
         It processes an OSE type annotation.
         :param ose_anno: A Python dict which represents an OSE annotation.
@@ -525,7 +604,22 @@ class JSON2CSDS:
 
         return None
 
-    def __process_sentence(self, sent_anno, sent_id, doc_id):
+    def __process_ose(self, ose_anno, ose_id, doc_id):
+        """
+        It processes an OSE type annotation.
+        :param ose_anno: A Python list which represents some OSE annotations.
+        :param ose_id: ID of the OSE (objective-speech-event) annotation items.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+
+        all_results = []
+        for anno in ose_anno:
+            res = self.__process_one_att(anno, ose_id, anno, doc_id)
+            all_results.append(res)
+        return all_results
+
+    def __process_one_sentence(self, sent_anno, sent_id, doc_id):
         """
         It processes a sentence type annotation.
         :param sent_anno: A Python dict which represents a sentence annotation.
@@ -555,6 +649,21 @@ class JSON2CSDS:
             return None
 
         return None
+
+    def __process_sentence(self, sent_anno, sent_id, doc_id):
+        """
+        It processes a sentence type annotation.
+        :param sent_anno: A Python list which represents some sentence annotations.
+        :param sent_id: ID of the sentence annotation items.
+        :param doc_id: Id of the doc.
+        :return: A csds object.
+        """
+
+        all_results = []
+        for anno in sent_anno:
+            res = self.__process_one_sentence(anno, sent_id, doc_id)
+            all_results.append(res)
+        return all_results
 
     def __csds_object2json(self, csds_object):
         """
@@ -604,10 +713,12 @@ class JSON2CSDS:
                 # Process each agent item by its corresponding ID.
                 for agent_id in agent_list:
                     annotation_item = annotations[agent_id]
-                    agent_object = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
-                    # Store the object!
-                    if not agent_object is None:
-                        agent_coll.add_instance(agent_object)
+                    agent_objects = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
+                    # Store the objects!
+                    if not agent_objects is None:
+                        for agent_object in agent_objects:
+                            if not agent_object is None:
+                                agent_coll.add_instance(agent_object)
                     del annotation_item
                 del agent_list
 
@@ -616,11 +727,13 @@ class JSON2CSDS:
             # Process each ES item by its corresponding ID.
             for es_id in es_list:
                 annotation_item = annotations[es_id]
-                csds_object = self.__process_es(annotations, es_id, annotation_item, doc_name)
-                # Store the object!
-                if not csds_object is None:
-                    ext_csds_coll.add_labeled_instance(csds_object)
-                del csds_object
+                csds_objects = self.__process_es(annotations, es_id, annotation_item, doc_name)
+                # Store the objects!
+                if not csds_objects is None:
+                    for csds_object in csds_objects:
+                        if csds_object:
+                            ext_csds_coll.add_labeled_instance(csds_object)
+                    del csds_objects
             del es_list
 
             # In the following line of code, we extract the IDs of attitude type annotations.
