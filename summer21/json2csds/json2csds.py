@@ -238,22 +238,20 @@ class JSON2CSDS:
 
         return csds_object
 
-
-    def __process_es(self, all_anno, es_id, es_anno, doc_id):
+    def __process_es(self, all_anno, es_id, es_annos, doc_id):
         """
-        It processes an ES (expressive-subjectivity) type annotation.
+        It processes ES (expressive-subjectivity) type annotation.
         :param all_anno: A Python dict which represents all annotations in the doc.
         :param es_id: ID of the annotation.
-        :param es_anno: A Python dict which represents an ES annotation.
+        :param es_annos: A Python list which represents some ES annotations.
         :param doc_id: ID of the doc.
-        :return: A CSDS object.
+        :return: One or several CSDS objects.
         """
         all_results = []
-        for anno in es_anno:
+        for anno in es_annos:
             res = self.__process_one_es(all_anno, es_id, anno, doc_id)
             all_results.append(res)
         return all_results
-
 
     def __process_one_att(self, all_anno, att_id, att_anno, doc_id):
         """
@@ -321,7 +319,6 @@ class JSON2CSDS:
 
         return csds_object
 
-
     def __process_att(self, all_anno, att_id, att_annos, doc_id):
         """
         It processes some attitude type annotations.
@@ -329,13 +326,12 @@ class JSON2CSDS:
         :param att_id: ID of the annotation.
         :param att_anno: A Python list which represents some attitude annotations.
         :param doc_id: ID of the doc.
-        :return: one or several CSDS objects.
+        :return: One or several CSDS objects.
         """
         all_results = []
         for anno in att_annos:
             res = self.__process_one_att(all_anno, att_id, anno, doc_id)
             all_results.append(res)
-        return all_results
         return all_results
 
     def __process_one_tar(self, tar_anno, tar_id, doc_id):
@@ -373,11 +369,11 @@ class JSON2CSDS:
 
     def __process_tar(self, tar_annos, tar_id, doc_id):
         """
-        It processes a target type annotation (specific for MPQA V2.0).
+        It processes target type annotations (specific for MPQA V2.0).
         :param tar_annos: A Python list which represents some target annotations.
         :param tar_id: ID of the target.
         :param doc_id: ID of the doc.
-        :return: A target object.
+        :return: One or several target objects.
         """
 
         all_results = []
@@ -385,9 +381,9 @@ class JSON2CSDS:
             res = self.__process_one_tar(anno, tar_id, doc_id)
             all_results.append(res)
         return all_results
-        return all_results
 
-    def __process_tf(self, tf_anno, tf_id, doc_id):
+
+    def __process_one_tf(self, tf_anno, tf_id, doc_id):
         """
         It processes a target frame type annotation.
         :param tf_anno: A Python dict which represents a targetFrame annotation.
@@ -420,7 +416,23 @@ class JSON2CSDS:
 
         return target_object
 
-    def __process_starget(self, starget_anno, starget_id, doc_id):
+    def __process_tf(self, tf_annos, tf_id, doc_id):
+        """
+        It processes target frame type annotations.
+        :param tf_annos: A Python list which represents some targetFrame annotations.
+        :param tf_id: ID of the targetFrame.
+        :param doc_id: ID of the doc.
+        :return: One or several target (target frame) objects.
+        """
+
+        all_results = []
+        for anno in tf_annos:
+            res = self.__process_one_tf(anno, tf_id, doc_id)
+            all_results.append(res)
+        return all_results
+
+
+    def __process_one_starget(self, starget_anno, starget_id, doc_id):
         """
         It processes a sTarget type annotation.
         :param starget_anno: A Python dict which represents a sTarget annotation.
@@ -451,6 +463,21 @@ class JSON2CSDS:
             return None
 
         return starget_object
+
+    def __process_starget(self, starget_anno, starget_id, doc_id):
+        """
+        It processes sTarget type annotations.
+        :param starget_anno: A Python list which represents some sTarget annotations.
+        :param starget_id: ID of the sTarget.
+        :param doc_id: ID of the doc.
+        :return: One or several sTarget objects.
+        """
+
+        all_results = []
+        for anno in starget_anno:
+            res = self.__process_one_starget(self, anno, starget_id, doc_id)
+            all_results.append(res)
+        return all_results
 
     def __process_etarget(self, etarget_anno, etarget_id, doc_id):
         """
@@ -562,7 +589,6 @@ class JSON2CSDS:
             res = self.__process_one_ds(self, anno, ds_id, doc_id)
             all_results.append(res)
         return all_results
-
 
     def __process_one_ose(self, ose_anno, ose_id, doc_id):
         """
@@ -729,7 +755,7 @@ class JSON2CSDS:
                 annotation_item = annotations[es_id]
                 csds_objects = self.__process_es(annotations, es_id, annotation_item, doc_name)
                 # Store the objects!
-                if not csds_objects is None:
+                if csds_objects:
                     for csds_object in csds_objects:
                         if csds_object:
                             ext_csds_coll.add_labeled_instance(csds_object)
@@ -741,10 +767,12 @@ class JSON2CSDS:
             # Process each attitude item by its corresponding ID.
             for att_id in att_list:
                 annotation_item = annotations[att_id]
-                csds_object = self.__process_att(annotations, att_id, annotation_item, doc_name)
-                if not csds_object is None:
-                    ext_csds_coll.add_labeled_instance(csds_object)
-                del csds_object
+                csds_objects = self.__process_att(annotations, att_id, annotation_item, doc_name)
+                if csds_objects:
+                    for csds_object in csds_objects:
+                        if csds_object:
+                            ext_csds_coll.add_labeled_instance(csds_object)
+                    del csds_objects
             del att_list
 
             if 'target' in curr_doc:
@@ -754,11 +782,13 @@ class JSON2CSDS:
                 # Process each target frame item by its corresponding ID.
                 for tar_id in tar_list:
                     annotation_item = annotations[tar_id]
-                    tar_object = self.__process_tar(annotation_item, tar_id, doc_name)
-                    # Store the object.
-                    if not tar_object is None:
-                        target_coll.add_instance(tar_object)
-                    del tar_object
+                    tar_objects = self.__process_tar(annotation_item, tar_id, doc_name)
+                    # Store the objects.
+                    if tar_objects:
+                        for tar_object in tar_objects:
+                            if tar_object:
+                                target_coll.add_instance(tar_object)
+                        del tar_objects
                 del tar_list
 
             if 'targetFrame' in curr_doc:
@@ -767,11 +797,13 @@ class JSON2CSDS:
                 # Process each target frame item by its corresponding ID.
                 for tf_id in tf_list:
                     annotation_item = annotations[tf_id]
-                    tf_object = self.__process_tf(annotation_item, tf_id, doc_name)
-                    # Store the object.
-                    if not tf_object is None:
-                        target_coll.add_instance(tf_object)
-                    del tf_object
+                    tf_objects = self.__process_tf(annotation_item, tf_id, doc_name)
+                    # Store the objects.
+                    if tf_objects:
+                        for tf_object in tar_objects:
+                            if tf_object:
+                                target_coll.add_instance(tf_object)
+                        del tf_objects
                 del tf_list
 
             if 'sTarget' in curr_doc:
@@ -780,11 +812,13 @@ class JSON2CSDS:
                 # Process each sTarget item by its corresponding ID.
                 for starget_id in starget_list:
                     annotation_item = annotations[starget_id]
-                    starget_object = self.__process_starget(annotation_item, starget_id, doc_name)
-                    # Store the object.
-                    if not starget_object is None:
-                        target_coll.add_instance(starget_object)
-                    del starget_object
+                    starget_objects = self.__process_starget(annotation_item, starget_id, doc_name)
+                    # Store the objects.
+                    if starget_objects:
+                        for starget_object in starget_objects:
+                            if starget_object:
+                                target_coll.add_instance(starget_object)
+                        del starget_objects
                 del starget_list
 
             if 'eTarget' in curr_doc:
