@@ -6,8 +6,6 @@ class TypeTarget(str, Enum):
     STARGET = 'sTarget'
     TARGETFRAME = 'targetFrame'
     TARGET = 'target'
-    AGENT = 'agent'
-    ATTITUDE = 'attitude'
 
 
 class Target:
