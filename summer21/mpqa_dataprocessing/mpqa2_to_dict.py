@@ -145,7 +145,8 @@ class mpqa2_to_dict:
                 output["annotations"][id].append(temp_dict)
             
             if anno_type in output:
-                output[anno_type].append(id)
+                if id not in output[anno_type]:
+                    output[anno_type].append(id)
             else: # If there's a new type of annotation, warn us in red!
                 output[anno_type] = [id]
                 print("\033[91m <UNKNOWN ANNO: {}>\033[00m".format(anno_type))

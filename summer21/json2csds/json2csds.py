@@ -162,8 +162,13 @@ class JSON2CSDS:
         :return: One or several Agent objects.
         """
         all_results = []
-        for anno in agent_annos:
-            res = self.__process_one_agent(anno, doc_id, agent_id=agent_id)
+        if len(agent_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {agent_id} in {doc_id}>\033[00m')
+        for i in range(len(agent_annos)):
+            if i == 0:
+                res = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id)
+            else:
+                res = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id+"&&"+str(i))
             all_results.append(res)
         return all_results
 
@@ -248,8 +253,13 @@ class JSON2CSDS:
         :return: One or several CSDS objects.
         """
         all_results = []
-        for anno in es_annos:
-            res = self.__process_one_es(all_anno, es_id, anno, doc_id)
+        if len(es_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {es_id} in {doc_id}>\033[00m')
+        for i in range(len(es_annos)):
+            if i == 0:
+                res = self.__process_one_es(all_anno, es_id, es_annos[i], doc_id)
+            else:
+                res = self.__process_one_es(all_anno, es_id, es_annos[i]+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -329,8 +339,13 @@ class JSON2CSDS:
         :return: One or several CSDS objects.
         """
         all_results = []
-        for anno in att_annos:
-            res = self.__process_one_att(all_anno, att_id, anno, doc_id)
+        if len(att_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {att_id} in {doc_id}>\033[00m')
+        for i in range(len(att_annos)):
+            if i == 0:
+                res = self.__process_one_att(all_anno, att_id, att_annos[i], doc_id)
+            else:
+                res = self.__process_one_att(all_anno, att_id+"&&"+str(i), att_annos[i], doc_id)
             all_results.append(res)
         return all_results
 
@@ -377,8 +392,13 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in tar_annos:
-            res = self.__process_one_tar(anno, tar_id, doc_id)
+        if len(tar_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {tar_id} in {doc_id}>\033[00m')
+        for i in range(len(tar_annos)):
+            if i == 0:
+                res = self.__process_one_tar(tar_annos[i], tar_id, doc_id)
+            else:
+                res = self.__process_one_tar(tar_annos[i], tar_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -425,8 +445,14 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in tf_annos:
-            res = self.__process_one_tf(anno, tf_id, doc_id)
+
+        if len(tf_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {tf_id} in {doc_id}>\033[00m')
+        for i in range(len(tf_annos)):
+            if i == 0:
+                res = self.__process_one_tf(tf_annos[i], tf_id, doc_id)
+            else:
+                res = self.__process_one_tf(tf_annos[i], tf_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -472,8 +498,13 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in starget_annos:
-            res = self.__process_one_starget(anno, starget_id, doc_id)
+        if len(starget_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {starget_id} in {doc_id}>\033[00m')
+        for i in range(len(starget_annos)):
+            if i == 0:
+                res = self.__process_one_starget(starget_annos[i], starget_id, doc_id)
+            else:
+                res = self.__process_one_starget(starget_annos[i], starget_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -522,8 +553,13 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in etarget_annos:
-            res = self.__process_one_etarget(anno, etarget_id, doc_id)
+        if len(etarget_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {etarget_id} in {doc_id}>\033[00m')
+        for i in range(len(etarget_annos)):
+            if i == 0:
+                res = self.__process_one_etarget(etarget_annos[i], etarget_id, doc_id)
+            else:
+                res = self.__process_one_etarget(etarget_annos[i], etarget_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -598,8 +634,13 @@ class JSON2CSDS:
         :return: One or several csds objects.
         """
         all_results = []
-        for anno in ds_annos:
-            res = self.__process_one_ds(anno, ds_id, doc_id)
+        if len(ds_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {ds_id} in {doc_id}>\033[00m')
+        for i in range(len(ds_annos)):
+            if i == 0:
+                res = self.__process_one_ds(ds_annos[i], ds_id, doc_id)
+            else:
+                res = self.__process_one_ds(ds_annos[i], ds_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -653,8 +694,13 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in ose_annos:
-            res = self.__process_one_ose(anno, ose_id, doc_id)
+        if len(ose_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {ose_id} in {doc_id}>\033[00m')
+        for i in range(len(ose_annos)):
+            if i == 0:
+                res = self.__process_one_ose(ose_annos[i], ose_id, doc_id)
+            else:
+                res = self.__process_one_ose(ose_annos[i], ose_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
@@ -699,8 +745,13 @@ class JSON2CSDS:
         """
 
         all_results = []
-        for anno in sent_annos:
-            res = self.__process_one_sentence(anno, sent_id, doc_id)
+        if len(sent_annos) > 1:
+            print(f'\033[93m <Warning: Duplicated ID detected: {sent_id} in {doc_id}>\033[00m')
+        for i in range(len(sent_annos)):
+            if i == 0:
+                res = self.__process_one_sentence(sent_annos[i], sent_id, doc_id)
+            else:
+                res = self.__process_one_sentence(sent_annos[i], sent_id+"&&"+str(i), doc_id)
             all_results.append(res)
         return all_results
 
