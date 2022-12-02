@@ -580,7 +580,7 @@ class JSON2CSDS:
         if 'attitude-link' in ds_anno:
             att_link = ds_anno['attitude-link']
         else:
-            att_link = None
+            att_link = []
 
         if 'intensity' in ds_anno:
             inten = ds_anno['intensity']
@@ -613,7 +613,7 @@ class JSON2CSDS:
                 this_intensity=inten,
                 this_annotation_type=self.__type_mapper('direct_subjective'),
                 this_expression_intensity=exp_int,
-                this_attitude_link=att_link,
+                this_attitude_link=self.__add_docname_to_list(doc_id, attitude_link),
                 this_head=ds_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=sent_id,
