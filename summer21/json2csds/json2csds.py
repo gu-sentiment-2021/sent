@@ -5,7 +5,10 @@ import json
 from extended_csds import ExtendedCSDS, ExtendedCSDSCollection
 from Target import sTarget, eTarget, Target, TargetCollection
 from Agent import Agent, AgentCollection
-
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
 
 class JSON2CSDS:
     """
