@@ -715,7 +715,7 @@ class JSON2CSDS:
 
         try:
             sent_object = ExtendedCSDS(
-                this_text=None,
+                this_text='',
                 this_head_start=sent_anno['span-in-doc'][0],
                 this_head_end=sent_anno['span-in-doc'][1],
                 this_belief=None,
