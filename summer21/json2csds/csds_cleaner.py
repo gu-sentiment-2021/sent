@@ -10,6 +10,22 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 detokenizer = TreebankWordDetokenizer()
 
 
+def alert_wrong_anno(anno, doc_id, error=None):
+    """
+    It is used for alerting wrong annotation(s).
+    :param anno: The annotation that error(s) were happening in its process.
+    :param error: The error(s) that happened.
+    """
+
+    if str(error) != str("'text'"):
+        print('===================\nWrong Clean!!')
+        print(anno)
+        print('Error details: (doc_id: ', doc_id, ')')
+        print(error)
+        print(f'Type of error: {error.__class__.__name__}')
+        print('===================')
+
+
 def clean_item(txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
@@ -18,6 +34,7 @@ def clean_item(txt):
     txt = re.sub('<' + re_pattern + '*>', '', txt)
     txt = re.sub(re_pattern + '+>', '', txt)
     txt = re.sub('--', ' -- ', txt)
+    txt = re.sub('\`\`', "''", txt)
 
     return txt
 
@@ -45,7 +62,7 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         all_text_tokens = word_tokenize(text)
 
     if verbose and all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
-        print(f" <Warning word tokenization mismatch id=[{item_id}]: head={text_tokens2} | text={all_text_tokens}/>")
+        print(f" <Warning word tokenization mismatch id=[{item_id}]: head={text2} | w_head={text_tokens2} | text={all_text_tokens}/>")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
     return {
@@ -108,6 +125,7 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
     with open(save_address, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
 
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
