@@ -64,6 +64,9 @@ class JSON2CSDS:
             all_text_tokens = word_tokenize(clean_item(text))
 
             all_text_tokens = list(map(clean_item, all_text_tokens))
+            
+            if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
+                print('Error !!')
 
             # returns start index, list of tokens and the length of the tokens after the first index which should be considered
             return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2)
