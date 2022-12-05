@@ -9,7 +9,8 @@ from json2csds import JSON2CSDS
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 detokenizer = TreebankWordDetokenizer()
 
-def clean_item(self, txt):
+
+def clean_item(txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
     txt = re.sub('\n', '  ', txt)
@@ -27,68 +28,97 @@ def back_to_clean(lst):
     return txt
 
 
-def char_to_word(self, docname="", text="", head="", start=0, end=0, clean=False):
-    if text.find(head) >= 0:
-        text1 = text[0: start]
-        text2 = text[start: end]
-        text3 = text[end:]
+def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False):
+    text1 = text[0: start]
+    text2 = text[start: end]
+    text3 = text[end:]
 
-        if clean:
-            text_tokens1 = word_tokenize(self.__clean_item(text1))
-            text_tokens2 = word_tokenize(self.__clean_item(text2))
-            text_tokens3 = word_tokenize(self.__clean_item(text3))
-            all_text_tokens = word_tokenize(self.__clean_item(text))
-        else:
-            text_tokens1 = word_tokenize(text1)
-            text_tokens2 = word_tokenize(text2)
-            text_tokens3 = word_tokenize(text3)
-            all_text_tokens = word_tokenize(text)
+    if clean:
+        text_tokens1 = word_tokenize(clean_item(text1))
+        text_tokens2 = word_tokenize(clean_item(text2))
+        text_tokens3 = word_tokenize(clean_item(text3))
+        all_text_tokens = word_tokenize(clean_item(text))
+    else:
+        text_tokens1 = word_tokenize(text1)
+        text_tokens2 = word_tokenize(text2)
+        text_tokens3 = word_tokenize(text3)
+        all_text_tokens = word_tokenize(text)
 
-        if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
-            print(f"<Warning word tokenization mismatch in {docname}: {text_tokens2} | {all_text_tokens}/>")
+    if verbose and all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
+        print(f" <Warning word tokenization mismatch id=[{item_id}]: head={text_tokens2} | text={all_text_tokens}/>")
 
-        cleaned_text = back_to_clean(all_text_tokens)
-        cleaned_head = back_to_clean(text_tokens2)
-
-        # returns start index, list of tokens and the length of the tokens after the first index which should be considered
-        return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2), cleaned_text, cleaned_head
-
-clean_address = "..\mpqa_dataprocessing\database.mpqa.cleaned.221201"
-clean_obj = JSON2CSDS("MPQA2.0", clean_address, mpqa_version=2)
-# Gather the JSON file from MPQA.
-clean_mpqa_json = clean_obj.produce_json_file()
-clean_json_output = clean_obj.doc2csds(clean_mpqa_json, json_output=True)
-
-# Path is where you want to save the JSON file.
-path = ''
-
-with open(path + 'MPQA.json', 'w', encoding='utf-8') as f:
-    json.dump(clean_mpqa_json, f, ensure_ascii=False, indent=4)
+    # returns start index, list of tokens and the length of the tokens after the first index which should be considered
+    return {
+        'w_head_span': (len(text_tokens1), len(text_tokens1)+len(text_tokens2)),
+        'w_text': all_text_tokens,
+        'w_head': text_tokens2,
+        'clean_text': back_to_clean(all_text_tokens),
+        'clean_head': back_to_clean(text_tokens2),
+    }
 
 
-with open(path + 'MPQA2.0_v221205_org.json', 'w', encoding='utf-8') as f:
-    json.dump(clean_json_output, f, ensure_ascii=False, indent=4)
+def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], verbose=False):
+    word_based_info = {}
+    word_based_info_list = []
+    for item_id in ids:
+        if item_id in data_subset:
+            item = data_subset[item_id]  #dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
+            word_based_info = char_to_word(
+                item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, verbose=verbose
+            )
+            if add_attitude_attributes:
+                word_based_info.update({
+                    'annotation_type': item['annotation_type'],
+                    'polarity': item['polarity'],
+                    'intensity': item['intensity'],
+                })
+            if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
+                print(f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
+        elif verbose:
+            print(f" <Warning id={item_id} couldn't be found./>")
+        word_based_info_list.append(word_based_info)
 
-# Loading the saved JSON file.
-with open(path + 'MPQA2.0_v221205_org.json', encoding='utf-8') as clean_json_file:
-    clean_data = json.load(clean_json_file)
+    return word_based_info_list
 
-address = "..\mpqa_dataprocessing\database.mpqa.cleaned"
-obj = JSON2CSDS("MPQA2.0", address, mpqa_version=2)
-# Gather the JSON file from MPQA.
-mpqa_json = obj.produce_json_file()
-json_output = obj.doc2csds(mpqa_json, json_output=True)
+def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=False, activate_progressbar=True):
+    obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
+    # Gather the JSON file from MPQA.
+    mpqa_json = obj.produce_json_file()
+    data = obj.doc2csds(mpqa_json, json_output=True)
 
-# Path is where you want to save the JSON file.
-path = ''
+    n = len(data['csds_objects'])
+    progressbar = -1
+    for k in range(n):
+        item = data['csds_objects'][k]
 
-with open(path + 'MPQA.json', 'w', encoding='utf-8') as f:
-    json.dump(mpqa_json, f, ensure_ascii=False, indent=4)
+        word_based_info = char_to_word(
+            text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean
+        )
+        item.update(word_based_info)
 
+        item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'], verbose=verbose)
+        item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean, parent_w_text=item['w_text'], verbose=verbose)
+        item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True, parent_w_text=item['w_text'], verbose=verbose)
 
-with open(path + 'MPQA2.0_v221205_org.json', 'w', encoding='utf-8') as f:
-    json.dump(json_output, f, ensure_ascii=False, indent=4)
+        data['csds_objects'][k] = item
 
-# Loading the saved JSON file.
-with open(path + 'MPQA2.0_v221205_org.json', encoding='utf-8') as json_file:
-    data = json.load(json_file)
+        if activate_progressbar and progressbar < k//(n//100):
+            progressbar = k//(n//100)
+            print(f'{progressbar}% completed')
+
+    with open(save_address, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+tokenize_and_extract_info(
+    data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
+    save_address='MPQA2.0_v221205_cleaned.json',
+    clean=True,
+    verbose=False
+)
+
+tokenize_and_extract_info(
+    data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
+    save_address='MPQA2.0_v221205.json',
+    clean=False,
+    verbose=False
+)

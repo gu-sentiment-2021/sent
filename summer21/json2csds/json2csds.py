@@ -115,10 +115,10 @@ class JSON2CSDS:
         try:
             # Extract features from agent annotation.
             if agent_anno['span-in-doc'][0] == 0 and agent_anno['span-in-doc'][1] == 0:
-                its_text = None
-                its_head_start = -1
-                its_head_end = -1
-                its_sentence_id = -1
+                its_text = ''
+                its_head_start = 0
+                its_head_end = 0
+                its_sentence_id = 0
             else:
                 its_text = agent_anno['text']
                 its_head_start = agent_anno['span-in-sentence'][0]
@@ -715,9 +715,9 @@ class JSON2CSDS:
 
         try:
             sent_object = ExtendedCSDS(
-                this_text=None,
-                this_head_start=sent_anno['span-in-doc'][0],
-                this_head_end=sent_anno['span-in-doc'][1],
+                this_text=sent_anno['head'],
+                this_head_start=0,
+                this_head_end=sent_anno['span-in-doc'][1]-sent_anno['span-in-doc'][0],
                 this_belief=None,
                 this_polarity=None,
                 this_intensity=None,
