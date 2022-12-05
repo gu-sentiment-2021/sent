@@ -39,7 +39,7 @@ class JSON2CSDS:
         return result
     
     
-    def __clean_item(txt):
+    def __clean_item(self, txt):
         re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
         txt = re.sub('\n','  ', txt)
@@ -51,7 +51,7 @@ class JSON2CSDS:
         return txt
 
     
-    def __char_to_word(text, head, start, end):
+    def __char_to_word(self, text, head, start, end):
         if text.find(head) >= 0:
             text1 = text[0: start]
             text2 = text[start: end]
