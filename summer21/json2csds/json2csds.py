@@ -50,23 +50,27 @@ class JSON2CSDS:
 
         return txt
 
-    
-    def __char_to_word(self, text, head, start, end):
+
+    def __char_to_word(self, doc="", text, head, start, end, clean=False):
         if text.find(head) >= 0:
             text1 = text[0: start]
             text2 = text[start: end]
             text3 = text[end:]
 
-            text_tokens1 = word_tokenize(self.__clean_item(text1))
-            text_tokens2 = word_tokenize(self.__clean_item(text2))
-            text_tokens3 = word_tokenize(self.__clean_item(text3))
+            if clean:
+                text_tokens1 = word_tokenize(self.__clean_item(text1))
+                text_tokens2 = word_tokenize(self.__clean_item(text2))
+                text_tokens3 = word_tokenize(self.__clean_item(text3))
+                all_text_tokens = word_tokenize(self.__clean_item(text))
+                all_text_tokens = list(map(self.__clean_item, all_text_tokens))
+            else:
+                text_tokens1 = word_tokenize(text1)
+                text_tokens2 = word_tokenize(text2)
+                text_tokens3 = word_tokenize(text3)
+                all_text_tokens = word_tokenize(text)
 
-            all_text_tokens = word_tokenize(self.__clean_item(text))
-
-            all_text_tokens = list(map(self.__clean_item, all_text_tokens))
-            
             if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
-                print('Error !!')
+                print(f"<Warning word tokenization mismatch: {text_tokens2} | {all_text_tokens}/>")
 
             # returns start index, list of tokens and the length of the tokens after the first index which should be considered
             return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2)
