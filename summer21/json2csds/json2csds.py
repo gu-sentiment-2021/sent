@@ -5,10 +5,6 @@ import json
 from extended_csds import ExtendedCSDS, ExtendedCSDSCollection
 from Target import sTarget, eTarget, Target, TargetCollection
 from Agent import Agent, AgentCollection
-import re
-import nltk
-from nltk.tokenize import word_tokenize
-nltk.download('punkt')
 
 class JSON2CSDS:
     """
@@ -39,43 +35,6 @@ class JSON2CSDS:
         return result
     
     
-    def __clean_item(self, txt):
-        re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
-
-        txt = re.sub('\n','  ', txt)
-        txt = re.sub('<UH>','UUHH', txt)
-        txt = re.sub('<'+re_pattern+'*>','', txt)
-        txt = re.sub(re_pattern+'+>','', txt)
-        txt = re.sub('--',' -- ', txt)
-
-        return txt
-
-
-    def __char_to_word(self, doc="", text, head, start, end, clean=False):
-        if text.find(head) >= 0:
-            text1 = text[0: start]
-            text2 = text[start: end]
-            text3 = text[end:]
-
-            if clean:
-                text_tokens1 = word_tokenize(self.__clean_item(text1))
-                text_tokens2 = word_tokenize(self.__clean_item(text2))
-                text_tokens3 = word_tokenize(self.__clean_item(text3))
-                all_text_tokens = word_tokenize(self.__clean_item(text))
-                all_text_tokens = list(map(self.__clean_item, all_text_tokens))
-            else:
-                text_tokens1 = word_tokenize(text1)
-                text_tokens2 = word_tokenize(text2)
-                text_tokens3 = word_tokenize(text3)
-                all_text_tokens = word_tokenize(text)
-
-            if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
-                print(f"<Warning word tokenization mismatch: {text_tokens2} | {all_text_tokens}/>")
-
-            # returns start index, list of tokens and the length of the tokens after the first index which should be considered
-            return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2)
-
-
     def __type_mapper(self, key):
         """
         A mapping between types and their corresponding number based on the enum.
