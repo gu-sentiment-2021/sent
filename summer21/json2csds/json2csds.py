@@ -34,6 +34,37 @@ class JSON2CSDS:
             m2d = mpqa3_to_dict(self.corpus_name, self.mpqa_dir)
             result = m2d.corpus_to_dict()
         return result
+    
+    
+    re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
+    def clean_item(txt):
+
+        txt = re.sub('\n','  ', txt)
+        txt = re.sub('<UH>','UUHH', txt)
+        txt = re.sub('<'+re_pattern+'*>','', txt)
+        txt = re.sub(re_pattern+'+>','', txt)
+        txt = re.sub('--',' -- ', txt)
+
+        return txt
+
+    
+    def char_to_word(text, head, start, end):
+        if text.find(head) >= 0:
+            text1 = text[0: start]
+            text2 = text[start: end]
+            text3 = text[end:]
+
+            text_tokens1 = word_tokenize(clean_item(text1))
+            text_tokens2 = word_tokenize(clean_item(text2))
+            text_tokens3 = word_tokenize(clean_item(text3))
+
+            all_text_tokens = word_tokenize(clean_item(text))
+
+            all_text_tokens = list(map(clean_item, all_text_tokens))
+
+            # returns start index, list of tokens and the length of the tokens after the first index which should be considered
+            return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2)
+
 
     def __type_mapper(self, key):
         """
