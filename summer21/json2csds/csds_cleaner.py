@@ -6,6 +6,9 @@ nltk.download('punkt')
 import json
 from json2csds import JSON2CSDS
 
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+detokenizer = TreebankWordDetokenizer()
+
 def clean_item(self, txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
@@ -15,6 +18,12 @@ def clean_item(self, txt):
     txt = re.sub(re_pattern + '+>', '', txt)
     txt = re.sub('--', ' -- ', txt)
 
+    return txt
+
+
+def back_to_clean(lst):
+    txt = detokenizer.detokenize(lst)
+    txt = re.sub(' \.', '.', txt)
     return txt
 
 
@@ -29,7 +38,6 @@ def char_to_word(self, docname="", text="", head="", start=0, end=0, clean=False
             text_tokens2 = word_tokenize(self.__clean_item(text2))
             text_tokens3 = word_tokenize(self.__clean_item(text3))
             all_text_tokens = word_tokenize(self.__clean_item(text))
-            all_text_tokens = list(map(self.__clean_item, all_text_tokens))
         else:
             text_tokens1 = word_tokenize(text1)
             text_tokens2 = word_tokenize(text2)
@@ -39,8 +47,11 @@ def char_to_word(self, docname="", text="", head="", start=0, end=0, clean=False
         if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
             print(f"<Warning word tokenization mismatch in {docname}: {text_tokens2} | {all_text_tokens}/>")
 
+        cleaned_text = back_to_clean(all_text_tokens)
+        cleaned_head = back_to_clean(text_tokens2)
+
         # returns start index, list of tokens and the length of the tokens after the first index which should be considered
-        return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2)
+        return len(text_tokens1), len(text_tokens1) + len(text_tokens2), all_text_tokens, len(text_tokens2), cleaned_text, cleaned_head
 
 clean_address = "..\mpqa_dataprocessing\database.mpqa.cleaned.221201"
 clean_obj = JSON2CSDS("MPQA2.0", clean_address, mpqa_version=2)
