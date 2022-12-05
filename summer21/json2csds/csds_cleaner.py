@@ -131,12 +131,12 @@ tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
     save_address='MPQA2.0_v221205_cleaned.json',
     clean=True,
-    verbose=False
+    verbose=True
 )
 
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
     save_address='MPQA2.0_v221205.json',
     clean=False,
-    verbose=False
+    verbose=True
 )
