@@ -39,8 +39,8 @@ class JSON2CSDS:
         return result
     
     
-    re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
-    def clean_item(txt):
+    def __clean_item(txt):
+        re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
         txt = re.sub('\n','  ', txt)
         txt = re.sub('<UH>','UUHH', txt)
@@ -51,19 +51,19 @@ class JSON2CSDS:
         return txt
 
     
-    def char_to_word(text, head, start, end):
+    def __char_to_word(text, head, start, end):
         if text.find(head) >= 0:
             text1 = text[0: start]
             text2 = text[start: end]
             text3 = text[end:]
 
-            text_tokens1 = word_tokenize(clean_item(text1))
-            text_tokens2 = word_tokenize(clean_item(text2))
-            text_tokens3 = word_tokenize(clean_item(text3))
+            text_tokens1 = word_tokenize(self.__clean_item(text1))
+            text_tokens2 = word_tokenize(self.__clean_item(text2))
+            text_tokens3 = word_tokenize(self.__clean_item(text3))
 
-            all_text_tokens = word_tokenize(clean_item(text))
+            all_text_tokens = word_tokenize(self.__clean_item(text))
 
-            all_text_tokens = list(map(clean_item, all_text_tokens))
+            all_text_tokens = list(map(self.__clean_item, all_text_tokens))
             
             if all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
                 print('Error !!')
