@@ -10,20 +10,45 @@ with open(path + 'MPQA2.0_v221205_cleaned.json', encoding='utf-8') as json_file:
     data = json.load(json_file)
 
 ese = 0
+agnt_in_ese = 0
+
+dse = 0
+agnt_in_dse = 0
+att_in_dse = 0
+
+att = 0
+trgt_in_att = 0
+
+agnt = len(data['agent_objects'])
+trgt = len(data['target_objects'])
+
 for item in data['csds_objects']:
     if item['annotation_type'] == 'expressive_subjectivity':
         ese += 1
-
-print(ese)
-
-dse = 0
-for item in data['csds_objects']:
+        agnt_in_ese += len(item['nested_source'])
     if item['annotation_type'] == 'direct_subjective':
         dse += 1
+        agnt_in_dse += len(item['nested_source'])
+        att_in_dse += len(item['attitude'])
+    if item['annotation_type'] in ['agreement', 'arguing', 'intention', 'other_attitude', 'sentiment', 'speculation']:
+        att += 1
+        trgt_in_att += len(item['target'])
 
-print(dse)
+print('Agents:', agnt)
+print('Targets:', trgt)
+print()
 
+print("ESEs:", ese)
+print("Agents in ESEs:", agnt_in_ese)
+print()
 
-#attitude?
+print("DSE:", dse)
+print("Attitudes in DSE:", att_in_dse)
+print("Agents in DSE:", agnt_in_dse)
+print()
+
+print("ATT:", att)
+print("Targets in ATTs:", trgt_in_att)
+print()
 
 print(data.keys())
