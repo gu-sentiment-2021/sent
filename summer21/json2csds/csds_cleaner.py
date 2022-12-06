@@ -157,9 +157,9 @@ tokenize_and_extract_info(
     verbose=False
 )
 
-tokenize_and_extract_info(
-    data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
-    save_address='MPQA2.0_v221205.json',
-    clean=False,
-    verbose=False
-)
+# tokenize_and_extract_info(
+#     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
+#     save_address='MPQA2.0_v221205.json',
+#     clean=False,
+#     verbose=False
+# )
