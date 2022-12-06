@@ -5,7 +5,7 @@ from mpqa2_to_dict import mpqa2_to_dict
 import json
 
 # Specifies the path of the mpqa v2.0 database
-address = "mpqa_dataprocessing\\database.mpqa.cleaned.221201"
+address = "database.mpqa.cleaned.221201"
 
 # Uses the mpqa2_to_dict module to convert mpqa to json file
 m2d = mpqa2_to_dict("MPQA2.0", address)
