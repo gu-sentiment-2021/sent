@@ -602,6 +602,14 @@ class JSON2CSDS:
         else:
             exp_int = None
 
+        if 'nested-source' in ds_anno:
+            nested_src = self.__add_docname_to_list(
+                doc_id,
+                ds_anno['nested-source']
+            )
+        else:
+            nested_src = None
+
         try:
             ds_object = ExtendedCSDS(
                 this_text=ds_anno['text'],
@@ -614,12 +622,15 @@ class JSON2CSDS:
                 this_annotation_type=self.__type_mapper('direct_subjective'),
                 this_expression_intensity=exp_int,
                 this_attitude_link=self.__add_docname_to_list(doc_id, att_link),
+                this_agent_link=nested_src,
                 this_head=ds_anno['head'],
                 this_doc_id=doc_id,
                 this_sentence_id=sent_id,
                 this_implicit=imp,
                 unique_id=doc_id + '&&' + ds_id
             )
+
+
             return ds_object
         except Exception as err:
             self.__alert_wrong_anno(ds_anno, doc_id, error=err)

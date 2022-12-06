@@ -77,30 +77,13 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
 def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], verbose=False):
     word_based_info = {}
     word_based_info_list = []
-
-    for item_id in ids:
-        if type(data_subset) is dict:
-            if item_id in data_subset:
-                item = data_subset[item_id]  #dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
-                word_based_info = char_to_word(
-                    item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, verbose=verbose
-                )
-                if add_attitude_attributes:
-                    word_based_info.update({
-                        'annotation_type': item['annotation_type'],
-                        'polarity': item['polarity'],
-                        'intensity': item['intensity'],
-                    })
-                if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
-                    print(f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
-            elif verbose:
-                print(f" <Warning id={item_id} couldn't be found./>")
-        else:
-            for item in data_subset:
-                if item_id == item['unique_id']:
+    if ids:
+        for item_id in ids:
+            if type(data_subset) is dict:
+                if item_id in data_subset:
+                    item = data_subset[item_id]  #dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
                     word_based_info = char_to_word(
-                        item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
-                        end=item['head_end'], clean=clean, verbose=verbose
+                        item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, verbose=verbose
                     )
                     if add_attitude_attributes:
                         word_based_info.update({
@@ -108,12 +91,29 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                             'polarity': item['polarity'],
                             'intensity': item['intensity'],
                         })
-                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
-                            word_based_info['w_text']:
-                        print(
-                            f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
+                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
+                        print(f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
+                elif verbose:
+                    print(f" <Warning id={item_id} couldn't be found./>")
+            else:
+                for item in data_subset:
+                    if item_id == item['unique_id']:
+                        word_based_info = char_to_word(
+                            item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
+                            end=item['head_end'], clean=clean, verbose=verbose
+                        )
+                        if add_attitude_attributes:
+                            word_based_info.update({
+                                'annotation_type': item['annotation_type'],
+                                'polarity': item['polarity'],
+                                'intensity': item['intensity'],
+                            })
+                        if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
+                                word_based_info['w_text']:
+                            print(
+                                f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
 
-        word_based_info_list.append(word_based_info)
+            word_based_info_list.append(word_based_info)
 
     return word_based_info_list
 
@@ -151,7 +151,7 @@ tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
     save_address='MPQA2.0_v221205_cleaned.json',
     clean=True,
-    verbose=True
+    verbose=False
 )
 
 tokenize_and_extract_info(
