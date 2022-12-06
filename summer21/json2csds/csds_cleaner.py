@@ -82,11 +82,11 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         'w_text': all_text_tokens,
         'w_head': text_tokens2,
         'clean_text': back_to_clean(all_text_tokens),
-        'clean_head': back_to_clean(text_tokens2),
+        'clean_head': back_to_clean(text_tokens2)
     }
 
 
-def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], verbose=False):
+def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], verbose=False, data_targets={}):
     word_based_info = {}
     word_based_info_list = []
     if ids:
@@ -119,6 +119,7 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                                 'annotation_type': item['annotation_type'],
                                 'polarity': item['polarity'],
                                 'intensity': item['intensity'],
+                                'target': find_info(item['target_link'], data_targets, clean, parent_w_text=word_based_info['w_text'], verbose=verbose)
                             })
                         if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
                                 word_based_info['w_text']:
@@ -126,6 +127,8 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                                 f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
 
             word_based_info_list.append(word_based_info)
+    # else:
+        #print()
 
     return word_based_info_list
 
@@ -147,7 +150,7 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
         item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'], verbose=verbose)
         item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean, parent_w_text=item['w_text'], verbose=verbose)
-        item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True, parent_w_text=item['w_text'], verbose=verbose)
+        item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True, parent_w_text=item['w_text'], verbose=verbose, data_targets=data['target_objects'])
 
         data['csds_objects'][k] = item
 
@@ -167,9 +170,11 @@ tokenize_and_extract_info(
     verbose=True
 )
 
-tokenize_and_extract_info(
-    data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
-    save_address='MPQA2.0_v221205.json',
-    clean=False,
-    verbose=True
-)
+
+
+# tokenize_and_extract_info(
+#     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
+#     save_address='MPQA2.0_v221205.json',
+#     clean=False,
+#     verbose=False
+# )

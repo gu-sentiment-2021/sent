@@ -21,6 +21,8 @@ trgt_in_att = 0
 
 agnt = len(data['agent_objects'])
 trgt = len(data['target_objects'])
+sentences = 0
+ose = 0
 
 for item in data['csds_objects']:
     if item['annotation_type'] == 'expressive_subjectivity':
@@ -33,6 +35,10 @@ for item in data['csds_objects']:
     if item['annotation_type'] in ['agreement', 'arguing', 'intention', 'other_attitude', 'sentiment', 'speculation']:
         att += 1
         trgt_in_att += len(item['target'])
+    if item['annotation_type'] == 'sentence':
+        sentences += 1
+    if item['annotation_type'] == 'objective_speech_event':
+        ose += 1
 
 print('Agents:', agnt)
 print('Targets:', trgt)
@@ -49,6 +55,10 @@ print()
 
 print("ATT:", att)
 print("Targets in ATTs:", trgt_in_att)
+print()
+
+print("OSE:", ose)
+print("Sentences:", sentences)
 print()
 
 print(data.keys())
