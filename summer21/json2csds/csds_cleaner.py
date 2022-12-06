@@ -34,7 +34,19 @@ def clean_item(txt):
     txt = re.sub('<' + re_pattern + '*>', '', txt)
     txt = re.sub(re_pattern + '+>', '', txt)
     txt = re.sub('--', ' -- ', txt)
-    txt = re.sub('\`\`', "''", txt)
+    txt = re.sub('  ', ' ', txt)
+
+    indices = []
+    for i in range(len(txt)):
+        if ord(txt[i]) == 96: # or ord(txt[i]) == 39:
+            indices.append(i)
+
+    if len(indices) > 0:
+        i = 0
+        while i < len(indices):
+            txt = txt[0: indices[i]] + chr(34) + txt[indices[i] + 1:]
+            i += 1
+
 
     return txt
 
@@ -147,16 +159,17 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
     save_address='MPQA2.0_v221205_cleaned.json',
     clean=True,
-    verbose=False
+    verbose=True
 )
 
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
     save_address='MPQA2.0_v221205.json',
     clean=False,
-    verbose=False
+    verbose=True
 )
