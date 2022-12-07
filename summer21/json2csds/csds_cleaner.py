@@ -67,6 +67,11 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         text_tokens2 = word_tokenize(clean_item(text2))
         text_tokens3 = word_tokenize(clean_item(text3))
         all_text_tokens = word_tokenize(clean_item(text))
+
+        text_tokens1 = list(map(clean_item, text_tokens1))
+        text_tokens2 = list(map(clean_item, text_tokens2))
+        text_tokens3 = list(map(clean_item, text_tokens3))
+        all_text_tokens = list(map(clean_item, all_text_tokens))
     else:
         text_tokens1 = word_tokenize(text1)
         text_tokens2 = word_tokenize(text2)
