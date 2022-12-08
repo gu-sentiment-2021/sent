@@ -109,7 +109,7 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                             'intensity': item['intensity'],
                         })
                     if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
-                        print(f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
+                        print(f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}/>')
                 elif verbose:
                     print(f" <Warning id={item_id} couldn't be found./>")
             else:
@@ -129,13 +129,14 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                         if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
                                 word_based_info['w_text']:
                             print(
-                                f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}')
+                                f' <Error sentence mismatch id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}/>')
 
             word_based_info_list.append(word_based_info)
     # else:
         #print()
 
     return word_based_info_list
+
 
 def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=False, activate_progressbar=True):
     obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
@@ -167,15 +168,12 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
     save_address='MPQA2.0_v221205_cleaned.json',
     clean=True,
     verbose=True
 )
-
-
 
 # tokenize_and_extract_info(
 #     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
