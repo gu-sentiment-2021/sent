@@ -132,6 +132,8 @@ class ExtendedCSDSCollection:
         Stores the name of the corpus from which the examples are drawn.
         :param this_corpus:
         """
+        self.labeled_instances = []
+        self.o_instances = []
         self.corpus = this_corpus
 
     def add_labeled_instance(self, new_instance):

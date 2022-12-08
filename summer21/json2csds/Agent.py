@@ -51,6 +51,7 @@ class AgentCollection:
         Stores the name of the corpus from which the objects are drawn.
         :param this_corpus:
         """
+        self.agent_instances = {}
         self.corpus = this_corpus
 
     def add_instance(self, new_instance):
