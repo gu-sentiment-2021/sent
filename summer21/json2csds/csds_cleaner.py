@@ -9,6 +9,9 @@ from json2csds import JSON2CSDS
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 detokenizer = TreebankWordDetokenizer()
 
+cache_clean_tokenizations_dict = {}
+cache_tokenizations_dict = {}
+
 
 def alert_wrong_anno(anno, doc_id, error=None):
     """
@@ -44,27 +47,18 @@ def clean_item(txt):
     txt = re.sub('--', ' -- ', txt)
     txt = re.sub('  ', ' ', txt)
 
-    # Handle ``s
+    # Handle ``s and ''s
     start_quotation_marks_indices = []
+    end_quotation_marks_indices = []
     for i in range(len(txt)-1):
         if txt[i:i+2] == '``':  # or ord(txt[i]) == 39:
             start_quotation_marks_indices.append(i)
-    if len(start_quotation_marks_indices) > 0:
-        i = 0
-        while i < len(start_quotation_marks_indices):
-            txt = txt[0: start_quotation_marks_indices[i]] + '"' + txt[start_quotation_marks_indices[i] + 2:]
-            i += 1
-
-    # Handle ''s
-    end_quotation_marks_indices = []
-    for i in range(len(txt)-1):
         if txt[i:i+2] == "''":  # or ord(txt[i]) == 39:
             end_quotation_marks_indices.append(i)
-    if len(end_quotation_marks_indices) > 0:
-        i = 0
-        while i < len(end_quotation_marks_indices):
-            txt = txt[0: end_quotation_marks_indices[i]] + '"' + txt[end_quotation_marks_indices[i] + 2:]
-            i += 1
+    for i in range(len(start_quotation_marks_indices)):
+        txt = txt[0: start_quotation_marks_indices[i]] + '"' + txt[start_quotation_marks_indices[i] + 2:]
+    for i in range(len(end_quotation_marks_indices)):
+        txt = txt[0: end_quotation_marks_indices[i]] + '"' + txt[end_quotation_marks_indices[i] + 2:]
 
     return txt
 
@@ -75,26 +69,36 @@ def back_to_clean(lst):
     return txt
 
 
+def cache_clean_tokenizations(text):
+    if text not in cache_clean_tokenizations_dict:
+        tokens = word_tokenize(clean_item(text))
+        tokens = list(map(clean_item, tokens))
+        cache_clean_tokenizations_dict[text] = tokens
+    return cache_clean_tokenizations_dict[text]
+
+
+def cache_tokenizations(text):
+    if text not in cache_clean_tokenizations_dict:
+        tokens = word_tokenize(text)
+        cache_tokenizations_dict[text] = tokens
+    return cache_tokenizations_dict[text]
+
+
 def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False):
     text1 = text[0: start]
     text2 = text[start: end]
     text3 = text[end:]
 
     if clean:
-        text_tokens1 = word_tokenize(clean_item(text1))
-        text_tokens2 = word_tokenize(clean_item(text2))
-        text_tokens3 = word_tokenize(clean_item(text3))
-        all_text_tokens = word_tokenize(clean_item(text))
-
-        text_tokens1 = list(map(clean_item, text_tokens1))
-        text_tokens2 = list(map(clean_item, text_tokens2))
-        text_tokens3 = list(map(clean_item, text_tokens3))
-        all_text_tokens = list(map(clean_item, all_text_tokens))
+        text_tokens1 = cache_clean_tokenizations(text1)
+        text_tokens2 = cache_clean_tokenizations(text2)
+        text_tokens3 = cache_clean_tokenizations(text3)
+        all_text_tokens = cache_clean_tokenizations(text)
     else:
-        text_tokens1 = word_tokenize(text1)
-        text_tokens2 = word_tokenize(text2)
-        text_tokens3 = word_tokenize(text3)
-        all_text_tokens = word_tokenize(text)
+        text_tokens1 = cache_tokenizations(text1)
+        text_tokens2 = cache_tokenizations(text2)
+        text_tokens3 = cache_tokenizations(text3)
+        all_text_tokens = cache_tokenizations(text)
 
     if verbose and all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
         print(f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
