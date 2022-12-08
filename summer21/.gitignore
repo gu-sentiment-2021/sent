@@ -131,6 +131,8 @@ dmypy.json
 
 .idea
 
+../.idea
+
 result_mpqa2.json
 
 dataV2.json
