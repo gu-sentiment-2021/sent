@@ -92,15 +92,15 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
     if clean:
         text_tokens1 = cache_clean_tokenizations(text1)
         text_tokens2 = cache_clean_tokenizations(text2)
-        text_tokens3 = cache_clean_tokenizations(text3)
+        # text_tokens3 = cache_clean_tokenizations(text3)
         all_text_tokens = cache_clean_tokenizations(text)
     else:
         text_tokens1 = cache_tokenizations(text1)
         text_tokens2 = cache_tokenizations(text2)
-        text_tokens3 = cache_tokenizations(text3)
+        # text_tokens3 = cache_tokenizations(text3)
         all_text_tokens = cache_tokenizations(text)
 
-    if verbose and all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
+    if verbose and all_text_tokens[len(text_tokens1): len(text_tokens1)+len(text_tokens2)] != text_tokens2:
         print(f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
