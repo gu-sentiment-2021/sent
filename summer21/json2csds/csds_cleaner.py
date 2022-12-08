@@ -26,6 +26,14 @@ def alert_wrong_anno(anno, doc_id, error=None):
         print('===================')
 
 
+def white_in_warning(text):
+    return f'\033[00m{text}\033[93m'
+
+
+def white_in_error(text):
+    return f'\033[00m{text}\033[91m'
+
+
 def clean_item(txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
 
@@ -89,7 +97,7 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         all_text_tokens = word_tokenize(text)
 
     if verbose and all_text_tokens != text_tokens1 + text_tokens2 + text_tokens3:
-        print(f" <Warning word tokenization mismatch id=[{item_id}]: head={text2} | w_head={text_tokens2} | text={all_text_tokens}/>")
+        print(f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
     return {
@@ -121,9 +129,9 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                         'target': find_info(item['target_link'], data_targets, clean, parent_w_text=word_based_info['w_text'], parent_id=item_id, verbose=False)
                     })
                 if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
-                    print(f' <Error sentence mismatch parent_id={parent_id} & id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}/>')
+                    print(f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
             elif verbose:
-                print(f" <Warning id={item_id} couldn't be found./>")
+                print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
         else:
             for item in data_subset:
                 if item_id == item['unique_id']:
@@ -137,9 +145,8 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                             'intensity': item['intensity'],
                             'target': find_info(item['target_link'], data_targets, clean, parent_w_text=word_based_info['w_text'], parent_id=item_id, verbose=False)
                         })
-                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
-                            word_based_info['w_text']:
-                        print(f' <Error sentence mismatch parent_id={parent_id} & id={item_id}: parent={parent_w_text} | child={word_based_info["w_text"]}/>')
+                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
+                        print(f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
 
         word_based_info_list.append(word_based_info)
 
