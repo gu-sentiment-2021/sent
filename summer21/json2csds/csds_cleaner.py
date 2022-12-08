@@ -1,13 +1,38 @@
 import re
 import nltk
 from nltk.tokenize import word_tokenize
+
 nltk.download('punkt')
 
 import json
 from json2csds import JSON2CSDS
 
 from nltk.tokenize.treebank import TreebankWordDetokenizer
+
 detokenizer = TreebankWordDetokenizer()
+
+import re
+import spacy
+from spacy.tokenizer import Tokenizer
+
+special_cases = {"``": [{"ORTH": "``"}]}
+prefix_re = re.compile(r'''^[\[\("']''')
+suffix_re = re.compile(r'''[\]\)"']$''')
+infix_re = re.compile(r'''[~]''')
+# infix_re = re.compile(r'''[-~]''')
+simple_url_re = re.compile(r'''^https?://''')
+
+
+def custom_tokenizer(nlp):
+    return Tokenizer(nlp.vocab, rules=special_cases,
+                     prefix_search=prefix_re.search,
+                     suffix_search=suffix_re.search,
+                     infix_finditer=infix_re.finditer,
+                     url_match=simple_url_re.match)
+
+
+nlp = spacy.load("en_core_web_sm")
+nlp.tokenizer = custom_tokenizer(nlp)
 
 cache_clean_tokenizations_dict = {}
 cache_tokenizations_dict = {}
@@ -50,10 +75,10 @@ def clean_item(txt):
     # Handle ``s and ''s
     start_quotation_marks_indices = []
     end_quotation_marks_indices = []
-    for i in range(len(txt)-1):
-        if txt[i:i+2] == '``':  # or ord(txt[i]) == 39:
+    for i in range(len(txt) - 1):
+        if txt[i:i + 2] == '``':  # or ord(txt[i]) == 39:
             start_quotation_marks_indices.append(i)
-        if txt[i:i+2] == "''":  # or ord(txt[i]) == 39:
+        if txt[i:i + 2] == "''":  # or ord(txt[i]) == 39:
             end_quotation_marks_indices.append(i)
     for i in range(len(start_quotation_marks_indices)):
         txt = txt[0: start_quotation_marks_indices[i]] + '"' + txt[start_quotation_marks_indices[i] + 2:]
@@ -71,7 +96,7 @@ def back_to_clean(lst):
 
 def cache_clean_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = word_tokenize(clean_item(text))
+        tokens = [t.text for t in nlp(clean_item(text))]
         tokens = list(map(clean_item, tokens))
         cache_clean_tokenizations_dict[text] = tokens
     return cache_clean_tokenizations_dict[text]
@@ -79,7 +104,7 @@ def cache_clean_tokenizations(text):
 
 def cache_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = word_tokenize(text)
+        tokens = [t.text for t in nlp(text)]
         cache_tokenizations_dict[text] = tokens
     return cache_tokenizations_dict[text]
 
@@ -100,12 +125,13 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         # text_tokens3 = cache_tokenizations(text3)
         all_text_tokens = cache_tokenizations(text)
 
-    if verbose and all_text_tokens[len(text_tokens1): len(text_tokens1)+len(text_tokens2)] != text_tokens2:
-        print(f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
+    if verbose and all_text_tokens[len(text_tokens1): len(text_tokens1) + len(text_tokens2)] != text_tokens2:
+        print(
+            f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
     return {
-        'w_head_span': (len(text_tokens1), len(text_tokens1)+len(text_tokens2)),
+        'w_head_span': (len(text_tokens1), len(text_tokens1) + len(text_tokens2)),
         'w_text': all_text_tokens,
         'w_head': text_tokens2,
         'clean_text': back_to_clean(all_text_tokens),
@@ -113,7 +139,8 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
     }
 
 
-def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], parent_id='', verbose=False, data_targets={}):
+def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_w_text=[], parent_id='',
+              verbose=False, data_targets={}):
     word_based_info = {}
     word_based_info_list = []
     if ids is None:
@@ -121,36 +148,46 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
     for item_id in ids:
         if type(data_subset) is dict:
             if item_id in data_subset:
-                item = data_subset[item_id]  #dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
+                item = data_subset[
+                    item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
                 word_based_info = char_to_word(
-                    item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, verbose=verbose
+                    item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
+                    end=item['head_end'], clean=clean, verbose=verbose
                 )
                 if add_attitude_attributes:
                     word_based_info.update({
                         'annotation_type': item['annotation_type'],
                         'polarity': item['polarity'],
                         'intensity': item['intensity'],
-                        'target': find_info(item['target_link'], data_targets, clean, parent_w_text=word_based_info['w_text'], parent_id=item_id, verbose=False)
+                        'target': find_info(item['target_link'], data_targets, clean,
+                                            parent_w_text=word_based_info['w_text'], parent_id=item_id, verbose=False)
                     })
-                if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
-                    print(f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
+                if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
+                        word_based_info['w_text']:
+                    print(
+                        f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
             elif verbose:
                 print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
         else:
             for item in data_subset:
                 if item_id == item['unique_id']:
                     word_based_info = char_to_word(
-                        item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, verbose=verbose
+                        item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
+                        end=item['head_end'], clean=clean, verbose=verbose
                     )
                     if add_attitude_attributes:
                         word_based_info.update({
                             'annotation_type': item['annotation_type'],
                             'polarity': item['polarity'],
                             'intensity': item['intensity'],
-                            'target': find_info(item['target_link'], data_targets, clean, parent_w_text=word_based_info['w_text'], parent_id=item_id, verbose=False)
+                            'target': find_info(item['target_link'], data_targets, clean,
+                                                parent_w_text=word_based_info['w_text'], parent_id=item_id,
+                                                verbose=False)
                         })
-                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
-                        print(f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
+                    if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
+                            word_based_info['w_text']:
+                        print(
+                            f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
 
         word_based_info_list.append(word_based_info)
 
@@ -174,14 +211,18 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         item.update(word_based_info)
 
         item_id = item['unique_id']
-        item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose)
-        item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean, parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose)
-        item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True, parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose, data_targets=data['target_objects'])
+        item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'],
+                                   parent_id=item_id, verbose=verbose)
+        item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean,
+                                          parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose)
+        item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True,
+                                     parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose,
+                                     data_targets=data['target_objects'])
 
         data['csds_objects'][k] = item
 
-        if activate_progressbar and progressbar < k//(n//100):
-            progressbar = k//(n//100)
+        if activate_progressbar and progressbar < k // (n // 100):
+            progressbar = k // (n // 100)
             print(f'{progressbar}% completed')
 
     with open(save_address, 'w', encoding='utf-8') as f:
