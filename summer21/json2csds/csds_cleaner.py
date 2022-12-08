@@ -61,6 +61,19 @@ def white_in_warning(text):
 def white_in_error(text):
     return f'\033[00m{text}\033[91m'
 
+def clean_sentence(sentence):
+    if sentence.endswith('.'):
+        if re.search('[a-z\d _=+/\"\' ].$', sentence):
+            sentence = sentence[:-1] + ' . '
+    else:
+        i = len(sentence) - 1
+        while i >= 0:
+            if sentence[i] == '.':
+                sentence = sentence[0: i] + ' . ' + sentence[i+1:]
+                return sentence
+            i -= 1
+
+    return sentence
 
 def clean_item(txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
@@ -110,6 +123,9 @@ def cache_tokenizations(text):
 
 
 def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False):
+
+    text = clean_sentence(text)
+
     text1 = text[0: start]
     text2 = text[start: end]
     text3 = text[end:]
