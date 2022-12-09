@@ -11,11 +11,8 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 
 detokenizer = TreebankWordDetokenizer()
 
-
-
 cache_clean_tokenizations_dict = {}
 cache_tokenizations_dict = {}
-
 
 def alert_wrong_anno(anno, doc_id, error=None):
     """
@@ -209,11 +206,23 @@ def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_i
     return word_based_info_list
 
 
+def preprocess_agents_in_sentences(data_subset):
+    agents_in_sentences = {}
+    for agent_id, agent in data_subset.items():
+        if agent['sentence_id'] not in agents_in_sentences:
+            agents_in_sentences[agent['sentence_id']] = {agent_id: agent}
+        else:
+            agents_in_sentences[agent['sentence_id']][agent_id] = agent
+    return agents_in_sentences
+
+
 def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=False, activate_progressbar=True):
     obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
     # Gather the JSON file from MPQA.
     mpqa_json = obj.produce_json_file()
     data = obj.doc2csds(mpqa_json, json_output=True)
+
+    agents_in_sentences = preprocess_agents_in_sentences(data['agent_objects'])
 
     n = len(data['csds_objects'])
     progressbar = -1
