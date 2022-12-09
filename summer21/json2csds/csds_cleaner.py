@@ -174,8 +174,7 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
     return word_based_info_list
 
 
-def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_id='',
-              verbose=False):
+def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_id='', agents_in_sentences={}, verbose=False):
     word_based_info = {}
     word_based_info_list = []
     if ids is None:
@@ -183,8 +182,7 @@ def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_i
 
     for item_id in ids:
         if item_id in data_subset:
-            item = data_subset[
-                item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
+            item = data_subset[item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
 
             if item_id.endswith('agent-w') or item['sentence_id'] == parent['sentence_id']:
                 word_based_info = char_to_word(
@@ -195,9 +193,20 @@ def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_i
                 if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
                         word_based_info['w_text']:
                     print(
-                        f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
+                        f'\033[92m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
             else:
-                print('2dast')
+                agents_in_sentence = agents_in_sentences[parent['sentence_id']]
+                agent_found = False
+                for agent_id, agent in agents_in_sentence.items():
+                    if agent['nested_source'][-1] == item_id:
+                        word_based_info = char_to_word(
+                            item_id=agent_id, text=agent['text'], head=agent['head'], start=agent['head_start'],
+                            end=agent['head_end'], clean=clean, verbose=verbose
+                        )
+                        agent_found = True
+                        break
+                if not agent_found and verbose:
+                    print(f'\033[91m <Error agent not found (2 Dasts) parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
         elif verbose:
                 print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
 
@@ -237,8 +246,9 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         item_id = item['unique_id']
         item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'],
                                    parent_id=item_id, verbose=verbose)
-        item['nested_source'] = find_agent(item['nested_source_link'], data['agent_objects'], clean,
-                                          parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose, parent=item)
+        item['nested_source'] = find_agent(item['nested_source_link'], data['agent_objects'], item, clean,
+                                           parent_w_text=item['w_text'], parent_id=item_id,
+                                           agents_in_sentences=agents_in_sentences, verbose=verbose)
         item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True,
                                      parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose,
                                      data_targets=data['target_objects'])
