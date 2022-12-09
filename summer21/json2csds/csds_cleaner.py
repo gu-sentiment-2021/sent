@@ -18,7 +18,7 @@ cache_tokenizations_dict = {}
 
 
 
-def alert_wrong_anno(anno, doc_id, error=None):
+def alert_wrong_anno(anno, doc_id="", error=None):
     """
     It is used for alerting wrong annotation(s).
     :param anno: The annotation that error(s) were happening in its process.
@@ -177,8 +177,33 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
 
     return word_based_info_list
 
+def find_agent(item_nested_source, agents_special={}, data=None, data_targets={}):
 
-def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=False, activate_progressbar=True):
+    for nested_src in item_nested_source:
+        if not nested_src.endswith('agent-w'):
+            if nested_src in agents_special:
+                try:
+                    word_based_info = char_to_word(
+                        item_id=nested_src, text=agents_special[nested_src]['text'],
+                        head=agents_special[nested_src]['head'], start=agents_special[nested_src]['head_start'],
+                        end=agents_special[nested_src]['head_end']
+                    )
+
+                    word_based_info.update({
+                        'annotation_type': data[nested_src]['annotation_type'],
+                        'polarity': data[nested_src]['polarity'],
+                        'intensity': data[nested_src]['intensity'],
+                        'target': find_info(data[nested_src]['target_link'], data_targets,
+                                            parent_w_text=word_based_info['w_text'], parent_id=nested_src, verbose=False)
+                    })
+                except Exception as err:
+                    alert_wrong_anno(agents_special[nested_src], error=err)
+            else:
+                pass
+                #print(nested_src)
+
+
+def tokenize_and_extract_info(data_address, save_address, agents_special={}, clean=False, verbose=False, activate_progressbar=True):
     obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
     # Gather the JSON file from MPQA.
     mpqa_json = obj.produce_json_file()
@@ -196,15 +221,14 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
         item_id = item['unique_id']
 
-        #
-        doc_id = item['doc_id']
-
-
 
         item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'],
                                    parent_id=item_id, verbose=verbose)
-        item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean,
-                                          parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose)
+        #item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean,
+        #                                  parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose)
+
+        item['nested_source'] = find_agent(item['nested_source_link'], agents_special=agents_special, data=data['agent_objects'], data_targets=data['target_objects'])
+
         item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True,
                                      parent_w_text=item['w_text'], parent_id=item_id, verbose=verbose,
                                      data_targets=data['target_objects'])
@@ -219,12 +243,20 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-#tokenize_and_extract_info(
-#    data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
-#    save_address='MPQA2.0_v221205_cleaned.json',
- #   clean=True,
-  #  verbose=True
-#)
+#Load agents special json
+# Loading the saved JSON file.
+# Path is where you want to save the JSON file.
+path = ''
+with open(path + 'agents_special.json', encoding='utf-8') as json_file:
+    agents_special = json.load(json_file)
+
+tokenize_and_extract_info(
+    data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
+    save_address='MPQA2.0_v221205_cleaned.json',
+    agents_special=agents_special,
+    clean=True,
+    verbose=False
+)
 
 # tokenize_and_extract_info(
 #     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
