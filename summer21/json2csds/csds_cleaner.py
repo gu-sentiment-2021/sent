@@ -184,29 +184,29 @@ def find_agent(ids, data_subset, parent, clean=False, parent_w_text=[], parent_i
         if item_id in data_subset:
             item = data_subset[item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
 
-            if item_id.endswith('agent-w') or item['sentence_id'] == parent['sentence_id']:
+            if item_id.endswith('agent-w') or item_id.endswith('agent-implicit') or item['sentence_id'] == parent['sentence_id']:
                 word_based_info = char_to_word(
                     item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
                     end=item['head_end'], clean=clean, verbose=verbose
                 )
 
-                if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != \
-                        word_based_info['w_text']:
+                if verbose and parent_w_text != [] and word_based_info['w_text'] != [] and parent_w_text != word_based_info['w_text']:
                     print(
                         f'\033[92m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
             else:
-                agents_in_sentence = agents_in_sentences[parent['sentence_id']]
                 agent_found = False
-                for agent_id, agent in agents_in_sentence.items():
-                    if agent['nested_source'][-1] == item_id:
-                        word_based_info = char_to_word(
-                            item_id=agent_id, text=agent['text'], head=agent['head'], start=agent['head_start'],
-                            end=agent['head_end'], clean=clean, verbose=verbose
-                        )
-                        agent_found = True
-                        break
+                if parent['sentence_id'] in agents_in_sentences:
+                    agents_in_sentence = agents_in_sentences[parent['sentence_id']]
+                    for agent_id, agent in agents_in_sentence.items():
+                        if len(agent['nested_source']) > 0 and agent['nested_source'][-1] == item_id:
+                            word_based_info = char_to_word(
+                                item_id=agent_id, text=agent['text'], head=agent['head'], start=agent['head_start'],
+                                end=agent['head_end'], clean=clean, verbose=verbose
+                            )
+                            agent_found = True
+                            break
                 if not agent_found and verbose:
-                    print(f'\033[91m <Error agent not found (2 Dasts) parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_w_text=\t{white_in_error(parent_w_text)} \n\t child_w_text=\t{white_in_error(word_based_info["w_text"])} \n /> \033[00m')
+                    print(f'\033[91m <Error agent not found (2 Hands) parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}> & sentence-id=<{white_in_error(parent["sentence_id"])}>: \n\t parent_w_text=\t\t{white_in_error(parent_w_text)} \n\t supposed_child_text=\t{white_in_error(repr(item["text"]))} \n\t supposed_child_head=\t{white_in_error(repr(item["head"]))} \n /> \033[00m')
         elif verbose:
                 print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
 
