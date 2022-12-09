@@ -11,28 +11,7 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 
 detokenizer = TreebankWordDetokenizer()
 
-import re
-import spacy
-from spacy.tokenizer import Tokenizer
 
-special_cases = {"``": [{"ORTH": "``"}]}
-prefix_re = re.compile(r'''^[\[\("']''')
-suffix_re = re.compile(r'''[\]\)"']$''')
-infix_re = re.compile(r'''[~]''')
-# infix_re = re.compile(r'''[-~]''')
-simple_url_re = re.compile(r'''^https?://''')
-
-
-def custom_tokenizer(nlp):
-    return Tokenizer(nlp.vocab, rules=special_cases,
-                     prefix_search=prefix_re.search,
-                     suffix_search=suffix_re.search,
-                     infix_finditer=infix_re.finditer,
-                     url_match=simple_url_re.match)
-
-
-nlp = spacy.load("en_core_web_sm")
-nlp.tokenizer = custom_tokenizer(nlp)
 
 cache_clean_tokenizations_dict = {}
 cache_tokenizations_dict = {}
@@ -61,19 +40,7 @@ def white_in_warning(text):
 def white_in_error(text):
     return f'\033[00m{text}\033[91m'
 
-def clean_sentence(sentence):
-    if sentence.endswith('.'):
-        if re.search('[a-z\d _=+/\"\' ].$', sentence):
-            sentence = sentence[:-1] + ' . '
-    else:
-        i = len(sentence) - 1
-        while i >= 0:
-            if sentence[i] == '.':
-                sentence = sentence[0: i] + ' . ' + sentence[i+1:]
-                return sentence
-            i -= 1
 
-    return sentence
 
 def clean_item(txt):
     re_pattern = '[a-zA-Z0-9 _=+/\"\'\-]'
@@ -109,7 +76,7 @@ def back_to_clean(lst):
 
 def cache_clean_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = [t.text for t in nlp(clean_item(text))]
+        tokens = word_tokenize(clean_item(text))
         tokens = list(map(clean_item, tokens))
         cache_clean_tokenizations_dict[text] = tokens
     return cache_clean_tokenizations_dict[text]
@@ -117,14 +84,12 @@ def cache_clean_tokenizations(text):
 
 def cache_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = [t.text for t in nlp(text)]
+        tokens = word_tokenize(text)
         cache_tokenizations_dict[text] = tokens
     return cache_tokenizations_dict[text]
 
 
 def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False):
-
-    text = clean_sentence(text)
 
     text1 = text[0: start]
     text2 = text[start: end]
