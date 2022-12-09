@@ -103,7 +103,7 @@ class JSON2CSDS:
         """
         return [f'{doc_id}&&{s}' for s in array]
 
-    def __process_one_agent(self, agent_anno, doc_id, agent_id=""):
+    def __process_one_agent(self, agent_anno, doc_id, agent_id="", passed_dict={}):
         """
         It processes an agent type annotation.
         :param agent_anno: A Python dict which represents an agent annotation.
@@ -147,13 +147,20 @@ class JSON2CSDS:
             if 'nested-source' in agent_anno:
                 agent_object.nested_source = self.__add_docname_to_list(doc_id, agent_anno['nested-source'])
 
+
+            #
+            for nested_src in agent_object.nested_source:
+                if not nested_src.endswith('agent-w'):
+                    passed_dict[nested_src] = agent_anno
+                    #print(nested_src)
+
         except Exception as err:
             self.__alert_wrong_anno(agent_anno, doc_id, error=err)
-            return None
+            return None, passed_dict
 
-        return agent_object
+        return agent_object, passed_dict
 
-    def __process_agent(self, agent_annos, doc_id, agent_id=""):
+    def __process_agent(self, agent_annos, doc_id, agent_id="", passed_dict={}):
         """
         It processes agent type annotations.
         :param agent_annos: A Python list which represents some agent annotations.
@@ -166,11 +173,11 @@ class JSON2CSDS:
             print(f'\033[93m <Warning: Duplicated ID detected: {agent_id} in {doc_id}>\033[00m')
         for i in range(len(agent_annos)):
             if i == 0:
-                res = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id)
+                res, passed_dict = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id, passed_dict=passed_dict)
             else:
-                res = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id+"&&"+str(i))
+                res, passed_dict = self.__process_one_agent(agent_annos[i], doc_id, agent_id=agent_id+"&&"+str(i), passed_dict=passed_dict)
             all_results.append(res)
-        return all_results
+        return all_results, passed_dict
 
     def __process_one_es(self, all_anno, es_id, es_anno, doc_id):
         """
@@ -806,6 +813,8 @@ class JSON2CSDS:
         # And here, we create an Agent collection that stores the Agent objects.
         agent_coll = AgentCollection(self.corpus_name)
 
+        passed_dict = {}
+
         # Process each document.
         for doc_name in doc_list:
             curr_doc = docs[doc_name]
@@ -819,7 +828,7 @@ class JSON2CSDS:
                 # Process each agent item by its corresponding ID.
                 for agent_id in agent_list:
                     annotation_item = annotations[agent_id]
-                    agent_objects = self.__process_agent(annotation_item, doc_name, agent_id=agent_id)
+                    agent_objects, passed_dict = self.__process_agent(annotation_item, doc_name, agent_id=agent_id, passed_dict=passed_dict)
                     # Store the objects!
                     if agent_objects:
                         for agent_object in agent_objects:
@@ -963,6 +972,8 @@ class JSON2CSDS:
 
             del annotations
 
+
+
         if json_output:
             csds_coll_lst = ext_csds_coll.get_all_instances()[0]
             target_coll_lst = target_coll.get_all_instances()
@@ -982,7 +993,8 @@ class JSON2CSDS:
                 'corpus_name': self.corpus_name,
                 'csds_objects': csds_json_files,
                 'target_objects': target_json_files,
-                'agent_objects': agent_json_files
+                'agent_objects': agent_json_files,
+                'agent_special': passed_dict
             }
             return overall_result
         else:

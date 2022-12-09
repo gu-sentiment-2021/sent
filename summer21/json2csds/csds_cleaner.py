@@ -17,6 +17,7 @@ cache_clean_tokenizations_dict = {}
 cache_tokenizations_dict = {}
 
 
+
 def alert_wrong_anno(anno, doc_id, error=None):
     """
     It is used for alerting wrong annotation(s).
@@ -194,6 +195,12 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         item.update(word_based_info)
 
         item_id = item['unique_id']
+
+        #
+        doc_id = item['doc_id']
+
+
+
         item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_w_text=item['w_text'],
                                    parent_id=item_id, verbose=verbose)
         item['nested_source'] = find_info(item['nested_source_link'], data['agent_objects'], clean,
@@ -212,12 +219,12 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-tokenize_and_extract_info(
-    data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
-    save_address='MPQA2.0_v221205_cleaned.json',
-    clean=True,
-    verbose=True
-)
+#tokenize_and_extract_info(
+#    data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
+#    save_address='MPQA2.0_v221205_cleaned.json',
+ #   clean=True,
+  #  verbose=True
+#)
 
 # tokenize_and_extract_info(
 #     data_address='../mpqa_dataprocessing/database.mpqa.cleaned',
@@ -225,3 +232,4 @@ tokenize_and_extract_info(
 #     clean=False,
 #     verbose=False
 # )
+
