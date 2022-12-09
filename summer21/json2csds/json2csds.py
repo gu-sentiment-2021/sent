@@ -125,7 +125,7 @@ class JSON2CSDS:
                 its_head_end = agent_anno['span-in-sentence'][1]
 
                 if 'sentence-id' in agent_anno:
-                    its_sentence_id = agent_anno['sentence-id']
+                    its_sentence_id = doc_id + '&&' + agent_anno['sentence-id']
                 else:
                     its_sentence_id = None
 
@@ -230,7 +230,7 @@ class JSON2CSDS:
                 ),
                 this_head=es_anno['head'],
                 this_doc_id=doc_id,
-                this_sentence_id=es_anno['sentence-id'],
+                this_sentence_id=doc_id + '&&' + es_anno['sentence-id'],
                 this_agent_link=self.__add_docname_to_list(
                     doc_id, es_anno['nested-source'] if 'nested-source' in es_anno else []
                 ),
@@ -276,7 +276,7 @@ class JSON2CSDS:
         its_type = self.__type_mapper('unknown')  # Type (default is unknown)
 
         if 'sentence-id' in att_anno:
-            sent_id = att_anno['sentence-id']
+            sent_id = doc_id + '&&' + att_anno['sentence-id']
         else:
             sent_id = None
 
@@ -359,7 +359,7 @@ class JSON2CSDS:
         """
 
         if 'sentence-id' in tar_anno:
-            sent_id = tar_anno['sentence-id']
+            sent_id = doc_id + '&&' + tar_anno['sentence-id']
         else:
             sent_id = None
 
@@ -373,7 +373,8 @@ class JSON2CSDS:
                 this_head_end=tar_anno['span-in-sentence'][1],
                 this_head=tar_anno['head'],
                 this_annotation_type=tar_anno['anno-type'],
-                unique_id=doc_id + '&&' + tar_id
+                unique_id=doc_id + '&&' + tar_id,
+                doc_id=doc_id
             )
 
         except Exception as err:
@@ -412,7 +413,7 @@ class JSON2CSDS:
         """
 
         if 'sentence-id' in tf_anno:
-            sent_id = tf_anno['sentence-id']
+            sent_id = doc_id + '&&' + tf_anno['sentence-id']
         else:
             sent_id = None
 
@@ -426,7 +427,8 @@ class JSON2CSDS:
                 this_head_end=tf_anno['span-in-sentence'][1],
                 this_head=tf_anno['head'],
                 this_annotation_type=tf_anno['anno-type'],
-                unique_id=doc_id + '&&' + tf_id
+                unique_id=doc_id + '&&' + tf_id,
+                doc_id = doc_id
             )
 
         except Exception as err:
@@ -468,14 +470,15 @@ class JSON2CSDS:
             # Extract features from sTarget annotation and create an object from them.
             starget_object = sTarget(
                 this_id=starget_id,
-                this_sentence_id=starget_anno['sentence-id'],
+                this_sentence_id=doc_id + '&&' + starget_anno['sentence-id'],
                 this_text=starget_anno['text'],
                 this_head_start=starget_anno['span-in-sentence'][0],
                 this_head_end=starget_anno['span-in-sentence'][1],
                 this_head=starget_anno['head'],
                 this_annotation_type=starget_anno['anno-type'],
                 this_etarget_link=self.__add_docname_to_list(doc_id, starget_anno['eTarget-link']),
-                unique_id=doc_id + '&&' + starget_id
+                unique_id=doc_id + '&&' + starget_id,
+                doc_id=doc_id
             )
 
             # Check 'target-uncertain' which is an optional attribute.
@@ -520,14 +523,15 @@ class JSON2CSDS:
             # Extract features from eTarget annotation and create an object from them.
             etarget_object = eTarget(
                 this_id=etarget_id,
-                this_sentence_id=etarget_anno['sentence-id'],
+                this_sentence_id=doc_id + '&&' + etarget_anno['sentence-id'],
                 this_text=etarget_anno['text'],
                 this_head_start=etarget_anno['span-in-sentence'][0],
                 this_head_end=etarget_anno['span-in-sentence'][1],
                 this_head=etarget_anno['head'],
                 this_annotation_type=etarget_anno['anno-type'],
                 this_type_etarget=etarget_anno['type'],
-                unique_id=doc_id + '&&' + etarget_id
+                unique_id=doc_id + '&&' + etarget_id,
+                doc_id=doc_id
             )
 
             # Check 'isNegated' and 'isReferredInSpan' which are optional attributes.
@@ -573,7 +577,7 @@ class JSON2CSDS:
         """
 
         if 'sentence-id' in ds_anno:
-            sent_id = ds_anno['sentence-id']
+            sent_id = doc_id + '&&' + ds_anno['sentence-id']
         else:
             sent_id = None
 
@@ -664,7 +668,7 @@ class JSON2CSDS:
         :return: A csds object.
         """
         if 'sentence-id' in ose_anno:
-            sent_id = ose_anno['sentence-id']
+            sent_id = doc_id + '&&' + ose_anno['sentence-id']
         else:
             sent_id = None
 
@@ -740,7 +744,7 @@ class JSON2CSDS:
                 this_annotation_type=sent_anno['anno-type'],
                 this_head=sent_anno['head'],
                 this_doc_id=doc_id,
-                this_sentence_id=sent_id,
+                this_sentence_id=doc_id + '&&' + sent_id,
                 this_implicit=None,
                 unique_id=doc_id + '&&' + sent_id
             )

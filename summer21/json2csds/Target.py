@@ -16,6 +16,7 @@ class Target:
     """
     unique_id = -1 # unique id of each annotation
     sentence_id = -1  # index of sentence within document
+    doc_id = ""  # ID of the document.
     text = ""  # sentence in which the annotated head occurs
     target_id = ""  # id of eTarget or sTarget
     head_start = -1  # start span of eTarget or sTarget
@@ -24,7 +25,7 @@ class Target:
     annotation_type: TypeTarget  # The type of annotation
 
     def __init__(self, this_text, this_id, this_head_start, this_head_end, this_annotation_type,
-                 this_head="", this_sentence_id=-1, unique_id=-1):
+                 this_head="", this_sentence_id=-1, unique_id=-1, doc_id=""):
         """
         The init method (constructor) for Target class.
         """
@@ -36,6 +37,7 @@ class Target:
         self.head_end = this_head_end
         self.head = this_head
         self.annotation_type = TypeTarget(this_annotation_type)
+        self.doc_id = doc_id
 
 
 class eTarget(Target):

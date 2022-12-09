@@ -133,20 +133,6 @@ dmypy.json
 
 ../.idea
 
-result_mpqa2.json
-
-dataV2.json
-
-data.json
-
-dataV3.json
-
-data_mpqa.json
-
-dataV3_220713.json
-
-MPQA*_v*.json
-
-MPQA.json
+*.json
 
 *.zip
