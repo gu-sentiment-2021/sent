@@ -76,15 +76,17 @@ def back_to_clean(lst):
 
 def cache_clean_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = word_tokenize(clean_item(text))
-        tokens = list(map(clean_item, tokens))
+        text2 = text + ' .'
+        tokens = word_tokenize(clean_item(text2))
+        tokens = list(map(clean_item, tokens))[0: -1]
         cache_clean_tokenizations_dict[text] = tokens
     return cache_clean_tokenizations_dict[text]
 
 
 def cache_tokenizations(text):
     if text not in cache_clean_tokenizations_dict:
-        tokens = word_tokenize(text)
+        text2 = text + ' .'
+        tokens = word_tokenize(text2)[0:-1]
         cache_tokenizations_dict[text] = tokens
     return cache_tokenizations_dict[text]
 
