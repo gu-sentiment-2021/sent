@@ -49,6 +49,9 @@ def clean_item(txt):
     txt = re.sub('--', ' -- ', txt)
     txt = re.sub('  ', ' ', txt)
 
+    if txt == 'U.S':
+        txt = 'U.S.'
+
     # Handle ``s and ''s
     start_quotation_marks_indices = []
     end_quotation_marks_indices = []
@@ -127,7 +130,7 @@ def clean_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens):
     return tokens1, tokens2, tokens3, all_tokens
 
 
-def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False):
+def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False, remove=True):
 
     text1 = text[0: start]
     text2 = text[start: end]
@@ -150,16 +153,22 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
             f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
-    return {
-        'w_head_span': (len(text_tokens1), len(text_tokens1) + len(text_tokens2)),
-        'w_text': all_text_tokens,
-        'w_head': text_tokens2,
-        'clean_text': back_to_clean(all_text_tokens),
-        'clean_head': back_to_clean(text_tokens2)
-    }
+    if not remove:
+        return {
+            'w_head_span': (len(text_tokens1), len(text_tokens1) + len(text_tokens2)),
+            'w_text': all_text_tokens,
+            'w_head': text_tokens2,
+            'clean_text': back_to_clean(all_text_tokens),
+            'clean_head': back_to_clean(text_tokens2)
+        }
+    else:
+        return {
+            'w_head_span': (len(text_tokens1), len(text_tokens1) + len(text_tokens2)),
+            'clean_head': back_to_clean(text_tokens2)
+        }
 
 
-def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_clean_text='', parent_id='',
+def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_id='',
               verbose=False, data_targets={}):
     word_based_info = {}
     word_based_info_list = []
@@ -179,8 +188,8 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                         'annotation_type': item['annotation_type'],
                         'polarity': item['polarity'],
                         'intensity': item['intensity'],
-                        'target': find_info(item['target_link'], data_targets, clean,
-                                            parent_clean_text=word_based_info['clean_text'], parent_id=item_id, verbose=False)
+                        'target': find_info(item['target_link'], data_targets, clean
+                                            , parent_id=item_id, verbose=False)
                     })
                 # if verbose and parent_clean_text != '' and word_based_info['clean_text'] != '' and parent_clean_text != \
                 #         word_based_info['clean_text']:
@@ -201,8 +210,7 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                             'polarity': item['polarity'],
                             'intensity': item['intensity'],
                             'target': find_info(item['target_link'], data_targets, clean,
-                                                parent_clean_text=word_based_info['clean_text'], parent_id=item_id,
-                                                verbose=False)
+                                                 parent_id=item_id, verbose=False)
                         })
                     # if verbose and parent_clean_text != '' and word_based_info['clean_text'] != '' and parent_clean_text != \
                     #         word_based_info['clean_text']:
@@ -214,7 +222,7 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
     return word_based_info_list
 
 
-def find_agent(ids, data_subset, parent, clean=False, parent_clean_text='', parent_id='', agents_in_sentences={}, verbose=False):
+def find_agent(ids, data_subset, parent, clean=False, parent_id='', agents_in_sentences={}, verbose=False):
     word_based_info = {}
     word_based_info_list = []
     if ids is None:
@@ -279,18 +287,18 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
         item = data['csds_objects'][k]
 
         word_based_info = char_to_word(
-            text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean
+            text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, remove=False
         )
         item.update(word_based_info)
 
         item_id = item['unique_id']
-        item['target'] = find_info(item['target_link'], data['target_objects'], clean, parent_clean_text=item['clean_text'],
+        item['target'] = find_info(item['target_link'], data['target_objects'], clean,
                                    parent_id=item_id, verbose=verbose)
         item['nested_source'] = find_agent(item['nested_source_link'], data['agent_objects'], item, clean,
-                                           parent_clean_text=item['clean_text'], parent_id=item_id,
+                                           parent_id=item_id,
                                            agents_in_sentences=agents_in_sentences, verbose=verbose)
         item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True,
-                                     parent_clean_text=item['clean_text'], parent_id=item_id, verbose=verbose,
+                                     parent_id=item_id, verbose=verbose,
                                      data_targets=data['target_objects'])
 
         data['csds_objects'][k] = item
