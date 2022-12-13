@@ -27,14 +27,22 @@ ose = 0
 for item in data['csds_objects']:
     if item['annotation_type'] == 'expressive_subjectivity':
         ese += 1
-        agnt_in_ese += len(item['nested_source'])
+        for d in item['nested_source']:
+            if d != {}:
+                agnt_in_ese += 1
     if item['annotation_type'] == 'direct_subjective':
         dse += 1
-        agnt_in_dse += len(item['nested_source'])
-        att_in_dse += len(item['attitude'])
+        for d in item['nested_source']:
+            if d != {}:
+                agnt_in_dse += 1
+        for d in item['attitude']:
+            if d != {}:
+                att_in_dse += 1
     if item['annotation_type'] in ['agreement', 'arguing', 'intention', 'other_attitude', 'sentiment', 'speculation']:
         att += 1
-        trgt_in_att += len(item['target'])
+        for d in item['target']:
+            if d != {}:
+                trgt_in_att += 1
     if item['annotation_type'] == 'sentence':
         sentences += 1
     if item['annotation_type'] == 'objective_speech_event':
