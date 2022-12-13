@@ -14,6 +14,10 @@ detokenizer = TreebankWordDetokenizer()
 cache_clean_tokenizations_dict = {}
 cache_tokenizations_dict = {}
 
+global_dict_sentence_mismatches = {}
+global_not_founds = {}
+global_word_tokenization_mismatch = {}
+
 def alert_wrong_anno(anno, doc_id, error=None):
     """
     It is used for alerting wrong annotation(s).
@@ -131,7 +135,7 @@ def clean_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens):
 
 
 def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verbose=False, remove=True):
-
+    global global_word_tokenization_mismatch
     text1 = text[0: start]
     text2 = text[start: end]
     text3 = text[end:]
@@ -149,8 +153,12 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         all_text_tokens = cache_tokenizations(text)
 
     if verbose and all_text_tokens[len(text_tokens1): len(text_tokens1) + len(text_tokens2)] != text_tokens2:
-        print(
-            f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
+        if item_id in global_word_tokenization_mismatch:
+            global_word_tokenization_mismatch[item_id + '(text, head, w_text, w_head)'].append([text, text2, all_text_tokens, text_tokens2])
+        else:
+            global_word_tokenization_mismatch[item_id + '(text, head, w_text, w_head)'] = [text, text2, all_text_tokens, text_tokens2]
+        # print(
+        #     f"\033[93m <Warning word tokenization mismatch id=<{white_in_warning(item_id)}>: \n\t head=<{white_in_warning(repr(text2))}> \n\t text=<{white_in_warning(repr(text))}> \n\t w_head={white_in_warning(text_tokens2)} \n\t w_text={white_in_warning(all_text_tokens)} \n /> \033[00m")
 
     # returns start index, list of tokens and the length of the tokens after the first index which should be considered
     if not remove:
@@ -169,7 +177,9 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
 
 
 def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, parent_id='',
-              verbose=False, data_targets={}):
+              verbose=False, data_targets={}, parent_text=''):
+    global global_dict_sentence_mismatches
+    global global_not_founds
     word_based_info = {}
     word_based_info_list = []
     if ids is None:
@@ -179,27 +189,16 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
             if item_id in data_subset:
                 item = data_subset[
                     item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
-                word_based_info = char_to_word(
-                    item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
-                    end=item['head_end'], clean=clean, verbose=verbose
-                )
-                if add_attitude_attributes:
-                    word_based_info.update({
-                        'annotation_type': item['annotation_type'],
-                        'polarity': item['polarity'],
-                        'intensity': item['intensity'],
-                        'target': find_info(item['target_link'], data_targets, clean
-                                            , parent_id=item_id, verbose=False)
-                    })
-                # if verbose and parent_clean_text != '' and word_based_info['clean_text'] != '' and parent_clean_text != \
-                #         word_based_info['clean_text']:
-                #     print(
-                #         f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_clean_text=\t{white_in_error(parent_clean_text)} \n\t child_clean_text=\t{white_in_error(word_based_info["clean_text"])} \n /> \033[00m')
-            # elif verbose:
-            #     print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
-        else:
-            for item in data_subset:
-                if item_id == item['unique_id']:
+                if verbose and parent_text != '' and item['text'] != '' and parent_text != \
+                        item['text']:
+                    key_pch = 'parent:' + parent_id + 'child:' + item_id
+                    if key_pch in global_dict_sentence_mismatches:
+                        global_dict_sentence_mismatches[key_pch].append([parent_text, item['text']])
+                    else:
+                        global_dict_sentence_mismatches[key_pch] = [parent_text, item['text']]
+                    # print(
+                    #     f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_text=\t{white_in_error(parent_text)} \n\t child_text=\t{white_in_error(item["text"])} \n /> \033[00m')
+                else:
                     word_based_info = char_to_word(
                         item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
                         end=item['head_end'], clean=clean, verbose=verbose
@@ -209,13 +208,41 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
                             'annotation_type': item['annotation_type'],
                             'polarity': item['polarity'],
                             'intensity': item['intensity'],
-                            'target': find_info(item['target_link'], data_targets, clean,
-                                                 parent_id=item_id, verbose=False)
+                            'target': find_info(item['target_link'], data_targets, clean
+                                                , parent_id=item_id, verbose=False, parent_text = item['text'])
                         })
-                    # if verbose and parent_clean_text != '' and word_based_info['clean_text'] != '' and parent_clean_text != \
-                    #         word_based_info['clean_text']:
-                    #     print(
-                    #         f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_clean_text=\t{white_in_error(parent_clean_text)} \n\t child_clean_text=\t{white_in_error(word_based_info["clean_text"])} \n /> \033[00m')
+            elif verbose:
+                if 'other' in global_not_founds:
+                    global_not_founds['other'].append([item_id])
+                else:
+                    global_not_founds['other'] = [item_id]
+                # print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
+        else:
+            for item in data_subset:
+                if item_id == item['unique_id']:
+                    if verbose and parent_text != '' and item['text'] != '' and parent_text != \
+                            item['text']:
+                        flag = False
+                        key_pch = 'parent:' + parent_id + 'child:' + item_id
+                        if key_pch in global_dict_sentence_mismatches:
+                            global_dict_sentence_mismatches[key_pch].append([parent_text, item['text']])
+                        else:
+                            global_dict_sentence_mismatches[key_pch] = [parent_text, item['text']]
+                        # print(
+                        # f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_text=\t{white_in_error(parent_text)} \n\t child_text=\t{white_in_error(item["text"])} \n /> \033[00m')
+                    else:
+                        word_based_info = char_to_word(
+                            item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
+                            end=item['head_end'], clean=clean, verbose=verbose
+                        )
+                        if add_attitude_attributes:
+                            word_based_info.update({
+                                'annotation_type': item['annotation_type'],
+                                'polarity': item['polarity'],
+                                'intensity': item['intensity'],
+                                'target': find_info(item['target_link'], data_targets, clean,
+                                                     parent_id=item_id, verbose=False, parent_text = item['text'])
+                            })
 
         word_based_info_list.append(word_based_info)
 
@@ -223,8 +250,12 @@ def find_info(ids, data_subset, clean=False, add_attitude_attributes=False, pare
 
 
 def find_agent(ids, data_subset, parent, clean=False, parent_id='', agents_in_sentences={}, verbose=False):
+    global global_dict_sentence_mismatches
+    global global_not_founds
     word_based_info = {}
     word_based_info_list = []
+    parent_text = parent['text']
+
     if ids is None:
         return word_based_info_list
 
@@ -233,14 +264,21 @@ def find_agent(ids, data_subset, parent, clean=False, parent_id='', agents_in_se
             item = data_subset[item_id]  # dictionary: char based for sentence, word_based for sentence array, aspect, polarity, intensity, type
 
             if item_id.endswith('agent-w') or item_id.endswith('agent-implicit') or item['sentence_id'] == parent['sentence_id']:
-                word_based_info = char_to_word(
-                    item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
-                    end=item['head_end'], clean=clean, verbose=verbose
-                )
+                if verbose and parent_text != '' and item['text'] != '' and parent_text != \
+                        item['text']:
+                    key_pch = 'parent:' + parent_id + 'child:' + item_id
+                    if key_pch in global_dict_sentence_mismatches:
+                        global_dict_sentence_mismatches[key_pch].append([parent_text, item['text']])
+                    else:
+                        global_dict_sentence_mismatches[key_pch] = [parent_text, item['text']]
+                    # print(
+                    #     f'\033[91m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_text=\t{white_in_error(parent_text)} \n\t child_text=\t{white_in_error(item["text"])} \n /> \033[00m')
+                else:
+                    word_based_info = char_to_word(
+                        item_id=item_id, text=item['text'], head=item['head'], start=item['head_start'],
+                        end=item['head_end'], clean=clean, verbose=verbose
+                    )
 
-                # if verbose and parent_clean_text != '' and word_based_info['clean_text'] != '' and parent_clean_text != word_based_info['clean_text']:
-                #     print(
-                #         f'\033[92m <Error sentence mismatch parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}>: \n\t parent_clean_text=\t{white_in_error(parent_clean_text)} \n\t child_clean_text=\t{white_in_error(word_based_info["clean_text"])} \n /> \033[00m')
             else:
                 agent_found = False
                 if parent['sentence_id'] in agents_in_sentences:
@@ -253,10 +291,18 @@ def find_agent(ids, data_subset, parent, clean=False, parent_id='', agents_in_se
                             )
                             agent_found = True
                             break
-                # if not agent_found and verbose:
-                #     print(f'\033[91m <Error agent not found (2 Hands) parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}> & sentence-id=<{white_in_error(parent["sentence_id"])}>: \n\t parent_clean_text=\t\t{white_in_error(parent_clean_text)} \n\t supposed_child_text=\t{white_in_error(repr(item["text"]))} \n\t supposed_child_head=\t{white_in_error(repr(item["head"]))} \n /> \033[00m')
-        # elif verbose:
-        #         print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
+                if not agent_found and verbose:
+                    if 'agent (parent_id & child_id)' in global_not_founds:
+                        global_not_founds['agent (parent_id & child_id)'].append([parent_id, item_id])
+                    else:
+                        global_not_founds['agent (parent_id & child_id)'] = [parent_id, item_id]
+                    # print(f'\033[91m <Error agent not found (2 Hands) parent_id=<{white_in_error(parent_id)}> & child_id=<{white_in_error(item_id)}> & sentence-id=<{white_in_error(parent["sentence_id"])}>: \n\t parent_text=\t\t{white_in_error(parent_text)} \n\t supposed_text=\t{white_in_error(repr(item["text"]))} \n\t supposed_child_head=\t{white_in_error(repr(item["head"]))} \n /> \033[00m')
+        elif verbose:
+            if 'other' in global_not_founds:
+                global_not_founds['other'].append([item_id])
+            else:
+                global_not_founds['other'] = [item_id]
+            # print(f"\033[93m <Warning id=<{white_in_warning(item_id)}> couldn't be found./> \033[00m\033[00m")
 
         word_based_info_list.append(word_based_info)
 
@@ -274,6 +320,10 @@ def preprocess_agents_in_sentences(data_subset):
 
 
 def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=False, activate_progressbar=True):
+    global global_dict_sentence_mismatches
+    global global_not_founds
+    global global_word_tokenization_mismatch
+
     obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
     # Gather the JSON file from MPQA.
     mpqa_json = obj.produce_json_file()
@@ -293,13 +343,13 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
         item_id = item['unique_id']
         item['target'] = find_info(item['target_link'], data['target_objects'], clean,
-                                   parent_id=item_id, verbose=verbose)
+                                   parent_id=item_id, verbose=verbose, parent_text = item['text'])
         item['nested_source'] = find_agent(item['nested_source_link'], data['agent_objects'], item, clean,
                                            parent_id=item_id,
                                            agents_in_sentences=agents_in_sentences, verbose=verbose)
         item['attitude'] = find_info(item['attitude_link'], data['csds_objects'], clean, add_attitude_attributes=True,
                                      parent_id=item_id, verbose=verbose,
-                                     data_targets=data['target_objects'])
+                                     data_targets=data['target_objects'], parent_text = item['text'])
 
         data['csds_objects'][k] = item
 
@@ -309,6 +359,15 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
     with open(save_address, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
+    if verbose:
+        global_dict = {
+         'sentence_mismatch' : global_dict_sentence_mismatches,
+         'not_found' : global_not_founds,
+         'word_tokenization_mismatch' : global_word_tokenization_mismatch,
+        }
+        with open('problems.json', 'w', encoding='utf-8') as f:
+            json.dump(global_dict, f, ensure_ascii=False, indent=4)
 
 
 tokenize_and_extract_info(
