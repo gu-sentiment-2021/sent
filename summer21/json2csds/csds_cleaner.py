@@ -53,21 +53,35 @@ def clean_item(txt):
     txt = re.sub('--', ' -- ', txt)
     txt = re.sub('  ', ' ', txt)
 
-    if txt == 'U.S':
+    if txt == 'U.S' or txt == 'U. S.' or txt == 'U. S':
         txt = 'U.S.'
 
-    # Handle ``s and ''s
+    # Handle ``s and ''s and `s
     start_quotation_marks_indices = []
     end_quotation_marks_indices = []
+    quotation_marks_indices = []
+
     for i in range(len(txt) - 1):
         if txt[i:i + 2] == '``':  # or ord(txt[i]) == 39:
             start_quotation_marks_indices.append(i)
-        if txt[i:i + 2] == "''":  # or ord(txt[i]) == 39:
-            end_quotation_marks_indices.append(i)
     for i in range(len(start_quotation_marks_indices)):
         txt = txt[0: start_quotation_marks_indices[i]] + '"' + txt[start_quotation_marks_indices[i] + 2:]
+        if i+1 < len(start_quotation_marks_indices):
+            start_quotation_marks_indices[i+1] -= 1
+
+    for i in range(len(txt) - 1):
+        if txt[i:i + 2] == "''":  # or ord(txt[i]) == 39:
+            end_quotation_marks_indices.append(i)
     for i in range(len(end_quotation_marks_indices)):
         txt = txt[0: end_quotation_marks_indices[i]] + '"' + txt[end_quotation_marks_indices[i] + 2:]
+        if i+1 < len(end_quotation_marks_indices):
+            end_quotation_marks_indices[i+1] -= 1
+
+    for i in range(len(txt)):
+        if txt[i:i + 1] == '`':
+            quotation_marks_indices.append(i)
+    for i in range(len(quotation_marks_indices)):
+        txt = txt[0: quotation_marks_indices[i]] + '\'' + txt[quotation_marks_indices[i] + 1:]
 
     return txt
 
@@ -75,6 +89,10 @@ def clean_item(txt):
 def back_to_clean(lst):
     txt = detokenizer.detokenize(lst)
     txt = re.sub(' \.', '.', txt)
+    txt = re.sub('\' ', '\'', txt)
+    txt = re.sub('\" ', '"', txt)
+    txt = re.sub('\. \"', '."', txt)
+    txt = re.sub('\. \'', '.\'', txt)
     return txt
 
 
@@ -94,42 +112,88 @@ def cache_tokenizations(text):
         cache_tokenizations_dict[text] = tokens
     return cache_tokenizations_dict[text]
 
-def clean_plus_end(inp, end):
-    final_input = inp.copy()
-    j = 0
-    length = len(inp)-1
+def clean_plus_end(inp, end, start):
+    if inp != []:
+        final_input = inp.copy()
+        j = 0
+        length = len(inp)-1
+        specific_symbols = ['"', '\'']
 
-    if end == 1:
-        length = len(inp)-2
+        if end == 1:
+            length = len(inp)-2
 
-    for i in range(length):
-        if inp[i+1] == '.' and (inp[i])[0].isupper():
-            final_input[j] += '.'
-            final_input.pop(j+1)
-        else:
-            j += 1
+        for i in range(length):
+            if inp[i+1] == '.' and (inp[i])[0].isupper():
+                final_input[j] += '.'
+                final_input.pop(j+1)
+            else:
+                j += 1
 
-    if end == 1:
-        if final_input[-1].endswith('.') and len(final_input[-1])>1:
-            final_input[-1] = (final_input[-1])[0:-1]
-            final_input.append('.')
+        if end == 1:
+            if final_input[-1] in specific_symbols:
+                ind = -2
+                if len(final_input) >= 2:
+                    if final_input[-2] in specific_symbols:
+                        ind = -3
+                if len(final_input) >= abs(ind):
+                    if final_input[ind].endswith('.') and len(final_input[ind])>1:
+                        final_input[ind] = (final_input[ind])[0:-1]
+                        final_input.insert(ind+1, '.')
+            else:
+                if final_input[-1].endswith('.') and len(final_input[-1])>1:
+                    final_input[-1] = (final_input[-1])[0:-1]
+                    final_input.append('.')
 
-    return final_input
+        if start == 1:
+            for item_s in specific_symbols:
+                if final_input[0].startswith(item_s) and len(final_input[0])>1:
+                    if final_input[0][1].isupper() or len(final_input[0])>3:
+                        final_input.insert(1, (final_input[0])[1:])
+                        final_input[0] = item_s
+
+        for i in range(len(final_input)):
+            if final_input[i] == 'U.S..':
+                final_input[i] = 'U.S.'
+
+            if final_input[i].startswith('\'') and len(final_input[i])>1:
+                if final_input[i][1].isupper() or len(final_input[i]) > 3:
+                    final_input.insert(i+1, (final_input[i])[1:])
+                    final_input[i] = '\''
+
+        for i in range(len(final_input)-1):
+            if final_input[i] == 'U.' and (final_input[i + 1] == 'S.' or final_input[i + 1] == 'S'):
+                final_input[i] = 'U.S.'
+                final_input.pop(i + 1)
+
+        return final_input
+    else:
+        return inp
 
 def clean_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens):
     tokens1, tokens2, tokens3, all_tokens = text_tokens1, text_tokens2, text_tokens3, all_text_tokens
 
-    if all_text_tokens[len(text_tokens1): len(text_tokens1) + len(text_tokens2)] != text_tokens2:
-        tokens1 = clean_plus_end(text_tokens1, 0)
-        all_tokens = clean_plus_end(all_text_tokens, 1)
+    # if all_text_tokens[len(text_tokens1): len(text_tokens1) + len(text_tokens2)] != text_tokens2:
+    all_tokens = clean_plus_end(all_text_tokens, 1, 1)
 
-        if text_tokens3 == []:
-            #end = 2, all
-            tokens2 = clean_plus_end(text_tokens2, 1)
+    if text_tokens3 == []:
+        #end = 2, all
+        if text_tokens1 == []:
+            # start = 2, all
+            tokens2 = clean_plus_end(text_tokens2, 1, 1)
         else:
-            #end = 3, all
-            tokens2 = clean_plus_end(text_tokens2, 0)
-            tokens3 = clean_plus_end(text_tokens3, 1)
+            # start = 1, all
+            tokens1 = clean_plus_end(text_tokens1, 0, 1)
+            tokens2 = clean_plus_end(text_tokens2, 1, 0)
+    else:
+        #end = 3, all
+        tokens3 = clean_plus_end(text_tokens3, 1, 0)
+        if text_tokens1 == []:
+            # start = 2, all
+            tokens2 = clean_plus_end(text_tokens2, 0, 1)
+        else:
+            # start = 1, all
+            tokens1 = clean_plus_end(text_tokens1, 0, 1)
+            tokens2 = clean_plus_end(text_tokens2, 0, 0)
 
     return tokens1, tokens2, tokens3, all_tokens
 
