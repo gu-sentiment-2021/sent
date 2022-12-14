@@ -110,7 +110,7 @@ def clean_plus_end(inp, end):
             j += 1
 
     if end == 1:
-        if final_input[-1].endswith('.'):
+        if final_input[-1].endswith('.') and len(final_input[-1])>1:
             final_input[-1] = (final_input[-1])[0:-1]
             final_input.append('.')
 
