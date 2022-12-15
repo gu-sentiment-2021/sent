@@ -151,23 +151,59 @@ def clean_plus_end(inp, end, start):
                         final_input.insert(1, (final_input[0])[1:])
                         final_input[0] = item_s
 
-        for i in range(len(final_input)):
-            if final_input[i] == 'U.S..':
-                final_input[i] = 'U.S.'
+        i = 0
+        while(True):
+            if i < len(final_input):
+                if final_input[i] == 'U.S..':
+                    final_input[i] = 'U.S.'
 
-            if final_input[i].startswith('\'') and len(final_input[i])>1:
-                if final_input[i][1].isupper() or len(final_input[i]) > 3:
-                    final_input.insert(i+1, (final_input[i])[1:])
-                    final_input[i] = '\''
+                if final_input[i].startswith('\'') and len(final_input[i]) > 1:
+                    if final_input[i][1].isupper() or len(final_input[i]) > 3:
+                        final_input.insert(i + 1, (final_input[i])[1:])
+                        final_input[i] = '\''
 
-        for i in range(len(final_input)-1):
-            if final_input[i] == 'U.' and (final_input[i + 1] == 'S.' or final_input[i + 1] == 'S'):
-                final_input[i] = 'U.S.'
-                final_input.pop(i + 1)
+                if i < len(final_input) - 1:
+                    if final_input[i] == 'U.' and (final_input[i + 1] == 'S.' or final_input[i + 1] == 'S'):
+                        final_input[i] = 'U.S.'
+                        final_input.pop(i + 1)
+
+                i += 1
+            else:
+                break
+
 
         return final_input
     else:
         return inp
+
+def clean_plus_plus(tokens1, tokens2, tokens3, all_tokens):
+    if all_tokens != []:
+        i = 0
+        # print(all_tokens)
+        while(True):
+            if i < len(all_tokens):
+                if all_tokens[i].endswith('.'):
+                    if tokens1 != []:
+                        if tokens1[-1] == all_tokens[i][0:-1]:
+                            all_tokens[i] = all_tokens[i][0:-1]
+                            all_tokens.insert(i + 1, '.')
+
+                    if tokens2 != []:
+                        if tokens2[-1] == all_tokens[i][0:-1]:
+                            all_tokens[i] = all_tokens[i][0:-1]
+                            all_tokens.insert(i + 1, '.')
+
+                    if tokens3 != []:
+                        if tokens3[-1] == all_tokens[i][0:-1]:
+                            all_tokens[i] = all_tokens[i][0:-1]
+                            all_tokens.insert(i + 1, '.')
+                i += 1
+            else:
+                break
+
+        # print(all_tokens)
+
+    return all_tokens
 
 def clean_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens):
     tokens1, tokens2, tokens3, all_tokens = text_tokens1, text_tokens2, text_tokens3, all_text_tokens
@@ -210,10 +246,11 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
         text_tokens3 = cache_clean_tokenizations(text3)
         all_text_tokens = cache_clean_tokenizations(text)
         text_tokens1, text_tokens2, text_tokens3, all_text_tokens = clean_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens)
+        all_text_tokens = clean_plus_plus(text_tokens1, text_tokens2, text_tokens3, all_text_tokens)
     else:
         text_tokens1 = cache_tokenizations(text1)
         text_tokens2 = cache_tokenizations(text2)
-        # text_tokens3 = cache_tokenizations(text3)
+        text_tokens3 = cache_tokenizations(text3)
         all_text_tokens = cache_tokenizations(text)
 
     if verbose and all_text_tokens[len(text_tokens1): len(text_tokens1) + len(text_tokens2)] != text_tokens2:
