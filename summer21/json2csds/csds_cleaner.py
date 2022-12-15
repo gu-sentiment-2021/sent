@@ -18,6 +18,8 @@ global_dict_sentence_mismatches = {}
 global_not_founds = {}
 global_word_tokenization_mismatch = {}
 
+version = 'v221214'
+
 def alert_wrong_anno(anno, doc_id, error=None):
     """
     It is used for alerting wrong annotation(s).
@@ -467,13 +469,13 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
          'not_found' : global_not_founds,
          'word_tokenization_mismatch' : global_word_tokenization_mismatch,
         }
-        with open('problems.json', 'w', encoding='utf-8') as f:
+        with open('problems_'+version+'.json', 'w', encoding='utf-8') as f:
             json.dump(global_dict, f, ensure_ascii=False, indent=4)
 
 
 tokenize_and_extract_info(
     data_address='../mpqa_dataprocessing/database.mpqa.cleaned.221201',
-    save_address='MPQA2.0_v221205_cleaned.json',
+    save_address='MPQA2.0_'+version+'_cleaned.json',
     clean=True,
     verbose=True
 )
