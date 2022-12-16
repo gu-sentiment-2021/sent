@@ -18,7 +18,7 @@ global_dict_sentence_mismatches = {}
 global_not_founds = {}
 global_word_tokenization_mismatch = {}
 
-version = 'v221214'
+version = 'v221216'
 
 def alert_wrong_anno(anno, doc_id, error=None):
     """
@@ -427,6 +427,7 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
     global global_not_founds
     global global_word_tokenization_mismatch
 
+    # data_keys = ['csds_objects', 'agent_objects', 'target_objects']
     obj = JSON2CSDS("MPQA2.0", data_address, mpqa_version=2)
     # Gather the JSON file from MPQA.
     mpqa_json = obj.produce_json_file()
@@ -434,6 +435,7 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
     agents_in_sentences = preprocess_agents_in_sentences(data['agent_objects'])
 
+    # csds_objects
     n = len(data['csds_objects'])
     progressbar = -1
     for k in range(n):
@@ -458,7 +460,50 @@ def tokenize_and_extract_info(data_address, save_address, clean=False, verbose=F
 
         if activate_progressbar and progressbar < k // (n // 100):
             progressbar = k // (n // 100)
-            print(f'{progressbar}% completed')
+            print(f'{progressbar}% completed (csds_objects)')
+
+    # target_objects
+    n = len(data['target_objects'])
+    progressbar = -1
+    j = 0
+    for k in data['target_objects']:
+        item = data['target_objects'][k]
+
+        word_based_info = char_to_word(
+            text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, remove=False
+        )
+        item.update(word_based_info)
+
+        data['target_objects'][k] = item
+
+        if activate_progressbar and progressbar < j // (n // 100):
+            progressbar = j // (n // 100)
+            print(f'{progressbar}% completed (target_objects)')
+        j += 1
+
+    # agent_objects
+    n = len(data['agent_objects'])
+    progressbar = -1
+    j = 0
+    for k in data['agent_objects']:
+        item = data['agent_objects'][k]
+
+        word_based_info = char_to_word(
+            text=item['text'], head=item['head'], start=item['head_start'], end=item['head_end'], clean=clean, remove=False
+        )
+        item.update(word_based_info)
+
+        item_id = item['unique_id']
+        item['nested_source_info'] = find_agent(item['nested_source'], data['agent_objects'], item, clean,
+                                           parent_id=item_id,
+                                           agents_in_sentences=agents_in_sentences, verbose=verbose)
+
+        data['agent_objects'][k] = item
+
+        if activate_progressbar and progressbar < j // (n // 100):
+            progressbar = j // (n // 100)
+            print(f'{progressbar}% completed (agent_objects)')
+        j += 1
 
     with open(save_address, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)

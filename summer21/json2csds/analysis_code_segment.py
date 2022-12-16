@@ -3,7 +3,7 @@ import json
 
 # Path is where you want to save the JSON file.
 path = ''
-version = 'v221214'
+version = 'v221216'
 
 # Loading the saved JSON file.
 with open(path + 'MPQA2.0_'+version+'_cleaned.json', encoding='utf-8') as json_file:
