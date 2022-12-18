@@ -678,15 +678,11 @@ class JSON2CSDS:
             imp = None
 
         try:
-            if imp == "true":
-                head_end = ose_anno['span-in-doc'][0]
-            else:
-                head_end = ose_anno['span-in-doc'][1]
 
             ose_object = ExtendedCSDS(
                 this_text=ose_anno['text'],
-                this_head_start=ose_anno['span-in-doc'][0],
-                this_head_end=head_end,
+                this_head_start=ose_anno['span-in-doc'][0] if imp == "true" else ose_anno['span-in-sentence'][0],
+                this_head_end=ose_anno['span-in-doc'][1] if imp == "true" else ose_anno['span-in-sentence'][1],
                 this_belief=None,
                 this_polarity=None,
                 this_intensity=None,

@@ -18,7 +18,7 @@ global_dict_sentence_mismatches = {}
 global_not_founds = {}
 global_word_tokenization_mismatch = {}
 
-version = 'v221216'
+version = 'v221219'
 
 def alert_wrong_anno(anno, doc_id, error=None):
     """
@@ -275,6 +275,7 @@ def char_to_word(item_id="", text="", head="", start=0, end=0, clean=False, verb
     else:
         return {
             'w_head_span': (len(text_tokens1), len(text_tokens1) + len(text_tokens2)),
+            'w_head': text_tokens2,
             'clean_head': back_to_clean(text_tokens2)
         }
 
