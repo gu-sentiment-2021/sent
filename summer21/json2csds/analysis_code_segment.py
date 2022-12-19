@@ -3,7 +3,7 @@ import json
 
 # Path is where you want to save the JSON file.
 path = ''
-version = 'v221216'
+version = 'v221219'
 
 # Loading the saved JSON file.
 with open(path + 'MPQA2.0_'+version+'_cleaned.json', encoding='utf-8') as json_file:
@@ -19,10 +19,12 @@ att_in_dse = 0
 att = 0
 trgt_in_att = 0
 
+ose = 0
+agnt_in_ose = 0
+
 agnt = len(data['agent_objects'])
 trgt = len(data['target_objects'])
 sentences = 0
-ose = 0
 
 for item in data['csds_objects']:
     if item['annotation_type'] == 'expressive_subjectivity':
@@ -47,6 +49,9 @@ for item in data['csds_objects']:
         sentences += 1
     if item['annotation_type'] == 'objective_speech_event':
         ose += 1
+        for d in item['nested_source']:
+            if d != {}:
+                agnt_in_ose += 1
 
 print('Agents:', agnt)
 print('Targets:', trgt)
@@ -66,6 +71,9 @@ print("Targets in ATTs:", trgt_in_att)
 print()
 
 print("OSE:", ose)
+print("Agents in OSE:", agnt_in_ose)
+print()
+
 print("Sentences:", sentences)
 print()
 

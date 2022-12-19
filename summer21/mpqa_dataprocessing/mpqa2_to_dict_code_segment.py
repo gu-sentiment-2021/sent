@@ -35,7 +35,7 @@ with open("result_mpqa2_cleaned.json", 'w') as file:
 # print(annos)
 
 # ##### Count number of links in attitudes, DSEs, and ESEs.
-# trgt_in_att, src_in_dse, att_in_dse, src_in_ese = 0, 0, 0, 0
+# trgt_in_att, src_in_dse, att_in_dse, src_in_ese, src_in_ose = 0, 0, 0, 0, 0
 # for docname, doc in result['docs'].items():
 #     for annoname in doc['attitude']:
 #         for anno in doc['annotations'][annoname]:
@@ -51,5 +51,9 @@ with open("result_mpqa2_cleaned.json", 'w') as file:
 #         for anno in doc['annotations'][annoname]:
 #             if 'nested-source' in anno:
 #                 src_in_ese += len(anno['nested-source'])
+#     for annoname in doc['objective-speech-event']:
+#         for anno in doc['annotations'][annoname]:
+#             if 'nested-source' in anno:
+#                 src_in_ose += len(anno['nested-source'])
 #
-# print(trgt_in_att, src_in_dse, att_in_dse, src_in_ese)
+# print(trgt_in_att, src_in_dse, att_in_dse, src_in_ese, src_in_ose)
