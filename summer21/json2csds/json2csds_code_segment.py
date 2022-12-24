@@ -16,11 +16,11 @@ with open(path + 'MPQA.json', 'w', encoding='utf-8') as f:
     json.dump(mpqa_json, f, ensure_ascii=False, indent=4)
 
 
-with open(path + 'MPQA2.0_v221205_org.json', 'w', encoding='utf-8') as f:
+with open(path + 'MPQA2.0_v221219_org.json', 'w', encoding='utf-8') as f:
     json.dump(json_output, f, ensure_ascii=False, indent=4)
 
 # Loading the saved JSON file.
-with open(path + 'MPQA2.0_v221205_org.json', encoding='utf-8') as json_file:
+with open(path + 'MPQA2.0_v221219_org.json', encoding='utf-8') as json_file:
     data = json.load(json_file)
 
 print(data.keys())
